@@ -8,6 +8,6 @@ class FileWritePrompter extends FilePrompter {
 	}
 
 	FileWritePrompter() {
-		public String promptText = "Output filename: ";
+		this.promptText = "Output filename: ";
 	}
 }
