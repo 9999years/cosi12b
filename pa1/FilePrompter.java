@@ -18,13 +18,27 @@ abstract class FilePrompter {
 		String filename;
 		System.out.print(this.promptText);
 		while(true) {
-			filename = stdin.nextLine();
+			try {
+				filename = stdin.nextLine();
+			} catch(NoSuchElementException e) {
+				System.err.println(
+					"Unexpected end of input stream! Exiting."
+				);
+				System.exit(-1);
+				return "";
+			}
 			if(this.check(filename)) {
 				break;
 			} else {
 				System.out.print(this.checkFailText);
 				System.out.print(this.promptText);
 			}
+		}
+		if(filename.equals("")) {
+			System.err.println(
+				"Empty filename! Exiting."
+			);
+			System.exit(-1);
 		}
 		return filename;
 	}

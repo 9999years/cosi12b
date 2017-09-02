@@ -11,25 +11,13 @@ import java.util.NoSuchElementException;
 
 class PersonalityTest {
 	public static void main(String[] args) {
-		String inFilename;
-		try {
-			inFilename = new FileReadPrompter().prompt();
-		} catch(NoSuchElementException e) {
-			System.err.println("Unexpected end of input stream! Exiting.");
-			return;
-		}
-		String outFilename;
-		try {
-			outFilename = new FileWritePrompter("Output filename: ").prompt();
-		} catch(NoSuchElementException e) {
-			System.err.println("Unexpected end of input stream! Exiting.");
-			return;
-		}
+		String inFilename  = new FileReadPrompter().prompt();
+		String outFilename = new FileWritePrompter().prompt();
 		KeirseyFileReader reader = new KeirseyFileReader(inFilename);
 		try {
 			reader.read();
 		} catch(FileNotFoundException e) {
-			System.err.println("File not found; deleted between typing input and writing?");
+			System.err.println("File not found! Deleted between input and computation?");
 		}
 		reader.writeFile(outFilename);
 	}

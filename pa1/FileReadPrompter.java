@@ -3,7 +3,8 @@ import java.io.File;
 class FileReadPrompter extends FilePrompter {
 	public String promptText = "Input filename: ";
 	protected boolean check(String filename) {
-		return new File(filename).exists();
+		File f = new File(filename);
+		return f.isFile() && f.canRead();
 	}
 
 	FileReadPrompter(String promptText, String checkFailText) {

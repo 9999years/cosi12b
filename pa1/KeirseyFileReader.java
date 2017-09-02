@@ -50,7 +50,10 @@ class KeirseyFileReader {
 			PrintStream outFile = new PrintStream(outFilename);
 			outFile.print(this.format());
 		} catch(FileNotFoundException e) {
-			System.err.println("File not found; deleted between typing input and writing?");
+			System.err.println(
+				"File not found; deleted between typing input and writing?"
+			);
+			System.exit(-1);
 		}
 	}
 
