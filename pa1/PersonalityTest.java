@@ -7,9 +7,10 @@
  */
 class PersonalityTest {
 	public static void main(String[] args) {
-		//byte[] dat = KeirseyLineParser.parse(
-			//"BABA-AABAAAAAAABAAAABBAAAAAABAAAABABAABAAABABABAABAAAAAABAAAAAABAAAAAA"
-		//);
-		String filename = FilePrompter.prompt();
+		String inFilename = new FileReadPrompter().prompt();
+		String outFilename = new FileWritePrompter().prompt();
+		KeirseyFileReader reader = new KeirseyFileReader(inFilename);
+		reader.read();
+		reader.writeFile(outFilename);
 	}
 }

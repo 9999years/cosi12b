@@ -1,3 +1,8 @@
+import java.util.stream.Stream;
+import java.util.function.ToIntFunction;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 class KeirseyResult {
 	// A answers
 	public int E_AMOUNT = 0;
@@ -13,7 +18,7 @@ class KeirseyResult {
 
 	// axis indexes
 	public static int IE = 0x00;
-	public static int SJ = 0x01;
+	public static int SN = 0x01;
 	public static int TF = 0x02;
 	public static int JP = 0x03;
 
@@ -21,23 +26,31 @@ class KeirseyResult {
 
 	public void KeirseyData(String name, String data) {
 		this.name = name;
+	}
 
+	public double[] getPercentages() {
+		return new double[] {
+			I_AMOUNT / (E_AMOUNT + I_AMOUNT),
+			N_AMOUNT / (S_AMOUNT + N_AMOUNT),
+			F_AMOUNT / (T_AMOUNT + F_AMOUNT),
+			P_AMOUNT / (J_AMOUNT + P_AMOUNT)
+		};
 	}
 
 	public String toString() {
-		int[] percents = DoubleStream(this.getPercentages())
-			.mapToInt(k -> Math.round(k * 100.0d))
+		int[] percents = Arrays.stream(this.getPercentages())
+			.mapToInt(k -> (int) Math.round(k * 100.0d))
 			.toArray();
 
 		return String.format(
 			"%s:\n%s %s %s %s\n[%d, %d, %d, %d] = %s\n\n",
 			this.name,
 			this.questionString(this.IE),
-			this.questionString(this.SJ),
+			this.questionString(this.SN),
 			this.questionString(this.TF),
 			this.questionString(this.JP),
 			percents[this.IE],
-			percents[this.SJ],
+			percents[this.SN],
 			percents[this.TF],
 			percents[this.JP],
 			this.getType()
@@ -57,7 +70,7 @@ class KeirseyResult {
 		if(group == this.IE) {
 			a_amount = this.E_AMOUNT;
 			b_amount = this.I_AMOUNT;
-		} else if(group == this.SJ) {
+		} else if(group == this.SN) {
 			a_amount = this.S_AMOUNT;
 			b_amount = this.N_AMOUNT;
 		} else if(group == this.TF) {
@@ -76,7 +89,7 @@ class KeirseyResult {
 		if(group == IE) {
 			E_AMOUNT += aQuestion(answer);
 			I_AMOUNT += bQuestion(answer);
-		} else if(group == SJ) {
+		} else if(group == SN) {
 			S_AMOUNT += aQuestion(answer);
 			N_AMOUNT += bQuestion(answer);
 		} else if(group == TF) {
@@ -88,15 +101,6 @@ class KeirseyResult {
 		} else {
 			throw new IllegalArgumentException("Invalid group ID");
 		}
-	}
-
-	public double[] getPercentages() {
-		return new double[] {
-			I_AMOUNT / (E_AMOUNT + I_AMOUNT),
-			N_AMOUNT / (S_AMOUNT + N_AMOUNT),
-			F_AMOUNT / (T_AMOUNT + F_AMOUNT),
-			P_AMOUNT / (J_AMOUNT + P_AMOUNT)
-		};
 	}
 
 	public String getType() {
