@@ -1,5 +1,5 @@
 import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.io.PrintStream;
 import java.io.File;
@@ -11,26 +11,29 @@ class KeirseyFileReader {
 
 	public void read() throws FileNotFoundException {
 		Scanner fileIn = new Scanner(new File(this.filename));
-		ArrayList<String> lines = new ArrayList<String>();
+		LinkedList<String> lines = new LinkedList<String>();
+		int lineCount = 0;
 		while(true) {
 			try {
-				lines.add(fileIn.nextLine());
+				lines.push(fileIn.nextLine());
+				lineCount++;
 			} catch(NoSuchElementException e) {
 				break;
 			}
 		}
 
-		if(lines.size() % 2 != 0) {
+		if(lineCount % 2 != 0) {
 			throw new IllegalArgumentException(
 				"Invalid test file; not an even number of lines"
 			);
 		}
 
-		this.data = new KeirseyResult[lines.size() / 2];
-		for(int i = 0; i < lines.size(); i++) {
+		this.data = new KeirseyResult[lineCount / 2];
+		for(int i = 0; i < lineCount / 2; i++) {
 			// add new record with the name
-			this.data[i] = new KeirseyEvaluator().parse(lines.get(i + 1));
-			this.data[i].name = lines.get(i);
+			this.data[i] = new KeirseyEvaluator().parse(
+				lines.removeLast(),
+				lines.removeLast());
 		}
 	}
 

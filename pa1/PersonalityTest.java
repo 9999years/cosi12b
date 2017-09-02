@@ -20,7 +20,7 @@ class PersonalityTest {
 		}
 		String outFilename;
 		try {
-			outFilename = new FileWritePrompter().prompt();
+			outFilename = new FileWritePrompter("Output filename: ").prompt();
 		} catch(NoSuchElementException e) {
 			System.err.println("Unexpected end of input stream! Exiting.");
 			return;

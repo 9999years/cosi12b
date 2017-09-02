@@ -24,16 +24,12 @@ class KeirseyResult {
 
 	public String name;
 
-	public void KeirseyData(String name, String data) {
-		this.name = name;
-	}
-
 	public double[] getPercentages() {
 		return new double[] {
-			I_AMOUNT / (E_AMOUNT + I_AMOUNT),
-			N_AMOUNT / (S_AMOUNT + N_AMOUNT),
-			F_AMOUNT / (T_AMOUNT + F_AMOUNT),
-			P_AMOUNT / (J_AMOUNT + P_AMOUNT)
+			(double) I_AMOUNT / (E_AMOUNT + I_AMOUNT),
+			(double) N_AMOUNT / (S_AMOUNT + N_AMOUNT),
+			(double) F_AMOUNT / (T_AMOUNT + F_AMOUNT),
+			(double) P_AMOUNT / (J_AMOUNT + P_AMOUNT)
 		};
 	}
 
@@ -43,7 +39,7 @@ class KeirseyResult {
 			.toArray();
 
 		return String.format(
-			"%s:\n%s %s %s %s\n[%d, %d, %d, %d] = %s\n\n",
+			"%s:\n%s %s %s %s\n[%d%%, %d%%, %d%%, %d%%] = %s\n\n",
 			this.name,
 			this.questionString(this.IE),
 			this.questionString(this.SN),
@@ -86,18 +82,18 @@ class KeirseyResult {
 	}
 
 	public void parseQuestion(int group, int answer) {
-		if(group == IE) {
-			E_AMOUNT += aQuestion(answer);
-			I_AMOUNT += bQuestion(answer);
-		} else if(group == SN) {
-			S_AMOUNT += aQuestion(answer);
-			N_AMOUNT += bQuestion(answer);
-		} else if(group == TF) {
-			T_AMOUNT += aQuestion(answer);
-			F_AMOUNT += bQuestion(answer);
-		} else if(group == JP) {
-			J_AMOUNT += aQuestion(answer);
-			P_AMOUNT += bQuestion(answer);
+		if(group == this.IE) {
+			this.E_AMOUNT += aQuestion(answer);
+			this.I_AMOUNT += bQuestion(answer);
+		} else if(group == this.SN) {
+			this.S_AMOUNT += aQuestion(answer);
+			this.N_AMOUNT += bQuestion(answer);
+		} else if(group == this.TF) {
+			this.T_AMOUNT += aQuestion(answer);
+			this.F_AMOUNT += bQuestion(answer);
+		} else if(group == this.JP) {
+			this.J_AMOUNT += aQuestion(answer);
+			this.P_AMOUNT += bQuestion(answer);
 		} else {
 			throw new IllegalArgumentException("Invalid group ID");
 		}
@@ -111,5 +107,8 @@ class KeirseyResult {
 		ret.append(J_AMOUNT == P_AMOUNT ? "X" : J_AMOUNT > P_AMOUNT ? "J" : "P");
 		return ret.toString();
 	}
-}
 
+	KeirseyResult(String name) {
+		this.name = name;
+	}
+}
