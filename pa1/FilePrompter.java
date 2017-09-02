@@ -1,35 +1,41 @@
 import java.util.Scanner;
+import java.util.NoSuchElementException;
 
-class FilePrompter {
-	String promptText = "Input filename: ";
-	String notExistsText = "File doesn't exist! Try again?\n";
+abstract class FilePrompter {
+	public String promptText = "Input filename: ";
+	public String checkFailText = "File doesn't exist! Try again?\n";
 
 	/**
 	 * Override this in sub-classes for conditional rejection of certain
 	 * strings
 	 */
-	private boolean check(String filename) {
+	protected boolean check(String filename) {
 		return true;
 	}
 
-	public String prompt() {
+	public String prompt() throws NoSuchElementException {
 		Scanner stdin = new Scanner(System.in);
 		String filename;
+		System.out.print(this.promptText);
 		while(true) {
-			System.out.print(promptText);
 			filename = stdin.nextLine();
 			if(this.check(filename)) {
 				break;
 			} else {
-				System.out.print(notExistsText);
+				System.out.print(this.checkFailText);
+				System.out.print(this.promptText);
 			}
 		}
 		return filename;
 	}
 
-	FilePrompter(String promptText, String notExistsText) {
+	FilePrompter(String promptText, String checkFailText) {
 		this.promptText = promptText;
-		this.notExistsText = notExistsText;
+		this.checkFailText = checkFailText;
+	}
+
+	FilePrompter(String promptText) {
+		this.promptText = promptText;
 	}
 
 	FilePrompter() {

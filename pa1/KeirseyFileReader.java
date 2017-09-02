@@ -2,14 +2,15 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.io.PrintStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 
 class KeirseyFileReader {
 	String filename;
 	KeirseyResult[] data;
 
-	public void read() {
-		Scanner fileIn = new Scanner(this.filename);
+	public void read() throws FileNotFoundException {
+		Scanner fileIn = new Scanner(new File(this.filename));
 		ArrayList<String> lines = new ArrayList<String>();
 		while(true) {
 			try {
