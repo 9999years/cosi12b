@@ -18,6 +18,7 @@ class PersonalityTest {
 			reader.read();
 		} catch(FileNotFoundException e) {
 			System.err.println("File not found! Deleted between input and computation?");
+			return;
 		}
 		reader.writeFile(outFilename);
 	}
