@@ -7,7 +7,7 @@ class KeirseyLineParser {
 	public static byte ANSWER_BLANK = 0x00;
 	public static byte ANSWER_A     = 0x01;
 	public static byte ANSWER_B     = 0x02;
-	public static int TEST_LENGTH  = 70;
+	public static int TEST_LENGTH   = 70;
 
 	public static byte[] parse(String input) {
 		byte[] data = new byte[TEST_LENGTH];
