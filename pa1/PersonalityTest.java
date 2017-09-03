@@ -11,15 +11,20 @@ import java.util.NoSuchElementException;
 
 class PersonalityTest {
 	public static void main(String[] args) {
+		// get input filename
 		String inFilename  = new FileReadPrompter().prompt();
+		// get output filename
 		String outFilename = new FileWritePrompter().prompt();
+		// set up the reader
 		KeirseyFileReader reader = new KeirseyFileReader(inFilename);
+		// try to read, prepare to catch a race condition
 		try {
 			reader.read();
 		} catch(FileNotFoundException e) {
 			System.err.println("File not found! Deleted between input and computation?");
 			return;
 		}
+		// write and exit
 		reader.writeFile(outFilename);
 	}
 }

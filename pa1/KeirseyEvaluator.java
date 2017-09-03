@@ -1,3 +1,14 @@
+/**
+ * class for parsing strings into data
+ * @author Rebecca Turner
+ * @version 0.0.1
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
+/**
+ * uses KeirseyLineParser to parse a String of data (AAaaABbBB-AAabbaba...)
+ * into a KeirseyResult, which can then format itself
+ */
 public class KeirseyEvaluator {
 	private byte[] dat;
 	private int INDEX = 0;

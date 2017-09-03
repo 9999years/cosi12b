@@ -1,4 +1,12 @@
 /**
+ * parses a string of kts data into a byte array; not useful for external
+ * applications
+ * @author Rebecca Turner
+ * @version 0.0.1
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
+/**
  * Takes a string and returns a byte array of personality data.
  * Generally not directly useful.
  * @throws IllegalArgumentException
@@ -9,7 +17,7 @@ public class KeirseyLineParser {
 	public static byte ANSWER_B     = 0x02;
 	public static int TEST_LENGTH   = 70;
 
-	public static byte[] parse(String input) {
+	public static byte[] parse(String input) throws IllegalArgumentException {
 		byte[] data = new byte[TEST_LENGTH];
 		int i;
 		for(i = 0; i < input.length(); i++) {
@@ -46,5 +54,4 @@ public class KeirseyLineParser {
 
 		return data;
 	}
-
 }
