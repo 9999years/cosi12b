@@ -9,7 +9,7 @@
 import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
 
-class PersonalityTest {
+public class PersonalityTest {
 	public static void main(String[] args) {
 		// get input filename
 		String inFilename  = new FileReadPrompter().prompt();

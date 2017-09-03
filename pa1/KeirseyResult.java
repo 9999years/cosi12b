@@ -15,7 +15,7 @@ import java.util.Arrays;
  * used directly to store kts test data; capable of calculating string output
  * and building itself up one question at a time
  */
-class KeirseyResult {
+public class KeirseyResult {
 	// normally these are built up with parseQuestion
 	// but if you really need you can set them manually
 	// A answers

@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
  * Actual class to use; takes a filename and returns a KeirseyResult
  * use the constructor with a filename, .read, and then .toString or .writeFile
  */
-class KeirseyFileReader {
+public class KeirseyFileReader {
 	String filename;
 	KeirseyResult[] data;
 

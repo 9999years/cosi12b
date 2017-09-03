@@ -7,7 +7,7 @@
 
 import java.io.File;
 
-class FileReadPrompter extends FilePrompter {
+public class FileReadPrompter extends FilePrompter {
 	public String promptText = "Input filename: ";
 
 	/**

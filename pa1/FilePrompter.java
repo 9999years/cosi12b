@@ -14,18 +14,27 @@ import java.util.NoSuchElementException;
  * FileReadPrompter checks if the file exists and is readable, and
  * FileWritePrompter has a better default prompt string.
  */
-abstract class FilePrompter {
+public abstract class FilePrompter {
 	public String promptText = "Input filename: ";
 	public String checkFailText = "File doesn't exist! Try again?\n";
 
 	/**
 	 * Override this in sub-classes for conditional rejection of certain
-	 * strings
+	 * strings; by default we just make sure the user has entered *something*
 	 */
 	protected boolean check(String filename) {
-		return true;
+		return filename.length > 0;
 	}
 
+	/**
+	 * Prompt the user for a filename and handle bad ones by asking again.
+	 *
+	 * In an ideal world the user would handle those errors but if stdin
+	 * ends the whole game is off anyways, and also I really don't want to
+	 * do a ton of error handling in main().
+	 *
+	 * @throws NoSuchElementException when stdin ends Unexpected
+	 */
 	public String prompt() throws NoSuchElementException {
 		Scanner stdin = new Scanner(System.in);
 		String filename;
@@ -50,12 +59,6 @@ abstract class FilePrompter {
 				System.out.print(this.checkFailText);
 				System.out.print(this.promptText);
 			}
-		}
-		if(filename.equals("")) {
-			System.err.println(
-				"Empty filename! Exiting."
-			);
-			System.exit(-1);
 		}
 		return filename;
 	}

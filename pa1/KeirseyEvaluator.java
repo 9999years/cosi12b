@@ -43,8 +43,19 @@ public class KeirseyEvaluator {
 		return result;
 	}
 
+	/**
+	 * parses a string of input with KeirseyLineParser.
+	 */
 	public KeirseyResult parse(String name, String input) {
 		this.name = name;
+		return this.parseDat(KeirseyLineParser.parse(input));
+	}
+
+	/**
+	 * parses a string of input with KeirseyLineParser, but doesn't set the
+	 * output name as well
+	 */
+	public KeirseyResult parse(String input) {
 		return this.parseDat(KeirseyLineParser.parse(input));
 	}
 
