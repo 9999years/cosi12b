@@ -1,0 +1,38 @@
+digraph {
+	// method nodes, which start with dots, refer to methods of the
+	// previous class node in the heirarchy
+	// e.g. in Foo -> .bar -> .baz -> .bow -> Apple -> .ball
+	// .bow refers to Foo.bow and .ball refers to Apple.ball
+	node [shape=box];
+
+	main
+	-> FileReadPrompter
+	-> FileWritePrompter
+	-> KeirseyFileReader
+	-> ".read";
+
+	".read" -> ".writeFile" [style=invis];
+
+	"KeirseyResult.parseQuestion"
+	-> KeirseyLineParser
+	-> KLPparse
+	-> ".writeFile" [style=invis];
+
+	".read"
+	-> ".reader"
+	-> KeirseyEvaluator
+	-> { KEparse [label=".parse"] }
+	-> ".parseDat"
+	-> ".parseChunk"
+	-> "KeirseyResult.parseQuestion";
+	KEparse
+	-> KeirseyLineParser
+	-> { KLPparse [label=".parse"] };
+	KeirseyFileReader
+	-> ".writeFile"
+	-> ".toString"
+	-> { KRtoString [label="KeirseyResult.toString"] };
+	KRtoString -> ".getPercentages";
+	KRtoString -> ".questionString";
+	KRtoString -> ".getMBTI";
+}
