@@ -20,10 +20,7 @@ public class KeirseyFileReader {
 	String filename;
 	KeirseyResult[] data;
 
-	/**
-	 * Reads and parses the pre-configured file, checks for correctness
-	 */
-	public void read() throws FileNotFoundException {
+	private void reader(String fname) throws FileNotFoundException {
 		Scanner fileIn = new Scanner(new File(this.filename));
 		// growable data-type, no need for indexed access
 		LinkedList<String> lines = new LinkedList<String>();
@@ -57,7 +54,28 @@ public class KeirseyFileReader {
 	}
 
 	/**
+	 * Reads and parses the pre-configured file, checks for correctness
+	 * @param fname a string to override this.filename if necessary
+	 * @throws FileNotFoundException when a file object for fname
+	 * cannot be opened
+	 */
+	public void read(String fname) throws FileNotFoundException {
+		this.reader(fname);
+	}
+
+	/**
+	 * Reads and parses the pre-configured file, checks for correctness
+	 * @throws FileNotFoundException when a file object for this.filename
+	 * cannot be opened
+	 */
+	public void read() throws FileNotFoundException {
+		this.reader(this.filename);
+	}
+
+	/**
 	 * format each record in the file into a string and return it
+	 * @return a String representing the processed data for each record in
+	 * the input file
 	 */
 	public String toString() {
 		StringBuilder ret = new StringBuilder();
@@ -72,6 +90,8 @@ public class KeirseyFileReader {
 	 *
 	 * i'm gonna be honest this only exists because of the 'no io in
 	 * main()' restriction
+	 *
+	 * @param outFilename the file to write out to
 	 */
 	public void writeFile(String outFilename) {
 		try {

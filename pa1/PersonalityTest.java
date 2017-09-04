@@ -10,6 +10,10 @@ import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
 
 public class PersonalityTest {
+	/**
+	 * prompts for an input and output filename, reads the file and writes
+	 * processed data to the output file
+	 */
 	public static void main(String[] args) {
 		// get input filename
 		String inFilename  = new FileReadPrompter().prompt();

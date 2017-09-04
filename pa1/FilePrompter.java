@@ -21,9 +21,11 @@ public abstract class FilePrompter {
 	/**
 	 * Override this in sub-classes for conditional rejection of certain
 	 * strings; by default we just make sure the user has entered *something*
+	 * @param filename a filename to validate
+	 * @return true if filename is valid, false if not
 	 */
 	protected boolean check(String filename) {
-		return filename.length > 0;
+		return filename.length() > 0;
 	}
 
 	/**
@@ -34,6 +36,7 @@ public abstract class FilePrompter {
 	 * do a ton of error handling in main().
 	 *
 	 * @throws NoSuchElementException when stdin ends Unexpected
+	 * @return user-entered filename
 	 */
 	public String prompt() throws NoSuchElementException {
 		Scanner stdin = new Scanner(System.in);

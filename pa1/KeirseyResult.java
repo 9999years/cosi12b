@@ -41,6 +41,8 @@ public class KeirseyResult {
 	/**
 	 * get an array of double fractions for the portions of each kts
 	 * dimension answered with B
+	 * @return a 4-element array of the %B answers for each axis (IE, SN,
+	 * TF, and JP)
 	 */
 	public double[] getPercentages() {
 		return new double[] {
@@ -86,9 +88,9 @@ public class KeirseyResult {
 	}
 
 	/**
-	 * takes a group id (IE, SN, TF, or JP) and an answer from a
-	 * KeirseyLineParser (ANSWER_BLANK, ANSWER_A, ANSWER_B...) and adds it
-	 * to the result's internal dataset
+	 * adds an answer to the result's internal dataset
+	 * @param group the group id (IE, SN, TF, or JP)
+	 * @param answer the answer byte (ANSWER_BLANK, ANSWER_A, or ANSWER_B)
 	 */
 	public void parseQuestion(int group, int answer) {
 		if(group == this.IE) {
@@ -133,7 +135,9 @@ public class KeirseyResult {
 	}
 
 	/**
-	 * get the type as an uppercase string like ENFP or IXTJ
+	 * gets the mtbi-like type represented by the result
+	 * @return the type represented by the result as an uppercase string
+	 * like ENFP or IXTJ
 	 */
 	public String getType() {
 		StringBuilder ret = new StringBuilder();

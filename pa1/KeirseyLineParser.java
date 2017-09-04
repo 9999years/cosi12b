@@ -20,6 +20,10 @@ public class KeirseyLineParser {
 	/**
 	 * Takes a string and returns a byte array of personality data.
 	 * Generally not directly useful.
+	 *
+	 * @param input a string representing the kts data in the format
+	 * /[AaBb-]{70}/
+	 * @return a byte[] of the processed data
 	 */
 	public static byte[] parse(String input) throws IllegalArgumentException {
 		byte[] data = new byte[TEST_LENGTH];

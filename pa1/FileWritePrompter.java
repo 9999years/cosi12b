@@ -11,7 +11,7 @@ public class FileWritePrompter extends FilePrompter {
 	protected boolean check(String filename) {
 		// make sure we can actually write the file!
 		File f = new File(filename);
-		return filename.length > 0 && f.canWrite() == f.isFile();
+		return filename.length() > 0 && f.canWrite() == f.isFile();
 	}
 
 	FileWritePrompter(String promptText, String checkFailText) {
