@@ -13,6 +13,8 @@ public class PersonalityTest {
 	/**
 	 * prompts for an input and output filename, reads the file and writes
 	 * processed data to the output file
+	 * @param args completely ignored; in a better program it might read
+	 * input/output filenames
 	 */
 	public static void main(String[] args) {
 		// get input filename

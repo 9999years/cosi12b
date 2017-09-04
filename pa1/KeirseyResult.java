@@ -98,7 +98,7 @@ public class KeirseyResult {
 			percents[KeirseyResult.GROUP.SN.ordinal()],
 			percents[KeirseyResult.GROUP.TF.ordinal()],
 			percents[KeirseyResult.GROUP.JP.ordinal()],
-			this.getType()
+			this.getMBTI()
 		);
 	}
 
@@ -142,7 +142,7 @@ public class KeirseyResult {
 	 * @return the type represented by the result as an uppercase string
 	 * like ENFP or IXTJ
 	 */
-	public String getType() {
+	public String getMBTI() {
 		StringBuilder ret = new StringBuilder();
 		ret.append(E_AMOUNT == I_AMOUNT ? "X" : E_AMOUNT > I_AMOUNT ? "E" : "I");
 		ret.append(S_AMOUNT == N_AMOUNT ? "X" : S_AMOUNT > N_AMOUNT ? "S" : "N");
