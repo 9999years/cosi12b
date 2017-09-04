@@ -30,11 +30,12 @@ public class KeirseyResult {
 	public int F_AMOUNT = 0;
 	public int P_AMOUNT = 0;
 
-	// axis indexes
-	public static int IE = 0x00;
-	public static int SN = 0x01;
-	public static int TF = 0x02;
-	public static int JP = 0x03;
+	/**
+	 * axis indexes for parseQuestion and questionString
+	 */
+	public static enum GROUP {
+		IE, SN, TF, JP
+	}
 
 	public String name;
 
@@ -54,9 +55,34 @@ public class KeirseyResult {
 	}
 
 	/**
+	 * get the A and B answers for a question
+	 * like 9A-1B
+	 */
+	private String questionString(KeirseyResult.GROUP group) {
+		int a_amount, b_amount;
+		if(group == KeirseyResult.GROUP.IE) {
+			a_amount = this.E_AMOUNT;
+			b_amount = this.I_AMOUNT;
+		} else if(group == KeirseyResult.GROUP.SN) {
+			a_amount = this.S_AMOUNT;
+			b_amount = this.N_AMOUNT;
+		} else if(group == KeirseyResult.GROUP.TF) {
+			a_amount = this.T_AMOUNT;
+			b_amount = this.F_AMOUNT;
+		} else if(group == KeirseyResult.GROUP.JP) {
+			a_amount = this.J_AMOUNT;
+			b_amount = this.P_AMOUNT;
+		} else {
+			throw new IllegalArgumentException("Invalid group ID");
+		}
+		return String.format("%dA-%dB", a_amount, b_amount);
+	}
+
+	/**
 	 * formats the result to a cosi 12b-compliant string
 	 */
 	public String toString() {
+		// get percent values, map to nearest whole percent as an int
 		int[] percents = Arrays.stream(this.getPercentages())
 			.mapToInt(k -> (int) Math.round(k * 100.0d))
 			.toArray();
@@ -64,14 +90,14 @@ public class KeirseyResult {
 		return String.format(
 			"%s:\n%s %s %s %s\n[%d%%, %d%%, %d%%, %d%%] = %s\n\n",
 			this.name,
-			this.questionString(this.IE),
-			this.questionString(this.SN),
-			this.questionString(this.TF),
-			this.questionString(this.JP),
-			percents[this.IE],
-			percents[this.SN],
-			percents[this.TF],
-			percents[this.JP],
+			this.questionString(KeirseyResult.GROUP.IE),
+			this.questionString(KeirseyResult.GROUP.SN),
+			this.questionString(KeirseyResult.GROUP.TF),
+			this.questionString(KeirseyResult.GROUP.JP),
+			percents[KeirseyResult.GROUP.IE.ordinal()],
+			percents[KeirseyResult.GROUP.SN.ordinal()],
+			percents[KeirseyResult.GROUP.TF.ordinal()],
+			percents[KeirseyResult.GROUP.JP.ordinal()],
 			this.getType()
 		);
 	}
@@ -79,59 +105,36 @@ public class KeirseyResult {
 	/**
 	 * we need this and bQuestion about 4x each in parseQuestion
 	 */
-	private int aQuestion(int answer) {
-		return answer == KeirseyLineParser.ANSWER_A ? 1 : 0;
+	private int aQuestion(KeirseyLineParser.ANSWER answer) {
+		return answer == KeirseyLineParser.ANSWER.A ? 1 : 0;
 	}
 
-	private int bQuestion(int answer) {
-		return answer == KeirseyLineParser.ANSWER_B ? 1 : 0;
+	private int bQuestion(KeirseyLineParser.ANSWER answer) {
+		return answer == KeirseyLineParser.ANSWER.B ? 1 : 0;
 	}
 
 	/**
 	 * adds an answer to the result's internal dataset
 	 * @param group the group id (IE, SN, TF, or JP)
-	 * @param answer the answer byte (ANSWER_BLANK, ANSWER_A, or ANSWER_B)
+	 * @param answer the answer byte (KeirseyLineParser.ANSWER.BLANK,
+	 * ANSWER.A, or ANSWER.B)
 	 */
-	public void parseQuestion(int group, int answer) {
-		if(group == this.IE) {
+	public void parseQuestion(GROUP group, KeirseyLineParser.ANSWER answer) {
+		if(group == KeirseyResult.GROUP.IE) {
 			this.E_AMOUNT += aQuestion(answer);
 			this.I_AMOUNT += bQuestion(answer);
-		} else if(group == this.SN) {
+		} else if(group == KeirseyResult.GROUP.SN) {
 			this.S_AMOUNT += aQuestion(answer);
 			this.N_AMOUNT += bQuestion(answer);
-		} else if(group == this.TF) {
+		} else if(group == KeirseyResult.GROUP.TF) {
 			this.T_AMOUNT += aQuestion(answer);
 			this.F_AMOUNT += bQuestion(answer);
-		} else if(group == this.JP) {
+		} else if(group == KeirseyResult.GROUP.JP) {
 			this.J_AMOUNT += aQuestion(answer);
 			this.P_AMOUNT += bQuestion(answer);
 		} else {
 			throw new IllegalArgumentException("Invalid group ID");
 		}
-	}
-
-	/**
-	 * get the A and B answers for a question
-	 * like 9A-1B
-	 */
-	private String questionString(int group) {
-		int a_amount, b_amount;
-		if(group == this.IE) {
-			a_amount = this.E_AMOUNT;
-			b_amount = this.I_AMOUNT;
-		} else if(group == this.SN) {
-			a_amount = this.S_AMOUNT;
-			b_amount = this.N_AMOUNT;
-		} else if(group == this.TF) {
-			a_amount = this.T_AMOUNT;
-			b_amount = this.F_AMOUNT;
-		} else if(group == this.JP) {
-			a_amount = this.J_AMOUNT;
-			b_amount = this.P_AMOUNT;
-		} else {
-			throw new IllegalArgumentException("Invalid group ID");
-		}
-		return String.format("%dA-%dB", a_amount, b_amount);
 	}
 
 	/**

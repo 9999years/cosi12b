@@ -12,21 +12,26 @@
  * KeirseyFileReader
  */
 public class KeirseyLineParser {
-	public static byte ANSWER_BLANK = 0x00;
-	public static byte ANSWER_A     = 0x01;
-	public static byte ANSWER_B     = 0x02;
+	public static enum ANSWER {
+		BLANK,
+		A,
+		B
+	}
 	public static int TEST_LENGTH   = 70;
 
 	/**
-	 * Takes a string and returns a byte array of personality data.
+	 * Takes a string and returns a KeirseyLineParser.ANSWER array of
+	 * personality data.
 	 * Generally not directly useful.
 	 *
 	 * @param input a string representing the kts data in the format
 	 * /[AaBb-]{70}/
-	 * @return a byte[] of the processed data
+	 * @return a KeirseyLineParser.ANSWER[] of the processed data
 	 */
-	public static byte[] parse(String input) throws IllegalArgumentException {
-		byte[] data = new byte[TEST_LENGTH];
+	public static KeirseyLineParser.ANSWER[] parse(String input)
+			throws IllegalArgumentException {
+		KeirseyLineParser.ANSWER[] data =
+			new KeirseyLineParser.ANSWER[TEST_LENGTH];
 		int i;
 		for(i = 0; i < input.length(); i++) {
 			// don't bother with `.toLowerCase` to avoid overhead
@@ -34,11 +39,11 @@ public class KeirseyLineParser {
 			// spec
 			char c = input.charAt(i);
 			if(c == 'A' || c == 'a') {
-				data[i] = ANSWER_A;
+				data[i] = ANSWER.A;
 			} else if(c == 'B' || c == 'b') {
-				data[i] = ANSWER_B;
+				data[i] = ANSWER.B;
 			} else if(c == '-') {
-				data[i] = ANSWER_BLANK;
+				data[i] = ANSWER.BLANK;
 			} else {
 				throw new IllegalArgumentException(
 					"Illegal character `"
