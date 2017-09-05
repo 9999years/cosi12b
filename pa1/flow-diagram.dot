@@ -7,7 +7,9 @@ digraph {
 
 	main
 	-> FileReadPrompter
+	-> { main2 [label="main"] }
 	-> FileWritePrompter
+	-> { main3 [label="main"] }
 	-> KeirseyFileReader
 	-> ".read";
 
