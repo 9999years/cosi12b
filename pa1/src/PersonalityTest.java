@@ -1,5 +1,5 @@
 /**
- * Parses Keirsey (KTS) personality data from files and writing output to a
+ * Parses Keirsey (KTS) personality data from a file and writes output to a
  * file
  * @author Rebecca Turner
  * @version 0.0.1
@@ -23,11 +23,19 @@ import java.util.Arrays;
 
 public class PersonalityTest {
 
-	public static int GROUP_COUNT           = 4;
+	/**
+	 * index of a and b question counts in array
+	 */
 	public static int A_INDEX               = 0;
 	public static int B_INDEX               = 1;
 	public static int ANSWER_TYPES          = 2;
+	/**
+	 * questions in a whole test
+	 */
 	public static int TEST_LENGTH           = 70;
+	/**
+	 * there are 10 sections of 7 questions each in a repeating pattern
+	 */
 	public static int SECTION_COUNT         = 10;
 	public static int QUESTIONS_PER_SECTION = 7;
 
@@ -35,10 +43,16 @@ public class PersonalityTest {
 	public static int ANSWER_B     = 1;
 	public static int ANSWER_BLANK = 2;
 
-	public static int GROUP_IE = 0;
-	public static int GROUP_SN = 1;
-	public static int GROUP_TF = 2;
-	public static int GROUP_JP = 3;
+	/**
+	 * a group is an axis like the extroversion/introversion axis
+	 * there are four groups; not to be confused with *sections*, which are
+	 * the units of 7 questions in the test data
+	 */
+	public static int GROUP_COUNT = 4;
+	public static int GROUP_IE    = 0;
+	public static int GROUP_SN    = 1;
+	public static int GROUP_TF    = 2;
+	public static int GROUP_JP    = 3;
 
 	/**
 	 * checks that the file is readable and a file
@@ -79,20 +93,17 @@ public class PersonalityTest {
 			String promptText, String checkFailText, Predicate<String> checker)
 			throws NoSuchElementException {
 		Scanner stdin = new Scanner(System.in);
-		String filename;
+		String filename = "";
 
 		// prompt and loop
 		System.out.print(promptText);
-		while(true) {
-			try {
-				filename = stdin.nextLine();
-			} catch(NoSuchElementException e) {
-				System.err.println(
-					"Unexpected end of input stream! Exiting."
-				);
-				System.exit(-1);
-				return "";
-			}
+		while(stdin.hasNextLine()) {
+			filename = stdin.nextLine();
+				//System.err.println(
+					//"Unexpected end of input stream! Exiting."
+				//);
+				//System.exit(-1);
+				//return "";
 			// does the file pass some check?
 			if(checker.test(filename)) {
 				break;
@@ -133,7 +144,7 @@ public class PersonalityTest {
 		* this parses the next 7 questions, and is called 10 times by parseDat
 		*/
 		for(int i = 0; i < TEST_LENGTH; i += QUESTIONS_PER_SECTION) {
-			for(int j = 0; j < groupOrder.length; j++) {
+			for(int j = 0; j < QUESTIONS_PER_SECTION; j++) {
 				ret[groupOrder[j]] =
 					parseQuestion(ret[groupOrder[j]], data[i + j]);
 			}
