@@ -1,0 +1,15 @@
+Betty Boop:
+1A-9B 17A-3B 18A-2B 18A-2B
+[90%, 15%, 10%, 10%] = ISTJ
+
+
+Bugs Bunny:
+8A-2B 11A-9B 17A-3B 9A-11B
+[20%, 45%, 15%, 55%] = ESTP
+
+
+Han Solo:
+2A-8B 9A-9B 11A-9B 15A-5B
+[80%, 50%, 45%, 25%] = IXTJ
+
+
