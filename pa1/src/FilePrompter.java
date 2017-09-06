@@ -35,7 +35,7 @@ public abstract class FilePrompter {
 	 * ends the whole game is off anyways, and also I really don't want to
 	 * do a ton of error handling in main().
 	 *
-	 * @throws NoSuchElementException when stdin ends Unexpected
+	 * @throws NoSuchElementException when stdin ends unexpectedly
 	 * @return user-entered filename
 	 */
 	public String prompt() throws NoSuchElementException {
