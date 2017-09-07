@@ -2,7 +2,7 @@
  * Parses Keirsey (KTS) personality data from a file and writes output to a
  * file
  * @author Rebecca Turner
- * @version 0.0.1
+ * @version 1.0.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
 
@@ -14,7 +14,6 @@ import java.io.OutputStream;
 
 import java.util.Scanner;
 import java.util.NoSuchElementException;
-import java.util.LinkedList;
 import java.util.stream.Stream;
 import java.util.function.ToIntFunction;
 import java.util.function.Predicate;
@@ -41,10 +40,10 @@ public class PersonalityTest {
 	public static int QUESTIONS_PER_SECTION = 7;
 
 	/**
-	 * these *should* be enums but enums are a weird beast in Java
-	 * distanced from their C counterparts and using them as array indicies
-	 * is a hassle; most of the arrays exist because i can't create other
-	 * classes anyways, so...
+	 * a bunch of these fields *should* be enums but enums are a weird
+	 * beast in Java distanced from their C counterparts and using them as
+	 * array indicies is a hassle; most of the arrays exist because i can't
+	 * create other classes anyways, so here we are...
 	 */
 	public static int ANSWER_A     = 0;
 	public static int ANSWER_B     = 1;
@@ -125,8 +124,9 @@ public class PersonalityTest {
 	/**
 	 * adjust a keirsey record group to include a new answer
 	 * @param record one element of a keirsey record; see
-	 * formatKeirseyRecord
-	 * @param answer the answer int (ANSWER_BLANK, ANSWER_A, or ANSWER_B)
+	 * {@link #formatKeirseyRecord(int[][])}
+	 * @param answer the answer int ({@link #ANSWER_BLANK},
+	 * {@link #ANSWER_A}, or {@link #ANSWER_B})
 	 * @return the updated record element
 	 */
 	public static int[] parseQuestion(int[] record, int answer) {
@@ -139,13 +139,15 @@ public class PersonalityTest {
 	}
 
 	/**
-	 * Takes a string and returns a KeirseyLineParser.ANSWER array of
-	 * personality data.
+	 * Parse a kts data string to an int array.
 	 * Generally not directly useful.
 	 *
 	 * @param input a string representing the kts data in the format
 	 * /[AaBb-]{70}/
-	 * @return an int array TEST_LENGTH long corresponding to the parsed data
+	 * @return an int array {@link #TEST_LENGTH} long corresponding to the
+	 * parsed data
+	 * @throws IllegalArgumentException if the input data has any
+	 * characters not in AaBb-, or isn't exactly 70 characters long
 	 */
 	public static int[] parseKeirseyStringToData(String input)
 			throws IllegalArgumentException {
@@ -198,12 +200,14 @@ public class PersonalityTest {
 	}
 
 	/**
-	 * using data from parseKeirseyStringToData, create a keirsey record
-	 * for result formatting; see formatKeirseyRecord for details of the
-	 * record format
+	 * using data from {@link #parseKeirseyStringToData(String)}, create a
+	 * keirsey record for result formatting; see
+	 * {@link #formatKeirseyRecord(int[][])} for details of the record
+	 * format
 	 * @param data an int-array returned by or compatible with
-	 * parseKeirseyStringToData
-	 * @return a keirsey record; see formatKeirseyRecord for details
+	 * {@link #parseKeirseyStringToData(String)}
+	 * @return a keirsey record; see {@link #formatKeirseyRecord(int[][])}
+	 * for details
 	 */
 	public static int[][] reduceKeirseyDataToResult(int[] data) {
 		int[][] ret = new int[GROUP_COUNT][ANSWER_TYPES];
@@ -228,9 +232,9 @@ public class PersonalityTest {
 
 	/**
 	 * parses a string of input to a keirsey record; see
-	 * formatKeirseyRecord for details of the return format.
+	 * {@link #formatKeirseyRecord(int[][])} for details of the return format.
 	 * @param input the string of kts data, /[AaBb-]{70}/
-	 * @return a keirsey record, see formatKeirseyRecord for format details
+	 * @return a keirsey record, see {@link #formatKeirseyRecord(int[][])} for format details
 	 */
 	public static int[][] parseKeirseyRecord(String input) {
 		return reduceKeirseyDataToResult(
@@ -240,7 +244,8 @@ public class PersonalityTest {
 	/**
 	 * get the A and B answers for a question
 	 * like 9A-1B
-	 * @param sums one element of a keirsey record; see formatKeirseyRecord
+	 * @param sums one element of a keirsey record; see
+	 * {@link #formatKeirseyRecord(int[][])}
 	 * @return a string in the format NA-MB, where N and M are integers
 	 */
 	public static String questionString(int[] sums) {
@@ -251,7 +256,7 @@ public class PersonalityTest {
 	 * gets the mtbi-like type represented by the result
 	 * @return the type represented by the result as an uppercase string
 	 * like ENFP or IXTJ
-	 * @param record a keirsey record; see formatKeirseyRecord
+	 * @param record a keirsey record; see {@link #formatKeirseyRecord(int[][])}
 	 */
 	public static String getMBTI(int[][] record) {
 		StringBuilder ret = new StringBuilder();
@@ -272,11 +277,12 @@ public class PersonalityTest {
 
 	/**
 	 * format a keirsey record array to a COSI12B-compliant string
-	 * @param record a 2-d int array containing GROUP_COUNT elements of
-	 * ANSWER_TYPES ints each. the indexes of the top array correspond to
-	 * GROUP_IE through GROUP_JP, and the indexes of the lower array
-	 * correspond to A_INDEX and B_INDEX. the int values themselves may be
-	 * ANSWER_A, ANSWER_B, or ANSWER_BLANK
+	 * @param record a 2-d int array containing {@link #GROUP_COUNT} elements of
+	 * {@link #ANSWER_TYPES} ints each. the indexes of the top array correspond to
+	 * {@link #GROUP_IE} through {@link #GROUP_JP}, and the indexes of the lower array
+	 * correspond to {@link #A_INDEX} and {@link #B_INDEX}. the int values
+	 * themselves correspond to the counts of A and B answers from the
+	 * given test
 	 * @return a COSI12B-compliant kts record string
 	 */
 	public static String formatKeirseyRecord(int[][] record) {
@@ -352,36 +358,30 @@ public class PersonalityTest {
 	 * @param inFilename the filename of a kts data file to read from
 	 * @return a string of all the processed records in the input file,
 	 * double-newline separated
+	 * @throws IllegalArgumentException when input file has an odd number of lines
 	 */
-	public static String formatKeirseyFile(String inFilename) {
+	public static String formatKeirseyFile(String inFilename)
+		throws IllegalArgumentException {
 		Scanner fileIn = attemptOpenScanner(inFilename);
 
-		// growable data-type, no need for indexed access, only
-		LinkedList<String> lines = new LinkedList<String>();
-		while(fileIn.hasNextLine()) {
-			lines.push(fileIn.nextLine());
-		}
-
-		if(lines.size() % 2 != 0) {
-			throw new IllegalArgumentException(
-				"Invalid test file `"
-				+ inFilename
-				+ "`; not an even number of lines"
-			);
-		}
-
-		// we need this a couple times, no need to re-calculate multiple times
-		int recordCount = lines.size() / 2;
-
 		StringBuilder ret = new StringBuilder();
-		for(int i = 0; i < recordCount; i++) {
-			ret.append(lines.removeLast() + ":\n");
-			// add new record, pop twice
-			ret.append(
-				formatKeirseyRecord(
-				parseKeirseyRecord(lines.removeLast())));
+		while(fileIn.hasNextLine()) {
+			// consume two lines at once, but make sure we can actually get both lines
+			ret.append(fileIn.nextLine() + ":\n");
+			try {
+				ret.append(
+					formatKeirseyRecord(
+					parseKeirseyRecord(fileIn.nextLine())));
+			} catch(NoSuchElementException e) {
+				throw new IllegalArgumentException(
+					"Invalid test file `"
+					+ inFilename
+					+ "` has an odd number of lines"
+				);
+			}
 			ret.append("\n");
 		}
+
 		return ret.toString();
 	}
 
