@@ -25,6 +25,7 @@ public class PersonalityTest {
 
 	/**
 	 * index of a and b question counts in array
+	 * ignore blank answers
 	 */
 	public static int A_INDEX               = 0;
 	public static int B_INDEX               = 1;
@@ -39,6 +40,12 @@ public class PersonalityTest {
 	public static int SECTION_COUNT         = 10;
 	public static int QUESTIONS_PER_SECTION = 7;
 
+	/**
+	 * these *should* be enums but enums are a weird beast in Java
+	 * distanced from their C counterparts and using them as array indicies
+	 * is a hassle; most of the arrays exist because i can't create other
+	 * classes anyways, so...
+	 */
 	public static int ANSWER_A     = 0;
 	public static int ANSWER_B     = 1;
 	public static int ANSWER_BLANK = 2;
@@ -49,6 +56,7 @@ public class PersonalityTest {
 	 * the units of 7 questions in the test data
 	 */
 	public static int GROUP_COUNT = 4;
+
 	public static int GROUP_IE    = 0;
 	public static int GROUP_SN    = 1;
 	public static int GROUP_TF    = 2;
@@ -85,8 +93,11 @@ public class PersonalityTest {
 	 *
 	 * @throws NoSuchElementException when stdin ends unexpectedly
 	 * @param promptText the string to print before prompting the user
-	 * @param checkFailText the string to print if the user enters a filename that fails the checker
-	 * @param checker a function to check if the filename is valid
+	 * @param checkFailText the string to print if the user enters a
+	 * filename that fails the checker
+	 * @param checker a function returning a boolean to check if the
+	 * filename is valid; checkWriteFilename and checkReadFilename are
+	 * examples
 	 * @return user-entered filename
 	 */
 	public static String promptFilename(
@@ -99,11 +110,6 @@ public class PersonalityTest {
 		System.out.print(promptText);
 		while(stdin.hasNextLine()) {
 			filename = stdin.nextLine();
-				//System.err.println(
-					//"Unexpected end of input stream! Exiting."
-				//);
-				//System.exit(-1);
-				//return "";
 			// does the file pass some check?
 			if(checker.test(filename)) {
 				break;
@@ -117,10 +123,11 @@ public class PersonalityTest {
 	}
 
 	/**
-	 * adds an answer to the result's internal dataset
-	 * @param group the group id (IE, SN, TF, or JP)
-	 * @param answer the answer byte (KeirseyLineParser.ANSWER.BLANK,
-	 * ANSWER.A, or ANSWER.B)
+	 * adjust a keirsey record group to include a new answer
+	 * @param record one element of a keirsey record; see
+	 * formatKeirseyRecord
+	 * @param answer the answer int (ANSWER_BLANK, ANSWER_A, or ANSWER_B)
+	 * @return the updated record element
 	 */
 	public static int[] parseQuestion(int[] record, int answer) {
 		if(answer == ANSWER_A) {
@@ -131,27 +138,6 @@ public class PersonalityTest {
 		return record;
 	}
 
-	public static int[][] reduceKeirseyDataToResult(int[] data) {
-		int[][] ret = new int[GROUP_COUNT][ANSWER_TYPES];
-		int[] groupOrder = {
-			GROUP_IE,
-			GROUP_SN, GROUP_SN,
-			GROUP_TF, GROUP_TF,
-			GROUP_JP, GROUP_JP
-		};
-		/**
-		* there are 10 sections of 7 questions.
-		* this parses the next 7 questions, and is called 10 times by parseDat
-		*/
-		for(int i = 0; i < TEST_LENGTH; i += QUESTIONS_PER_SECTION) {
-			for(int j = 0; j < QUESTIONS_PER_SECTION; j++) {
-				ret[groupOrder[j]] =
-					parseQuestion(ret[groupOrder[j]], data[i + j]);
-			}
-		}
-		return ret;
-	}
-
 	/**
 	 * Takes a string and returns a KeirseyLineParser.ANSWER array of
 	 * personality data.
@@ -159,7 +145,7 @@ public class PersonalityTest {
 	 *
 	 * @param input a string representing the kts data in the format
 	 * /[AaBb-]{70}/
-	 * @return a KeirseyLineParser.ANSWER[] of the processed data
+	 * @return an int array TEST_LENGTH long corresponding to the parsed data
 	 */
 	public static int[] parseKeirseyStringToData(String input)
 			throws IllegalArgumentException {
@@ -187,7 +173,9 @@ public class PersonalityTest {
 				throw new IllegalArgumentException(
 					"Illegal character `"
 					+ c
-					+ "` in test data!"
+					+ "` in test data! Test data: `"
+					+ input
+					+ "`"
 				);
 			}
 		}
@@ -200,7 +188,9 @@ public class PersonalityTest {
 		// *character* error
 		if(i != TEST_LENGTH) {
 			throw new IllegalArgumentException(
-				"Invalid test data; not 70 characters long"
+				"Invalid test data; not 70 characters long. Test data: `"
+				+ input
+				+ "`"
 			);
 		}
 
@@ -208,9 +198,39 @@ public class PersonalityTest {
 	}
 
 	/**
-	 * parses a string of input with KeirseyLineParser.
+	 * using data from parseKeirseyStringToData, create a keirsey record
+	 * for result formatting; see formatKeirseyRecord for details of the
+	 * record format
+	 * @param data an int-array returned by or compatible with
+	 * parseKeirseyStringToData
+	 * @return a keirsey record; see formatKeirseyRecord for details
+	 */
+	public static int[][] reduceKeirseyDataToResult(int[] data) {
+		int[][] ret = new int[GROUP_COUNT][ANSWER_TYPES];
+		int[] groupOrder = {
+			GROUP_IE,
+			GROUP_SN, GROUP_SN,
+			GROUP_TF, GROUP_TF,
+			GROUP_JP, GROUP_JP
+		};
+		/**
+		 * there are 10 sections of 7 questions.
+		 * this parses the next 7 questions, and is called 10 times by parseDat
+		 */
+		for(int i = 0; i < TEST_LENGTH; i += QUESTIONS_PER_SECTION) {
+			for(int j = 0; j < QUESTIONS_PER_SECTION; j++) {
+				ret[groupOrder[j]] =
+					parseQuestion(ret[groupOrder[j]], data[i + j]);
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * parses a string of input to a keirsey record; see
+	 * formatKeirseyRecord for details of the return format.
 	 * @param input the string of kts data, /[AaBb-]{70}/
-	 * @return a KeirseyResult representing the kts data from data
+	 * @return a keirsey record, see formatKeirseyRecord for format details
 	 */
 	public static int[][] parseKeirseyRecord(String input) {
 		return reduceKeirseyDataToResult(
@@ -220,8 +240,8 @@ public class PersonalityTest {
 	/**
 	 * get the A and B answers for a question
 	 * like 9A-1B
-	 * @param sums the a and b answer counts for a group as a 2-element int
-	 * array
+	 * @param sums one element of a keirsey record; see formatKeirseyRecord
+	 * @return a string in the format NA-MB, where N and M are integers
 	 */
 	public static String questionString(int[] sums) {
 		return String.format("%dA-%dB", sums[A_INDEX], sums[B_INDEX]);
@@ -231,6 +251,7 @@ public class PersonalityTest {
 	 * gets the mtbi-like type represented by the result
 	 * @return the type represented by the result as an uppercase string
 	 * like ENFP or IXTJ
+	 * @param record a keirsey record; see formatKeirseyRecord
 	 */
 	public static String getMBTI(int[][] record) {
 		StringBuilder ret = new StringBuilder();
@@ -250,17 +271,23 @@ public class PersonalityTest {
 	}
 
 	/**
+	 * format a keirsey record array to a COSI12B-compliant string
+	 * @param record a 2-d int array containing GROUP_COUNT elements of
+	 * ANSWER_TYPES ints each. the indexes of the top array correspond to
+	 * GROUP_IE through GROUP_JP, and the indexes of the lower array
+	 * correspond to A_INDEX and B_INDEX. the int values themselves may be
+	 * ANSWER_A, ANSWER_B, or ANSWER_BLANK
+	 * @return a COSI12B-compliant kts record string
 	 */
 	public static String formatKeirseyRecord(int[][] record) {
 		// get percent values, map to nearest whole percent as an int
 		int[] percents = Arrays.stream(record)
-			.mapToInt(k -> (int) Math.round(
-				100.0d * ((double) k[B_INDEX]
-				/ (k[A_INDEX] + k[B_INDEX])))
+			.mapToInt(k -> (int) Math.round(100.0d * ((double)
+				k[B_INDEX] / (k[A_INDEX] + k[B_INDEX])))
 			).toArray();
 
 		return String.format(
-			"%s %s %s %s\n[%d%%, %d%%, %d%%, %d%%] = %s\n\n",
+			"%s %s %s %s\n[%d%%, %d%%, %d%%, %d%%] = %s\n",
 			questionString(record[GROUP_IE]),
 			questionString(record[GROUP_SN]),
 			questionString(record[GROUP_TF]),
@@ -273,6 +300,12 @@ public class PersonalityTest {
 		);
 	}
 
+	/**
+	 * attempt to open a scanner pointing towards the given file; halt
+	 * execution if unable to open
+	 * @param fname the file to attempt to open
+	 * @return the resulting scanner
+	 */
 	public static Scanner attemptOpenScanner(String fname) {
 		try {
 			return new Scanner(new File(fname));
@@ -280,7 +313,9 @@ public class PersonalityTest {
 			// race condition!
 			// nothing to do if we can't read
 			System.err.println(
-				"File not found; deleted between typing input and writing?"
+				"File"
+				+ fname
+				+ "not found; deleted between typing input and writing?"
 			);
 			System.exit(-1);
 			// empty object --- never created, just satisfies
@@ -289,13 +324,21 @@ public class PersonalityTest {
 		}
 	}
 
+	/**
+	 * attempt to open a printstream pointing towards the given file; halt
+	 * execution if unable to open
+	 * @param fname the file to attempt to open
+	 * @return the resulting PrintStream
+	 */
 	public static PrintStream attemptPrintStream(String fname) {
 		try {
 			return new PrintStream(fname);
 		} catch(FileNotFoundException e) {
 			// nothing to do if we can't write
 			System.err.println(
-				"File could not be opened; do you have write permissions?"
+				"File `"
+				+ fname
+				+ "` could not be opened; do you have write permissions?"
 			);
 			System.exit(-1);
 			// empty object --- never created, just satisfies
@@ -305,12 +348,12 @@ public class PersonalityTest {
 	}
 
 	/**
-	 * @param fname the filename of a kts data file
-	 * @return a 3d array with an element for each record in the input
-	 * file, each containing 4 elements, each containing an a-count and a
-	 * b-count element. better as an object but i'm restricted to one class
+	 * transform a keirsey data file to processed records
+	 * @param inFilename the filename of a kts data file to read from
+	 * @return a string of all the processed records in the input file,
+	 * double-newline separated
 	 */
-	public static void transformKeirseyFile(String inFilename, String outFilename) {
+	public static String formatKeirseyFile(String inFilename) {
 		Scanner fileIn = attemptOpenScanner(inFilename);
 
 		// growable data-type, no need for indexed access, only
@@ -321,34 +364,42 @@ public class PersonalityTest {
 
 		if(lines.size() % 2 != 0) {
 			throw new IllegalArgumentException(
-				"Invalid test file; not an even number of lines"
+				"Invalid test file `"
+				+ inFilename
+				+ "`; not an even number of lines"
 			);
 		}
 
 		// we need this a couple times, no need to re-calculate multiple times
 		int recordCount = lines.size() / 2;
 
-		PrintStream streamOut = attemptPrintStream(outFilename);
-
-		// 2 lines per record so we only need half the amount
-		// we've already checked for an even line-count so no need for
-		// wiggle room or anything
-		int[][][] ret = new int[recordCount][][];
+		StringBuilder ret = new StringBuilder();
 		for(int i = 0; i < recordCount; i++) {
-			streamOut.println(lines.removeLast() + ":");
+			ret.append(lines.removeLast() + ":\n");
 			// add new record, pop twice
-			streamOut.println(
+			ret.append(
 				formatKeirseyRecord(
 				parseKeirseyRecord(lines.removeLast())));
+			ret.append("\n");
 		}
+		return ret.toString();
 	}
 
+	/**
+	 * attempt to open a file and write to it
+	 * just completely quit if we get an error
+	 * @param fname the filename to write to
+	 * @param text the text to write to the file
+	 */
+	public static void writeFile(String fname, String text) {
+		attemptPrintStream(fname).print(text);
+	}
 
 	/**
 	 * prompts for an input and output filename, reads the file and writes
 	 * processed data to the output file
-	 * @param args completely ignored; in a better program it might read
-	 * input/output filenames
+	 * @param args completely ignored; a different spec might read
+	 * input/output filenames from it though
 	 */
 	public static void main(String[] args) {
 		// get input filename
@@ -362,6 +413,6 @@ public class PersonalityTest {
 			"Invalid path or un-writable file! Try again?\n",
 			f -> checkWriteFilename(f));
 		// parse and write
-		transformKeirseyFile(inFilename, outFilename);
+		writeFile(outFilename, formatKeirseyFile(inFilename));
 	}
 }
