@@ -1,40 +1,52 @@
 digraph {
-	// method nodes, which start with dots, refer to methods of the
-	// previous class node in the heirarchy
-	// e.g. in Foo -> .bar -> .baz -> .bow -> Apple -> .ball
-	// .bow refers to Foo.bow and .ball refers to Apple.ball
 	node [shape=box];
 
 	main
-	-> FileReadPrompter
-	-> { main2 [label="main"] }
-	-> FileWritePrompter
-	-> { main3 [label="main"] }
-	-> KeirseyFileReader
-	-> ".read";
+	-> promptFilename
+	-> { main2 [label=main] }
+	-> { promptFilename2 [label=promptFilename] }
+	-> checkWriteFilename;
 
-	".read" -> ".writeFile" [style=invis];
+	promptFilename -> checkReadFilename;
 
-	"KeirseyResult.parseQuestion"
-	-> KeirseyLineParser
-	-> KLPparse
-	-> ".writeFile" [style=invis];
+	promptFilename2
+	-> { main3 [label=main] }
+	-> formatKeirseyFile
+	-> {
+		attemptOpenScanner
+		parseKeirseyRecord
+		formatKeirseyRecord
+	};
 
-	".read"
-	-> ".reader"
-	-> KeirseyEvaluator
-	-> { KEparse [label=".parse"] }
-	-> ".parseDat"
-	-> ".parseChunk"
-	-> "KeirseyResult.parseQuestion";
-	KEparse
-	-> KeirseyLineParser
-	-> { KLPparse [label=".parse"] };
-	KeirseyFileReader
-	-> ".writeFile"
-	-> ".toString"
-	-> { KRtoString [label="KeirseyResult.toString"] };
-	KRtoString -> ".getPercentages";
-	KRtoString -> ".questionString";
-	KRtoString -> ".getMBTI";
+	parseKeirseyRecord
+	-> parseKeirseyStringToData;
+
+	parseKeirseyRecord
+	-> reduceKeirseyDataToResult
+	-> parseQuestion;
+
+	formatKeirseyRecord
+	-> { questionString getMBTI };
+
+	main3
+	-> writeFile
+	-> attemptPrintStream;
+
+	// data flow
+	edge [color=red];
+	promptFilename -> formatKeirseyFile -> writeFile;
+	promptFilename2 -> writeFile;
+	parseKeirseyRecord -> formatKeirseyRecord;
+	parseKeirseyStringToData -> reduceKeirseyDataToResult;
+	attemptOpenScanner -> parseKeirseyRecord;
+
+	// invisible arrows for ordering
+	edge [style=invis];
+
+	checkReadFilename -> main2;
+	checkWriteFilename -> main3;
+	attemptOpenScanner -> parseKeirseyRecord;
+	parseKeirseyStringToData -> reduceKeirseyDataToResult;
+	parseQuestion -> formatKeirseyRecord;
+	questionString -> getMBTI -> writeFile;
 }
