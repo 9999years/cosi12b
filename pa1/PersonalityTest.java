@@ -2,7 +2,7 @@
  * Parses Keirsey (KTS) personality data from a file and writes output to a
  * file
  * @author Rebecca Turner
- * @version 1.0.0
+ * @version 1.1.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
 
@@ -281,6 +281,7 @@ public class PersonalityTest {
 	 * get nearest percent of B answers for each axis in a kts record
 	 * @param record a keirsey record; see
 	 * {@link #formatKeirseyRecord(int[][])}
+	 * @return an int array of the nearest percent values of each group
 	 */
 	public static int[] getPercents(int[][] record) {
 		return Arrays.stream(record)

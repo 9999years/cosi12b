@@ -72,8 +72,8 @@ public class PersonalityTestTest {
 	public void ktsregulartest() {
 		// pre-computed to be correct
 		assertArrayEquals(PersonalityTest.parseKeirseyStringToData(
-"BA-ABABBB-bbbaababaaaabbaaabbaaabbabABBAAABABBAAABABAAAABBABAAABBABAAB"
-			), new int[] {
+"BA-ABABBB-bbbaababaaaabbaaabbaaabbabABBAAABABBAAABABAAAABBABAAABBABAAB"),
+			new int[] {
 			PersonalityTest.ANSWER_B, PersonalityTest.ANSWER_A,
 			PersonalityTest.ANSWER_BLANK, PersonalityTest.ANSWER_A,
 			PersonalityTest.ANSWER_B, PersonalityTest.ANSWER_A,
@@ -157,17 +157,13 @@ public class PersonalityTestTest {
 			PersonalityTest.reduceKeirseyDataToResult(
 				PersonalityTest.parseKeirseyStringToData(
 "aabaabbabbbaaaabaaaabaaaaababbbaabaaaabaabbbbabaaaabaabaaaaaabbaaaaabb")),
-			new int[][] {
-				{8, 2}, {11, 9}, {17, 3}, {9, 11}
-			}
+			new int[][] {{8, 2}, {11, 9}, {17, 3}, {9, 11}}
 		);
 		assertArrayEquals(
 			PersonalityTest.reduceKeirseyDataToResult(
 				PersonalityTest.parseKeirseyStringToData(
 "BABAAAABAAAAAAABAAAABBAAAAAABAAAABABAABAAABABABAABAAAAAABAAAAAABAAAAAA")),
-			new int[][] {
-				{1, 9}, {17, 3}, {18, 2}, {18, 2}
-			}
+			new int[][] {{1, 9}, {17, 3}, {18, 2}, {18, 2}}
 		);
 	}
 
