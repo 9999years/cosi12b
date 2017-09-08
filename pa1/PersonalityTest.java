@@ -232,9 +232,11 @@ public class PersonalityTest {
 
 	/**
 	 * parses a string of input to a keirsey record; see
-	 * {@link #formatKeirseyRecord(int[][])} for details of the return format.
+	 * {@link #formatKeirseyRecord(int[][])} for details of the return
+	 * format.
 	 * @param input the string of kts data, /[AaBb-]{70}/
-	 * @return a keirsey record, see {@link #formatKeirseyRecord(int[][])} for format details
+	 * @return a keirsey record, see {@link #formatKeirseyRecord(int[][])}
+	 * for format details
 	 */
 	public static int[][] parseKeirseyRecord(String input) {
 		return reduceKeirseyDataToResult(
@@ -242,8 +244,7 @@ public class PersonalityTest {
 	}
 
 	/**
-	 * get the A and B answers for a question
-	 * like 9A-1B
+	 * get the A and B answers for a question, like 9A-1B
 	 * @param sums one element of a keirsey record; see
 	 * {@link #formatKeirseyRecord(int[][])}
 	 * @return a string in the format NA-MB, where N and M are integers
@@ -256,7 +257,8 @@ public class PersonalityTest {
 	 * gets the mtbi-like type represented by the result
 	 * @return the type represented by the result as an uppercase string
 	 * like ENFP or IXTJ
-	 * @param record a keirsey record; see {@link #formatKeirseyRecord(int[][])}
+	 * @param record a keirsey record; see
+	 * {@link #formatKeirseyRecord(int[][])}
 	 */
 	public static String getMBTI(int[][] record) {
 		StringBuilder ret = new StringBuilder();
@@ -276,21 +278,30 @@ public class PersonalityTest {
 	}
 
 	/**
+	 * get nearest percent of B answers for each axis in a kts record
+	 * @param record a keirsey record; see
+	 * {@link #formatKeirseyRecord(int[][])}
+	 */
+	public static int[] getPercents(int[][] record) {
+		return Arrays.stream(record)
+			.mapToInt(k -> (int) Math.round(100.0d * ((double)
+				k[B_INDEX] / (k[A_INDEX] + k[B_INDEX])))
+			).toArray();
+	}
+
+	/**
 	 * format a keirsey record array to a COSI12B-compliant string
-	 * @param record a 2-d int array containing {@link #GROUP_COUNT} elements of
-	 * {@link #ANSWER_TYPES} ints each. the indexes of the top array correspond to
-	 * {@link #GROUP_IE} through {@link #GROUP_JP}, and the indexes of the lower array
-	 * correspond to {@link #A_INDEX} and {@link #B_INDEX}. the int values
-	 * themselves correspond to the counts of A and B answers from the
-	 * given test
+	 * @param record a 2-d int array containing {@link #GROUP_COUNT}
+	 * elements of {@link #ANSWER_TYPES} ints each. the indexes of the top
+	 * array correspond to {@link #GROUP_IE} through {@link #GROUP_JP}, and
+	 * the indexes of the lower array correspond to {@link #A_INDEX} and
+	 * {@link #B_INDEX}. the int values themselves correspond to the counts
+	 * of A and B answers from the given test
 	 * @return a COSI12B-compliant kts record string
 	 */
 	public static String formatKeirseyRecord(int[][] record) {
 		// get percent values, map to nearest whole percent as an int
-		int[] percents = Arrays.stream(record)
-			.mapToInt(k -> (int) Math.round(100.0d * ((double)
-				k[B_INDEX] / (k[A_INDEX] + k[B_INDEX])))
-			).toArray();
+		int[] percents = getPercents(record);
 
 		return String.format(
 			"%s %s %s %s\n[%d%%, %d%%, %d%%, %d%%] = %s\n",
@@ -386,7 +397,7 @@ public class PersonalityTest {
 	}
 
 	/**
-	 * attempt to open a file and write to it
+	 * attempt to open a file and write to it.
 	 * just completely quit if we get an error
 	 * @param fname the filename to write to
 	 * @param text the text to write to the file
