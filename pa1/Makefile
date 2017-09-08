@@ -1,8 +1,8 @@
 javac_opts=-encoding utf8
-common_opts=-cp ".;junit-4.12.jar;hamcrest-core-1.3.jar;../src"
+common_opts=-cp ".;junit-4.12.jar;hamcrest-core-1.3.jar;"
 
 docs: FORCE
-	javadoc -d docs PersonalityTest.java
+	javadoc $(javac_opts) $(common_opts) -d docs PersonalityTest.java
 	dot -odocs/flow-diagram.pdf -Tpdf flow-diagram.dot
 FORCE:
 main:
