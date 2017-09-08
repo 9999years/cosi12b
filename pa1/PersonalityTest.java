@@ -1,6 +1,8 @@
 /**
  * Parses Keirsey (KTS) personality data from a file and writes output to a
  * file
+ *
+ *
  * @author Rebecca Turner
  * @version 1.1.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
