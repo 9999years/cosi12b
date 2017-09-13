@@ -28,8 +28,7 @@ public class LetterInventory {
 		if(letter.length > 0) {
 			return Character.toLowerCase(
 				normalizer.normalize(letter, this.form)
-					.codePointAt(0)
-				);
+					.codePointAt(0));
 		} else {
 			// empty string
 			return -1;
@@ -45,12 +44,31 @@ public class LetterInventory {
 	}
 
 	/**
-	 * @param letter an int unicode scalar value GUARANTEED by the user to
-	 * be normalized an NOT greater than 0x7A (z). need those verified? use
-	 * one of the public get() methods
+	 * @param letter a NORMALIZED 
 	 */
-	private int getNormalized(int letter) {
-		return counts[letter - A_OFFSET];
+	private int getIndex(int letter) {
+		if(Character.isSurrogate((char) letter)) {
+			// not actually a character
+			throw IllegalArgumentException(
+				"Surrogate codepoints cannot be passed to get()!"
+			);
+		} else if(letter <= A_OFFSET
+			|| letter >= A_OFFSET + ALPHABET_LENGTH) {
+			throw IllegalArgumentException(
+				"Normalized codepoint value isn't in alphabet,"
+				+ "presumably due to being outside of the Latin"
+				+ "alphabet."
+			);
+		}
+
+		return letter - A_OFFSET;
+	}
+
+	/**
+	 * @param letter a normalized int unicode scalar value
+	 */
+	private int normalizedGet(int letter) {
+		return counts[getIndex(letter)];
 	}
 
 	/**
@@ -58,29 +76,13 @@ public class LetterInventory {
 	 * provide an override for an int instead of a char to access all
 	 * possible codepoints
 	 */
-	public int get(int letter) {
+	public int get(int letter) throws IllegalArgumentException {
 		letter = normalize(letter);
-		if(letter <= A_OFFSET
-			|| letter >= A_OFFSET + ALPHABET_LENGTH) {
-			// letter OK
-		} else {
-			throw IllegalArgumentException(
-				"Normalized codepoint value isn't in alphabet,"
-				+ "presumably due to being outside of the Latin"
-				+ "alphabet."
-			);
-		}
+		return normalizedGet(letter);
 	}
 
 	public int get(char letter) {
-		if(Character.isSurrogate(letter)) {
-			// not actually a character
-			throw IllegalArgumentException(
-				"Surrogate codepoints cannot be passed to get()!"
-			);
-		}
-		// plain cast is OK becuase we've ensured letter isn't a
-		// split surrogate
+		// plain cast is OK becuase we check for surrogates in get(int)
 		return get((int) letter);
 	}
 
@@ -89,9 +91,11 @@ public class LetterInventory {
 	}
 
 	public void set(int letter, int value) {
+
 	}
 
 	public void set(char letter, int value) {
+		set((int) letter, value);
 	}
 
 	public int size() {
