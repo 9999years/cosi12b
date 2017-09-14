@@ -1,21 +1,27 @@
 import java.text.Normalizer;
-import java.lang.IllegalArgumentException;
 
 public class LetterInventory {
 	/**
 	 * index of ascii A
 	 */
-	private final int A_OFFSET = 0x61;
+	private final int ALPHABET_START = 0x61;
 	private final int ALPHABET_LENGTH = 26;
+	private final int ALPHABET_END = 0x7a;
 	private int[] counts;
 	private int corpusSize;
-	private Normalizer normalizer;
-	private final Normalizer.form form = Normalizer.Form.NFD;
+	private final Normalizer.Form form = Normalizer.Form.NFD;
+
+	private void initCommon() {
+		this.counts = new int[ALPHABET_LENGTH];
+	}
 
 	LetterInventory() {
-		// already all zeroes
-		this.counts = new int[ALPHABET_LENGTH];
-		this.normalizer = new Normalizer();
+		initCommon();
+	}
+
+	LetterInventory(String corpus) {
+		initCommon();
+		absorb(corpus);
 	}
 
 	/**
@@ -25,9 +31,9 @@ public class LetterInventory {
 	 * codepoint otherwise
 	 */
 	private int normalize(String letter) {
-		if(letter.length > 0) {
+		if(letter.length() > 0) {
 			return Character.toLowerCase(
-				normalizer.normalize(letter, this.form)
+				Normalizer.normalize(letter, this.form)
 					.codePointAt(0));
 		} else {
 			// empty string
@@ -36,32 +42,54 @@ public class LetterInventory {
 	}
 
 	private int normalize(char letter) {
-		return normalize(new char[] {letter});
+		return normalize(new String(new char[] {letter}));
 	}
 
 	private int normalize(int letter) {
-		return normalize(new int[] {letter});
+		return normalize(new String(Character.toChars(letter)));
+	}
+
+	private boolean checkValid(int letter) {
+		letter = normalize(letter);
+		return !Character.isSurrogate((char) letter)
+			&& (letter >= ALPHABET_START && letter <= ALPHABET_END);
 	}
 
 	/**
-	 * @param letter a NORMALIZED 
+	 * @param letter a NORMALIZED letter
 	 */
 	private int getIndex(int letter) {
 		if(Character.isSurrogate((char) letter)) {
 			// not actually a character
-			throw IllegalArgumentException(
+			throw new IllegalArgumentException(
 				"Surrogate codepoints cannot be passed to get()!"
 			);
-		} else if(letter <= A_OFFSET
-			|| letter >= A_OFFSET + ALPHABET_LENGTH) {
-			throw IllegalArgumentException(
-				"Normalized codepoint value isn't in alphabet,"
-				+ "presumably due to being outside of the Latin"
-				+ "alphabet."
+		} else if(letter < ALPHABET_START || letter > ALPHABET_END) {
+			throw new IllegalArgumentException(
+				"Normalized codepoint value `"
+				+ new String(Character.toChars(letter))
+				+ "` isn't in alphabet,"
+				+ " presumably due to being outside of the Latin"
+				+ " alphabet."
 			);
 		}
 
-		return letter - A_OFFSET;
+		return letter - ALPHABET_START;
+	}
+
+	public void absorb(int letter) {
+		counts[getIndex(normalize(letter))]++;
+		corpusSize++;
+	}
+
+	public void absorb(char letter) {
+		absorb((int) letter);
+	}
+
+	public void absorb(String corpus) {
+		corpus.codePoints().forEach(cp -> {
+			if(checkValid(cp)) { absorb(cp); }
+		});
 	}
 
 	/**
@@ -91,7 +119,9 @@ public class LetterInventory {
 	}
 
 	public void set(int letter, int value) {
-
+		int inx = getIndex(normalize(letter));
+		corpusSize += value - counts[inx];
+		counts[inx] = value;
 	}
 
 	public void set(char letter, int value) {
@@ -102,16 +132,39 @@ public class LetterInventory {
 		return corpusSize;
 	}
 
-	public int isEmpty() {
+	public boolean isEmpty() {
 		return corpusSize == 0;
 	}
 
 	public String toString() {
+		StringBuilder ret = new StringBuilder("[");
+		int amt = 0;
+		for(int i = ALPHABET_START; i <= ALPHABET_END; i++) {
+			amt = get(i);
+			for(int j = 0; j < amt; j++) {
+				ret.append((char) i);
+			}
+		}
+		ret.append(']');
+		return ret.toString();
 	}
 
 	public LetterInventory add(LetterInventory other) {
+		LetterInventory ret = new LetterInventory();
+		for(int i = ALPHABET_START; i < ALPHABET_END; i++) {
+			ret.set(i, get(i) + other.get(i));
+		}
+		return ret;
 	}
 
 	public LetterInventory subtract(LetterInventory other) {
+		LetterInventory ret = new LetterInventory();
+		int val;
+		for(int i = ALPHABET_START; i < ALPHABET_END; i++) {
+			val = get(i) - other.get(i);
+			if(val < 0) { return null; }
+			ret.set(i, val);
+		}
+		return ret;
 	}
 }

@@ -1,6 +1,6 @@
 
-// The frequency analysis class attempts to solve substitution ciphers 
-// using a frequency analysis. 
+// The frequency analysis class attempts to solve substitution ciphers
+// using a frequency analysis.
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -27,7 +27,7 @@ public class FrequencyAnalysis {
      * to assign a letter or not. */
     private static final double EASY_THRESHOLD = 0.01;
 
-    /* The number of runs of passes through the text on the dictionary the 
+    /* The number of runs of passes through the text on the dictionary the
        analysis will perform. */
     private static final int NUMBER_DICTIONARY_RUNS = 10;
 
@@ -39,7 +39,7 @@ public class FrequencyAnalysis {
     private String decodedText;
 
     /* A dictionary of words that we use to complete the cryptogram. */
-    private List<String> dictionary; 
+    private List<String> dictionary;
 
     /* The frequency ordering in the ciphertext. */
     private List<Character> frequencyOrdering;
@@ -48,7 +48,7 @@ public class FrequencyAnalysis {
     private LetterInventory cryptogramInventory;
 
     /* All of the CIPHERTEXT letters that are currently unassigned.
-       We maintain the invariant that these letters are in CIPHERTEXT 
+       We maintain the invariant that these letters are in CIPHERTEXT
        frequency order. */
     private List<Character> unassignedCipherTextLetters;
 
@@ -57,7 +57,7 @@ public class FrequencyAnalysis {
        order. */
     private List<Character> unassignedPlainTextLetters;
 
-    /* post: constructs a frequency analysis on the ciphertext given */ 
+    /* post: constructs a frequency analysis on the ciphertext given */
     public FrequencyAnalysis(String ciphertext) throws FileNotFoundException {
         readCiphertext(ciphertext);
         calculateFrequencyOrdering();
@@ -65,7 +65,7 @@ public class FrequencyAnalysis {
         readDictionary();
     }
 
-    /* post: Attempts to use the most definitive frequencies to fill in letters 
+    /* post: Attempts to use the most definitive frequencies to fill in letters
              in the cryptogram. This function will overwrite any previous
              decoding work that was done.  */
     public void decipherEasyLetters() {
@@ -74,19 +74,19 @@ public class FrequencyAnalysis {
            everything to uppercase as well. */
         this.decodedText = this.cipherText.toUpperCase();
 
-        /* Since we are starting over, we must initialize the unassigned letters 
+        /* Since we are starting over, we must initialize the unassigned letters
            variables to contain all of the letters. */
-        this.unassignedCipherTextLetters = 
+        this.unassignedCipherTextLetters =
                             new ArrayList<Character>(ENGLISH_FREQUENCY_ORDER);
-        this.unassignedPlainTextLetters = 
+        this.unassignedPlainTextLetters =
                             new ArrayList<Character>(this.frequencyOrdering);
 
-        /* Run through all of the letters, and try to assign them based on their 
+        /* Run through all of the letters, and try to assign them based on their
            frequencies, as compared to English frequencies. */
         for (int i = 0; i < ENGLISH_FREQUENCY_ORDER.size(); i++) {
             char englishLetter = ENGLISH_FREQUENCY_ORDER.get(i);
             char cipherLetter = frequencyOrdering.get(i);
-    
+
             double freq = cryptogramInventory.getLetterPercentage(cipherLetter);
             double previousFreq = 1;
             if (i > 0) {
@@ -106,7 +106,7 @@ public class FrequencyAnalysis {
         }
     }
 
-    /* post: Attempts to use existing partial translations with a dictionary to 
+    /* post: Attempts to use existing partial translations with a dictionary to
        translate the ciphertext */
     public void decipherWithDictionary() {
         for (int x = 0; x < NUMBER_DICTIONARY_RUNS; x++) {
@@ -151,15 +151,15 @@ public class FrequencyAnalysis {
      *       plausible translation after replacing the specified character. */
     private List<Character> findPossibleChoices(String[] words, char toReplace) {
         String pattern = "[a-z-]*(" + toReplace + "+[a-z-]*)+";
-        List<Character> possibleChoices = 
+        List<Character> possibleChoices =
                       new ArrayList<Character>(unassignedPlainTextLetters);
 
         /* Run through the words with ONLY toReplace untranslated in them.
-         * Find all the possible valid translations, and if we end up with a 
-         * single choice, then we assume that it is the correct translation 
+         * Find all the possible valid translations, and if we end up with a
+         * single choice, then we assume that it is the correct translation
          * for that character. */
         for (int word = 0; word < words.length; word++) {
-            /* Only worry about this word if it has the character we're 
+            /* Only worry about this word if it has the character we're
                concerned with. */
             if (words[word].matches(pattern)) {
                 List<Character> workingChoices = new ArrayList<Character>();
@@ -181,7 +181,7 @@ public class FrequencyAnalysis {
 
         return possibleChoices;
     }
-    
+
     /* post: frequencyOrdering is populated with a list of all lowercase
      *       letters ordered from most to least frequent in the ciphertext;
      *       cryptogramInventory is populated with a letter inventory
@@ -190,14 +190,14 @@ public class FrequencyAnalysis {
         this.cryptogramInventory = new LetterInventory(this.cipherText);
 
         this.frequencyOrdering = this.getFrequencyOrder();
-    
+
         /* Reverse the frequencyOrdering, because getFrequencyOrder() returns a
          * list from least-to-most frequent, and we want the opposite. */
         Collections.reverse(this.frequencyOrdering);
     }
 
     /* throws a FileNotFoundException if file does not exist
-     * post: cipherText is populated with the contents of file, and 
+     * post: cipherText is populated with the contents of file, and
      *       decodedText is initialized to an all uppercase version of
      *       the ciphertext */
     private void readCiphertext(String file) throws FileNotFoundException {
@@ -250,7 +250,7 @@ public class FrequencyAnalysis {
 
         /* goes through the list of sorted counts */
         for (int i = 0; i < sortedFrequencies.size(); i++) {
-            /* go through all of the possible letters in the inventory, and 
+            /* go through all of the possible letters in the inventory, and
              * append each letter to the order (but only if it's not already
              * in the list) */
             for (char c = 'a'; c < ('z' + 1); c++) {
