@@ -119,6 +119,11 @@ public class LetterInventory {
 	}
 
 	public void set(int letter, int value) {
+		if(value < 0) {
+			throw new IllegalArgumentException(
+				"Cannot set a frequency to be less than 0!"
+			);
+		}
 		int inx = getIndex(normalize(letter));
 		corpusSize += value - counts[inx];
 		counts[inx] = value;
