@@ -10,8 +10,8 @@ run:
 	javac $(javac_opts) $(common_opts) LetterInventory.java FrequencyAnalysis.java
 	java $(common_opts) FrequencyAnalysis
 test:
-#javac $(javac_opts) $(common_opts) LetterInventoryTest.java
-#java  $(common_opts)               LetterInventoryTest
+	javac $(javac_opts) $(common_opts) LetterInventoryTest.java
+	java  $(common_opts) org.junit.runner.JUnitCore LetterInventoryTest
 	javac $(javac_opts) $(common_opts) Test1.java
 	java  $(common_opts)               Test1
 	javac $(javac_opts) $(common_opts) Test2.java
