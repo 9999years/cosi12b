@@ -115,7 +115,7 @@ public class LetterInventory {
 	}
 
 	public double getLetterPercentage(char letter) {
-		return get(letter) / corpusSize;
+		return (double) get(letter) / corpusSize;
 	}
 
 	public void set(int letter, int value) {
