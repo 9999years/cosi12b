@@ -1,12 +1,21 @@
+/**
+ * Keeps track of character frequencies in Latin text. Potentially useful for
+ * cryptogram frequency analysis.
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 import java.text.Normalizer;
 
 public class LetterInventory {
 	/**
 	 * index of ascii A
 	 */
-	private final int ALPHABET_START = 0x61;
+	private final int ALPHABET_START  = 0x61;
 	private final int ALPHABET_LENGTH = 26;
-	private final int ALPHABET_END = 0x7a;
+	private final int ALPHABET_END    = 0x7a;
 	private int[] counts;
 	private int corpusSize;
 	private final Normalizer.Form form = Normalizer.Form.NFD;
@@ -19,6 +28,9 @@ public class LetterInventory {
 		initCommon();
 	}
 
+	/**
+	 * initializes the object to include the values of a given corpus string
+	 */
 	LetterInventory(String corpus) {
 		initCommon();
 		absorb(corpus);
@@ -45,10 +57,19 @@ public class LetterInventory {
 		return normalize(new String(new char[] {letter}));
 	}
 
+	/**
+	 * @param letter the codepoint to be normalized
+	 */
 	private int normalize(int letter) {
 		return normalize(new String(Character.toChars(letter)));
 	}
 
+	/**
+	 * check if a given codepoint is valid for insertion into the matrix
+	 * used to verify insertion validity
+	 * much of the same logic as getIndex
+	 * @return true if the codepoint is valid, false otherwise
+	 */
 	private boolean checkValid(int letter) {
 		letter = normalize(letter);
 		return !Character.isSurrogate((char) letter)
@@ -56,9 +77,10 @@ public class LetterInventory {
 	}
 
 	/**
-	 * @param letter a NORMALIZED letter
+	 * @param letter a normalized letter (otherwise will error on, eg.
+	 * upper-case letters)
 	 */
-	private int getIndex(int letter) {
+	private int getIndex(int letter) throws IllegalArgumentException {
 		if(Character.isSurrogate((char) letter)) {
 			// not actually a character
 			throw new IllegalArgumentException(
@@ -88,6 +110,9 @@ public class LetterInventory {
 
 	public void absorb(String corpus) {
 		corpus.codePoints().forEach(cp -> {
+			// ignore if invalid codepoint
+			// we normalize twice, essentially, but that's ok
+			// normalization overhead is low
 			if(checkValid(cp)) { absorb(cp); }
 		});
 	}
@@ -147,6 +172,11 @@ public class LetterInventory {
 		}
 		ret.append(']');
 		return ret.toString();
+	}
+
+	public boolean equals(Object o) {
+		return o instanceof LetterInventory
+			&& counts.equals(((LetterInventory) o).counts);
 	}
 
 	public LetterInventory add(LetterInventory other) {
