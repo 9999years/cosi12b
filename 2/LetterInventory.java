@@ -7,8 +7,6 @@
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
 
-import java.text.Normalizer;
-
 public class LetterInventory {
 	/**
 	 * index of ascii a
@@ -22,9 +20,6 @@ public class LetterInventory {
 	 * ALPHABET_END - ALPHABET_START + 1
 	 */
 	private static final int ALPHABET_LENGTH = 26;
-	// use compatibility decomposition to match by letter rather than
-	// codepoint
-	private static final Normalizer.Form form = Normalizer.Form.NFKD;
 	private int[] counts;
 	private int corpusSize;
 
@@ -43,8 +38,8 @@ public class LetterInventory {
 	}
 
 	/**
-	 * get the normalized, lower-case value of the first letter in a string
-	 * (or of a char/int)
+	 * get the lower-case value of the first letter in a string (or of a
+	 * char/int)
 	 * @param letter a letter or letters to be normalized
 	 * @return -1 if letter is an empty string, value of the first unicode
 	 * codepoint otherwise
@@ -52,10 +47,7 @@ public class LetterInventory {
 	private int normalize(String letter) {
 		// make sure we don't do a bunch of processing to nothing
 		if(letter.length() > 0) {
-			// normalize -> lowercase -> get first codepoint
-			return Character.toLowerCase(
-				Normalizer.normalize(letter, this.form)
-					.codePointAt(0));
+			return Character.toLowerCase(letter.codePointAt(0));
 		} else {
 			// empty string
 			return -1;
@@ -84,8 +76,7 @@ public class LetterInventory {
 		// make sure codepoint isnt a surrogate and its normalized
 		// value is in the alphabet
 		letter = normalize(letter);
-		return !Character.isSurrogate((char) letter)
-			&& (letter >= ALPHABET_START && letter <= ALPHABET_END);
+		return letter >= ALPHABET_START && letter <= ALPHABET_END;
 	}
 
 	/**
@@ -94,12 +85,7 @@ public class LetterInventory {
 	 * @return the index in {@link #counts} for the given letter
 	 */
 	private int getIndex(int letter) throws IllegalArgumentException {
-		if(Character.isSurrogate((char) letter)) {
-			// not actually a character
-			throw new IllegalArgumentException(
-				"Surrogate codepoints cannot be passed to get()!"
-			);
-		} else if(letter < ALPHABET_START || letter > ALPHABET_END) {
+		if(letter < ALPHABET_START || letter > ALPHABET_END) {
 			// not in the alphabet
 			throw new IllegalArgumentException(
 				"Normalized codepoint "
@@ -157,10 +143,10 @@ public class LetterInventory {
 	 * but it's good practice to write flexible software either way
 	 *
 	 * @param letter the codepoint of a letter to fetch the frequencies of;
-	 * please note that get() normalizes text so e.g. U+72 r and U+211D
-	 * DOUBLE-STRUCK CAPITAL R will compare the same; as this class is
-	 * designed for use in frequency analysis, differentiating different
-	 * representations of the same letter is unnecessary
+	 * please note that get() normalizes text so e.g. U+72 r and U+52 R
+	 * will compare the same; as this class is designed for use in
+	 * frequency analysis, differentiating different representations of the
+	 * same letter is unnecessary
 	 *
 	 * @return the amount of that character fed to the object
 	 */
