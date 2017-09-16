@@ -28,20 +28,18 @@ public class LetterInventory {
 	private int[] counts;
 	private int corpusSize;
 
-	private void initCommon() {
-		this.counts = new int[ALPHABET_LENGTH];
-	}
-
 	LetterInventory() {
-		initCommon();
+		this("");
 	}
 
 	/**
 	 * initializes the object to include the values of a given corpus string
 	 */
 	LetterInventory(String corpus) {
-		initCommon();
-		absorb(corpus);
+		this.counts = new int[ALPHABET_LENGTH];
+		if(corpus.length() > 0) {
+			absorb(corpus);
+		}
 	}
 
 	/**
@@ -52,7 +50,9 @@ public class LetterInventory {
 	 * codepoint otherwise
 	 */
 	private int normalize(String letter) {
+		// make sure we don't do a bunch of processing to nothing
 		if(letter.length() > 0) {
+			// normalize -> lowercase -> get first codepoint
 			return Character.toLowerCase(
 				Normalizer.normalize(letter, this.form)
 					.codePointAt(0));
@@ -77,9 +77,12 @@ public class LetterInventory {
 	 * check if a given codepoint is valid for insertion into the matrix
 	 * used to verify insertion validity
 	 * much of the same logic as {@link #getIndex(int)}
+	 * @param letter the codepoint of a character to check
 	 * @return true if the codepoint is valid, false otherwise
 	 */
 	private boolean checkValid(int letter) {
+		// make sure codepoint isnt a surrogate and its normalized
+		// value is in the alphabet
 		letter = normalize(letter);
 		return !Character.isSurrogate((char) letter)
 			&& (letter >= ALPHABET_START && letter <= ALPHABET_END);
@@ -97,6 +100,7 @@ public class LetterInventory {
 				"Surrogate codepoints cannot be passed to get()!"
 			);
 		} else if(letter < ALPHABET_START || letter > ALPHABET_END) {
+			// not in the alphabet
 			throw new IllegalArgumentException(
 				"Normalized codepoint "
 				+ String.format("U+%X", letter)
@@ -137,14 +141,6 @@ public class LetterInventory {
 	}
 
 	/**
-	 * get the frequency of a letter
-	 * @param letter a normalized int unicode scalar value
-	 */
-	private int normalizedGet(int letter) {
-		return counts[getIndex(letter)];
-	}
-
-	/**
 	 * get the frequency of a given character
 	 *
 	 * this agrees with wider java conventions (see {@link
@@ -170,7 +166,7 @@ public class LetterInventory {
 	 */
 	public int get(int letter) throws IllegalArgumentException {
 		letter = normalize(letter);
-		return normalizedGet(letter);
+		return counts[getIndex(letter)];
 	}
 
 	public int get(char letter) {
@@ -187,7 +183,10 @@ public class LetterInventory {
 	 * letter
 	 */
 	public double getLetterPercentage(int letter) {
-		return (double) get(letter) / corpusSize;
+		// be wary of divide by zero
+		return corpusSize == 0
+			? 0.0
+			: (double) get(letter) / corpusSize;
 	}
 
 	public double getLetterPercentage(char letter) {

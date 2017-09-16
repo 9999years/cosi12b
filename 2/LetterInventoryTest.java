@@ -18,6 +18,17 @@ public class LetterInventoryTest {
 			a.getLetterPercentage('l'), DELTA);
 		assertEquals(0.071429,
 			a.getLetterPercentage('y'), DELTA);
+		a = new LetterInventory("ooooooooo");
+		assertEquals(1.0, a.getLetterPercentage('o'), DELTA);
+		a = new LetterInventory("z");
+		assertEquals(1.0, a.getLetterPercentage('z'), DELTA);
+		assertEquals(0.0, a.getLetterPercentage('o'), DELTA);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void percentExceptionTest() {
+		LetterInventory a = new LetterInventory("abc");
+		a.getLetterPercentage('-');
 	}
 
 	@Test
