@@ -20,4 +20,8 @@ mytests:
 	javac $(javac_opts) $(common_opts) LetterInventoryTest.java
 	java  $(common_opts) org.junit.runner.JUnitCore LetterInventoryTest
 clean:
+ifeq ($(OS),Windows_NT)
 	del *.class
+else
+	rm *.class
+endif
