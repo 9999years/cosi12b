@@ -11,14 +11,22 @@ import java.text.Normalizer;
 
 public class LetterInventory {
 	/**
-	 * index of ascii A
+	 * index of ascii a
 	 */
-	private final int ALPHABET_START  = 0x61;
-	private final int ALPHABET_LENGTH = 26;
-	private final int ALPHABET_END    = 0x7a;
+	private static final int ALPHABET_START  = 0x61;
+	/**
+	 * index of ascii b
+	 */
+	private static final int ALPHABET_END    = 0x7a;
+	/**
+	 * ALPHABET_END - ALPHABET_START + 1
+	 */
+	private static final int ALPHABET_LENGTH = 26;
+	// use compatibility decomposition to match by letter rather than
+	// codepoint
+	private static final Normalizer.Form form = Normalizer.Form.NFKD;
 	private int[] counts;
 	private int corpusSize;
-	private final Normalizer.Form form = Normalizer.Form.NFD;
 
 	private void initCommon() {
 		this.counts = new int[ALPHABET_LENGTH];
@@ -38,6 +46,7 @@ public class LetterInventory {
 
 	/**
 	 * get the normalized, lower-case value of the first letter in a string
+	 * (or of a char/int)
 	 * @param letter a letter or letters to be normalized
 	 * @return -1 if letter is an empty string, value of the first unicode
 	 * codepoint otherwise
@@ -67,7 +76,7 @@ public class LetterInventory {
 	/**
 	 * check if a given codepoint is valid for insertion into the matrix
 	 * used to verify insertion validity
-	 * much of the same logic as getIndex
+	 * much of the same logic as {@link #getIndex(int)}
 	 * @return true if the codepoint is valid, false otherwise
 	 */
 	private boolean checkValid(int letter) {
@@ -77,8 +86,9 @@ public class LetterInventory {
 	}
 
 	/**
-	 * @param letter a normalized letter (otherwise will error on, eg.
-	 * upper-case letters)
+	 * @param letter a normalized letter (otherwise will unnecessarily
+	 * error on, e.g. upper-case letters)
+	 * @return the index in {@link #counts} for the given letter
 	 */
 	private int getIndex(int letter) throws IllegalArgumentException {
 		if(Character.isSurrogate((char) letter)) {
@@ -88,11 +98,11 @@ public class LetterInventory {
 			);
 		} else if(letter < ALPHABET_START || letter > ALPHABET_END) {
 			throw new IllegalArgumentException(
-				"Normalized codepoint value `"
-				+ new String(Character.toChars(letter))
-				+ "` isn't in alphabet,"
-				+ " presumably due to being outside of the Latin"
-				+ " alphabet."
+				"Normalized codepoint "
+				+ String.format("U+%X", letter)
+				+ " isn't in alphabet,"
+				+ " presumably due to being outside of the"
+				+ " Latin alphabet."
 			);
 		}
 
@@ -108,16 +118,26 @@ public class LetterInventory {
 		absorb((int) letter);
 	}
 
+	/**
+	 * add data to the internal character-set from a string, char, or
+	 * codepoint integer
+	 * @param corpus the text to process
+	 */
 	public void absorb(String corpus) {
 		corpus.codePoints().forEach(cp -> {
 			// ignore if invalid codepoint
-			// we normalize twice, essentially, but that's ok
+			// we normalize twice, essentially --- once to make
+			// sure we *can* insert the codepoint, once to actually
+			// insert it (absorb will throw an
+			// IllegalArgumentException if called with a single
+			// invalid char otherwise) --- but that's ok bc
 			// normalization overhead is low
 			if(checkValid(cp)) { absorb(cp); }
 		});
 	}
 
 	/**
+	 * get the frequency of a letter
 	 * @param letter a normalized int unicode scalar value
 	 */
 	private int normalizedGet(int letter) {
@@ -125,9 +145,28 @@ public class LetterInventory {
 	}
 
 	/**
-	 * agree with wider java conventions (see Character class docs) and
-	 * provide an override for an int instead of a char to access all
-	 * possible codepoints
+	 * get the frequency of a given character
+	 *
+	 * this agrees with wider java conventions (see {@link
+	 * java.lang.Character} class docs) and provide an override for an int
+	 * instead of a char to access all possible codepoints (java's 2-byte
+	 * utf-16 encoded char data-type can't represent "astral" codepoints
+	 * [above U+FFFF, most notably emoji and many han characters but also
+	 * the several mathematical latin alphabets, often used for stylistic
+	 * purposes])
+	 *
+	 * the {@link FrequencyAnalysis} class isn't written to accommodate
+	 * non-normalized text so it'll crash when fed codepoints outside of (i
+	 * think?) ASCII with an {@link java.lang.IndexOutOfBoundsException},
+	 * but it's good practice to write flexible software either way
+	 *
+	 * @param letter the codepoint of a letter to fetch the frequencies of;
+	 * please note that get() normalizes text so e.g. U+72 r and U+211D
+	 * DOUBLE-STRUCK CAPITAL R will compare the same; as this class is
+	 * designed for use in frequency analysis, differentiating different
+	 * representations of the same letter is unnecessary
+	 *
+	 * @return the amount of that character fed to the object
 	 */
 	public int get(int letter) throws IllegalArgumentException {
 		letter = normalize(letter);
@@ -135,14 +174,33 @@ public class LetterInventory {
 	}
 
 	public int get(char letter) {
-		// plain cast is OK becuase we check for surrogates in get(int)
+		// plain cast to int is OK because we check for surrogates in
+		// get(int)
 		return get((int) letter);
 	}
 
-	public double getLetterPercentage(char letter) {
+	/**
+	 * get percent of database represented by a letter
+	 * 
+	 * @param letter the codepoint of a letter to count
+	 * @return the percentage of letters in the object that are the given
+	 * letter
+	 */
+	public double getLetterPercentage(int letter) {
 		return (double) get(letter) / corpusSize;
 	}
 
+	public double getLetterPercentage(char letter) {
+		return getLetterPercentage((int) letter);
+	}
+
+	/**
+	 * set a letter to a value
+	 * generally not useful; try one of the {@link #absorb(int)} methods
+	 *
+	 * @param letter the codepoint of a letter to count
+	 * @param value the value to set that letter's frequency to
+	 */
 	public void set(int letter, int value) {
 		if(value < 0) {
 			throw new IllegalArgumentException(
@@ -158,10 +216,23 @@ public class LetterInventory {
 		set((int) letter, value);
 	}
 
+	/**
+	 * how much data is in this object?
+	 * @return the number of characters represented in the frequency
+	 * counts; NOT the number of characters processed overall with the
+	 * constructor or {@link #absorb(String)}
+	 */
 	public int size() {
 		return corpusSize;
 	}
 
+	/**
+	 * does the object have any data?
+	 * @return true if the object represents frequencies of one or more
+	 * characters; will return false if the object has been fed entirely
+	 * non-represented characters (e.g. feeding "../92!@#(*$ {}{}{[]8"
+	 * would still lead to an empty object).
+	 */
 	public boolean isEmpty() {
 		return corpusSize == 0;
 	}
@@ -179,11 +250,13 @@ public class LetterInventory {
 		return ret.toString();
 	}
 
-	public boolean equals(Object o) {
-		return o instanceof LetterInventory
-			&& counts.equals(((LetterInventory) o).counts);
-	}
-
+	/**
+	 * get the union of two LetterInventory objects; does not mutate the
+	 * current object
+	 *
+	 * @param other the object to add with this one's data
+	 * @return a new LetterInventory object
+	 */
 	public LetterInventory add(LetterInventory other) {
 		LetterInventory ret = new LetterInventory();
 		for(int i = ALPHABET_START; i < ALPHABET_END; i++) {
@@ -192,6 +265,13 @@ public class LetterInventory {
 		return ret;
 	}
 
+	/**
+	 * get the value of removing another LetterInventory object's data from
+	 * this one's; does not mutate the current object
+	 *
+	 * @param other the object to add with this one's data
+	 * @return a new LetterInventory object
+	 */
 	public LetterInventory subtract(LetterInventory other) {
 		LetterInventory ret = new LetterInventory();
 		int val;
