@@ -19,4 +19,21 @@ public class LetterInventoryTest {
 		assertEquals(0.071429,
 			a.getLetterPercentage('y'), DELTA);
 	}
+
+	@Test
+	public void normalizationTest() {
+		LetterInventory a = new LetterInventory("aaabbc");
+		assertEquals("normalization works correctly going in",
+			0, a.get('ℝ'));
+		assertEquals("normalization works correctly fetching data",
+			3, a.get("𝕒".codePointAt(0)));
+		assertEquals(0, a.get('o'));
+		a.absorb("ở");
+		assertEquals("multiple diacritics", 1, a.get('o'));
+		// hahaha
+		a = new LetterInventory("ℂℊℋℌℍℎ");
+		assertEquals("more decomp tests",
+			"[cghhhh]",
+			a.toString());
+	}
 }
