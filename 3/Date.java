@@ -10,11 +10,7 @@ public class Date extends AbstractDate {
 		}
 	}
 
-	public String ISO8601() {
-		return String.format("%4d-%2d-%2d", year, month, day);
-	}
-
-	public static boolean isLeapYear(int year) {
-		return year % LEAP_YEAR_FREQUENCY == 0;
+	Date(UnvalidatedDate date) {
+		this(date.year, date.month, date.day);
 	}
 }

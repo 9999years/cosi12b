@@ -7,16 +7,24 @@ public class UnvalidatedDate extends AbstractDate {
 		this(date.year, date.month, date.day);
 	}
 
+	public boolean validateYear() {
+		return year >= MIN_YEAR;
+	}
+
 	public boolean validateMonth() {
 		return month > 0 && month <= MONTHS_IN_YEAR;
 	}
 
+	/**
+	 * only works on valid months
+	 */
 	public boolean validateDay() {
-		return Month.get(month).validateDay(this);
-	}
-
-	public boolean validateYear() {
-		return year >= MIN_YEAR;
+		return validateMonth()
+			&& day > 0
+			&& (
+				day <= Month.get(month).days
+				|| isLeapDay()
+			);
 	}
 
 	public String errorMessage() {
@@ -50,10 +58,8 @@ public class UnvalidatedDate extends AbstractDate {
 	}
 
 	public Date validate() {
-		if(isValid()) {
-			return new Date(year, month, day);
-		} else {
-			return null;
-		}
+		return isValid()
+			? new Date(this)
+			: null;
 	}
 }

@@ -26,19 +26,5 @@ public enum Month {
 		}
 		throw new IllegalArgumentException("No such month!");
 	}
-
-	public boolean validateDay(UnvalidatedDate date) {
-		if(days < date.day) {
-			if(this == Month.February
-				&& Date.isLeapYear(date.year)
-				&& date.day == Date.FEBRUARY_LEAP_DAY
-			) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
 };
 
