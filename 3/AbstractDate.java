@@ -19,4 +19,18 @@ abstract class AbstractDate {
 		this.month = month;
 		this.day   = day;
 	}
+
+	public boolean isLeapYear() {
+		return year % LEAP_YEAR_FREQUENCY == 0;
+	}
+
+	public boolean isLeapDay() {
+		return isLeapYear() &&
+			Month.get(month) == Month.February
+			&& day == FEBRUARY_LEAP_DAY;
+	}
+
+	public String ISO8601() {
+		return String.format("%4d-%2d-%2d", year, month, day);
+	}
 }

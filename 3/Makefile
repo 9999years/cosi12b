@@ -4,7 +4,6 @@ junit_ops=org.junit.runner.JUnitCore
 
 date=Date
 udate=UnvalidatedDate
-datetest=DateTest
 bday=Birthday
 
 docs: FORCE
@@ -19,5 +18,5 @@ run: main
 	java $(common_opts) $(bday)
 
 test:
-	javac $(javac_opts) $(common_opts) $(datetest).java
-	java  $(junit_ops)  $(common_opts) $(datetest)
+	javac $(javac_opts) $(common_opts) $(udate)Test.java
+	java  $(common_opts) $(junit_ops) $(udate)Test
