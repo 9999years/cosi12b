@@ -10,14 +10,35 @@ abstract class AbstractDate {
 	static final Month MIN_MONTH = Month.January;
 	static final Month MAX_MONTH = Month.December;
 
-	int year;
-	int month;
-	int day;
+	protected int year;
+	/**
+	 * months are unique in having names and a variable number of days
+	 */
+	protected Month month;
+	protected int day;
 
 	AbstractDate(int year, int month, int day) {
 		this.year  = year;
-		this.month = month;
+		this.month = Month.get(month);
 		this.day   = day;
+	}
+
+	/**
+	 * this does nothing!!!
+	 * java subclassed constructors inherently call super(args) so this
+	 * method must exist
+	 */
+	AbstractDate() { }
+
+	public int getYear()  { return year;  }
+	public int getMonth() { return month.value; }
+	public int getDay()   { return day;   }
+
+	public Month getRichMonth() { return month; }
+	public String getMonthName() { return month.name(); }
+
+	public String ISO8601() {
+		return String.format("%4d-%2d-%2d", year, month, day);
 	}
 
 	public boolean isLeapYear() {
@@ -25,12 +46,26 @@ abstract class AbstractDate {
 	}
 
 	public boolean isLeapDay() {
-		return isLeapYear() &&
-			Month.get(month) == Month.February
-			&& day == FEBRUARY_LEAP_DAY;
+		return isLeapYear()
+			&& getRichMonth() == Month.February
+			&& getDay() == FEBRUARY_LEAP_DAY;
 	}
 
-	public String ISO8601() {
-		return String.format("%4d-%2d-%2d", year, month, day);
+	/**
+	 * COSI 12B compliant representation of a Date object
+	 */
+	public String toString() {
+		return String.format("%d/%d/%d", year, month, day);
+	}
+
+	public boolean equals(Object o) {
+		if(o instanceof AbstractDate) {
+			AbstractDate d = (AbstractDate) o;
+			return year      == d.getYear()
+				&& month == d.getRichMonth()
+				&& day   == d.getDay();
+		} else {
+			return false;
+		}
 	}
 }
