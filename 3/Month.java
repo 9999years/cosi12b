@@ -15,9 +15,18 @@ public enum Month {
 	final int value;
 	final int days;
 
+	private static Month[] vals = values();
+
 	Month(int value, int days) {
 		this.value = value;
 		this.days = days;
+	}
+
+	/**
+	 * don't call this on December!
+	 */
+	public Month next() throws IndexOutOfBoundsException {
+		return vals[this.ordinal() + 1];
 	}
 
 	public static Month get(int number) {
@@ -26,5 +35,13 @@ public enum Month {
 		}
 		throw new IllegalArgumentException("No such month!");
 	}
-};
 
+	public int getDays(int year) {
+		if(new Date(year, 1, 1).isLeapYear()
+			&& this == February) {
+			return Date.FEBRUARY_LEAP_DAY;
+		} else {
+			return days;
+		}
+	}
+};
