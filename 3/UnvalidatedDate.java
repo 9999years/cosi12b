@@ -16,22 +16,23 @@ public class UnvalidatedDate extends AbstractDate {
 	}
 
 	/**
-	 * only works on valid months
+	 * only works on valid months and years
 	 */
 	public boolean validateDay() {
 		return validateMonth()
 			&& day > 0
 			&& (
-				day <= getRichMonth().days
+				day <= getRichMonth().getDays(getYear())
 				|| isLeapDay()
 			);
 	}
 
 	public String errorMessage() {
 		if(!validateMonth()) {
-			return getMonthName() + " is not a valid month!";
+			return getMonth() + " is not a valid month!";
 		} else if(!validateDay()) {
-			if(getMonth() == Month.February.value) {
+			// valid month
+			if(getMonth() == Month.February.toInt()) {
 				return getDay()
 					+ " is not a valid day in month "
 					+ getMonthName()
@@ -43,6 +44,7 @@ public class UnvalidatedDate extends AbstractDate {
 					+ getMonthName() + "!";
 			}
 		} else if(!validateYear()) {
+			// valid day and month
 			return getYear() + " is not a valid year; the Gregorian"
 				+ " calendar had yet to be adopted and"
 				+ " inconsistencies in year-length make"
