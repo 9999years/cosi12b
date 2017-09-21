@@ -6,6 +6,12 @@ date=Date
 udate=UnvalidatedDate
 bday=Birthday
 
+#ifeq ($(OS),Windows_NT)
+	#rm=del
+#else
+	rm=rm
+#endif
+
 docs: FORCE
 	javadoc $(javac_opts) $(common_opts) -d docs *.java
 
@@ -20,3 +26,7 @@ run: main
 test:
 	javac $(javac_opts) $(common_opts) $(udate)Test.java
 	java  $(common_opts) $(junit_ops) $(udate)Test
+	javac $(javac_opts) $(common_opts) $(date)Test.java
+	java  $(common_opts) $(junit_ops) $(date)Test
+clean:
+	$(rm) *.class

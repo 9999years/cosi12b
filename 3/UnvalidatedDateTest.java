@@ -6,25 +6,25 @@ public class UnvalidatedDateTest {
 	public void constructor() {
 		// make sure attribs are set correctly and are NOT VALIDATED
 		UnvalidatedDate d = new UnvalidatedDate(1, 2, 3);
-		assertEquals(d.year, 1);
-		assertEquals(d.month, 2);
-		assertEquals(d.day, 3);
+		assertEquals(1, d.getYear());
+		assertEquals(2, d.getMonth());
+		assertEquals(3, d.getDay());
 
 		d = new UnvalidatedDate(91283, -1239, -4054);
-		assertEquals(d.year, 91283);
-		assertEquals(d.month, -1239);
-		assertEquals(d.day, -4054);
+		assertEquals(91283, d.getYear());
+		assertEquals(-1239, d.getMonth());
+		assertEquals(-4054, d.getDay());
 
 		d = new UnvalidatedDate(new Date(2000, 12, 30));
-		assertEquals(d.year, 2000);
-		assertEquals(d.month, 12);
-		assertEquals(d.day, 30);
+		assertEquals(2000, d.getYear());
+		assertEquals(12, d.getMonth());
+		assertEquals(30, d.getDay());
 
 		// leap day!
 		d = new UnvalidatedDate(new Date(2000, 2, 29));
-		assertEquals(d.year, 2000);
-		assertEquals(d.month, 2);
-		assertEquals(d.day, 29);
+		assertEquals(2000, d.getYear());
+		assertEquals(2, d.getMonth());
+		assertEquals(29, d.getDay());
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class UnvalidatedDateTest {
 		assertTrue("month 11 is valid",
 			new UnvalidatedDate(2000, 11, 1).validateMonth());
 		assertTrue("month 12 is valid",
-			new UnvalidatedDate(2000, 11, 1).validateMonth());
+			new UnvalidatedDate(2000, 12, 1).validateMonth());
 	}
 
 	@Test

@@ -22,26 +22,32 @@ public enum Month {
 		this.days = days;
 	}
 
-	/**
-	 * don't call this on December!
-	 */
-	public Month next() throws IndexOutOfBoundsException {
-		return vals[this.ordinal() + 1];
+	public Month next() {
+		return vals[(this.ordinal() + 1) % vals.length];
 	}
 
 	public static Month get(int number) {
-		for(Month m : Month.values()) {
-			if(m.value == number) { return m; }
+		for(Month m : vals) {
+			if(m.toInt() == number) { return m; }
 		}
-		throw new IllegalArgumentException("No such month!");
+		throw new IllegalArgumentException("No month "
+			+ number + " exists!");
 	}
 
 	public int getDays(int year) {
-		if(new Date(year, 1, 1).isLeapYear()
+		if(Date.isLeapYear(year)
 			&& this == February) {
 			return Date.FEBRUARY_LEAP_DAY;
 		} else {
 			return days;
 		}
+	}
+
+	public String toString() {
+		return name();
+	}
+
+	public int toInt() {
+		return value;
 	}
 };
