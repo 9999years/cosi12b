@@ -1,3 +1,13 @@
+/**
+ * Abstract class to store date-like objects. Extended by Date for a real date,
+ * and UnvalidatedDate for a date that's not guaranteed to be valid
+ * (essentially a 3-tuple of ints)
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 abstract class AbstractDate implements Comparable<AbstractDate> {
 	static final int MONTHS_PER_YEAR = 12;
 	static final int LEAP_YEAR_FREQUENCY = 4;
@@ -38,7 +48,7 @@ abstract class AbstractDate implements Comparable<AbstractDate> {
 	public void setMonth(int month) { this.month = month; }
 	public void setDay(int day)     { this.day   = day;   }
 
-	public Month getRichMonth() { return Month.get(month); }
+	protected Month getRichMonth() { return Month.get(month); }
 	public String getMonthName() { return Month.get(month).toString(); }
 
 	/**
@@ -69,27 +79,16 @@ abstract class AbstractDate implements Comparable<AbstractDate> {
 			getYear(), getMonth(), getDay());
 	}
 
-	protected int compareInt(int a, int b) {
-		if(a == b) {
-			return 0;
-		} else if(a > b) {
-			return 1;
-		} else {
-			// a < b
-			return -1;
-		}
-	}
-
 	protected int compareYear(AbstractDate d) {
-		return compareInt(getYear(), d.getYear());
+		return Integer.compare(getYear(), d.getYear());
 	}
 
 	protected int compareMonth(AbstractDate d) {
-		return compareInt(getMonth(), d.getMonth());
+		return Integer.compare(getMonth(), d.getMonth());
 	}
 
 	protected int compareDay(AbstractDate d) {
-		return compareInt(getDay(), d.getDay());
+		return Integer.compare(getDay(), d.getDay());
 	}
 
 	/**
@@ -97,8 +96,10 @@ abstract class AbstractDate implements Comparable<AbstractDate> {
 	 * 0 if equal
 	 * -1 if o is lt this
 	 *
-	 *  this is a complete MESS
-	 *  should probably convert to days as int and then compare directly?
+	 * @see java.lang.Comparable
+	 *
+	 * this is a complete MESS
+	 * should probably convert to days as int and then compare directly?
 	 */
 	public int compareTo(AbstractDate o) {
 		// compare years, months, then days
@@ -109,6 +110,10 @@ abstract class AbstractDate implements Comparable<AbstractDate> {
 		} else {
 			return compareDay(o);
 		}
+	}
+
+	public static int compare(AbstractDate a, AbstractDate b) {
+		return a.compareTo(b);
 	}
 
 	public boolean equals(Object o) {

@@ -1,3 +1,12 @@
+/**
+ * Stores a date that's not guaranteed to be valid (essentially a 3-tuple of
+ * ints)
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 public class UnvalidatedDate extends AbstractDate {
 	UnvalidatedDate(int year, int month, int day) {
 		super(year, month, day);
