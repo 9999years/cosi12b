@@ -76,4 +76,60 @@ abstract class AbstractDate {
 			return false;
 		}
 	}
+
+	protected int compareInt(int a, int b) {
+		if(a == b) {
+			return 0;
+		} else if(a > b) {
+			return 1;
+		} else {
+			// a < b
+			return -1;
+		}
+	}
+
+	protected int compareYear(AbstractDate d) {
+		return compareInt(getYear(), d.getYear());
+	}
+
+	protected int compareMonth(AbstractDate d) {
+		return compareInt(getMonth(), d.getMonth());
+	}
+
+	protected int compareDay(AbstractDate d) {
+		return compareInt(getDay(), d.getDay());
+	}
+
+	/**
+	 * 1 if o is gt this
+	 * 0 if equal
+	 * -1 if o is lt this
+	 *
+	 *  this is a complete MESS
+	 *  should probably convert to days as int and then compare directly?
+	 */
+	public int compare(Object o) {
+		if(equals(o)) {
+			return 0;
+		} else {
+			AbstractDate d = (AbstractDate) o;
+			int year = compareYear(d);
+			if(year == 1) {
+				return 1;
+			} else if(year == -1) {
+				return -1;
+			} else {
+				// years identical
+				int month = compareMonth(d);
+				if(month == 1) {
+					return 1;
+				} else if(month == -1) {
+					return -1;
+				} else {
+					// months identical
+					return compareDay(d);
+				}
+			}
+		}
+	}
 }

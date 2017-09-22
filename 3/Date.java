@@ -130,6 +130,10 @@ public class Date extends AbstractDate {
 	}
 
 	public void nextYear() {
+		if(isLeapDay()) {
+			nextDay();
+		}
+
 		setYear(getYear() + 1);
 	}
 
@@ -157,18 +161,48 @@ public class Date extends AbstractDate {
 		}
 	}
 
+	public int daysInMonth() {
+		return getRichMonth().getDays(getYear());
+	}
+
+	public Date copy() {
+		return new Date(getYear(), getMonth(), getDay());
+	}
+
+	public int daysBetween(Date o) {
+		if(compare(o) == 0) {
+			return 0;
+		} else if(compare(o) == 1) {
+			// flip around
+			return o.daysBetween(this);
+		} else {
+			int days = 0;
+			Date counter = copy();
+			while(counter.getYear() < o.getYear()) {
+				days += counter.daysInYear();
+				counter.setYear(counter.getYear() + 1);
+			}
+			while(counter.getMonth() < o.getMonth()) {
+				days += counter.daysInMonth();
+				counter.setMonth(counter.getMonth() + 1);
+			}
+			days += o.getDay() - counter.getDay();
+			return days;
+		}
+	}
+
 	public static int daysSinceEpoch() {
 		return (int) ((System.currentTimeMillis()
 			+ TimeZone.getDefault().getRawOffset())
 			/ MILLISECONDS_PER_DAY);
 	}
 
-	public static int daysInYear(int year) {
-		return DAYS_PER_YEAR + (isLeapYear(year) ? 1 : 0);
+	public int daysInYear() {
+		return daysInYear(getYear());
 	}
 
-	public int daysInMonth() {
-		return getRichMonth().getDays(getYear());
+	public static int daysInYear(int year) {
+		return DAYS_PER_YEAR + (isLeapYear(year) ? 1 : 0);
 	}
 
 	public static int leapYearsBetween(int min, int max) {
