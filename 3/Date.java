@@ -1,4 +1,5 @@
 import java.util.TimeZone;
+import java.lang.Math;
 
 public class Date extends AbstractDate {
 	/**
@@ -119,6 +120,18 @@ public class Date extends AbstractDate {
 		return Day.get(
 			(dayOfYear() + dayOffset) % DAYS_PER_WEEK
 			).toString();
+		// formula from alex lopez-ortiz of university of waterloo
+		// https://cs.uwaterloo.ca/~alopez-o/math-faq/node73.html
+		//int month = (getMonth() + 10) % MONTHS_PER_YEAR;
+		//int year = getYear() - (month > 11 ? 1 : 0);
+		//return Day.get((
+			//getDay()
+			//+ (int) (2.6 * month - 0.2)
+			////+ 493 * year / 400
+			//+ 5 * year / 4
+			//- 7 * year / 400
+			//+ 6
+			//) % DAYS_PER_WEEK).toString();
 	}
 
 	public int dayOfYear() {
@@ -144,8 +157,8 @@ public class Date extends AbstractDate {
 			// roll over year
 			nextYear();
 		}
-		// if you call nextMonth on eg. dec 31, you go to january 31,
-		// an invalid date. this makes dec 31 -> feb 3 instead
+		// if you call nextMonth on eg. jan 31, you go to feb 31,
+		// an invalid date. this makes jan 31 -> mar 3 instead
 		if(getDay() > daysInMonth()) {
 			setDay(getDay() - daysInMonth());
 			// recurse!
@@ -169,25 +182,25 @@ public class Date extends AbstractDate {
 		return new Date(getYear(), getMonth(), getDay());
 	}
 
+	public static int daysBetweenYears(int a, int b) {
+		if(a > b) {
+			return daysBetweenYears(b, a);
+		} else {
+			return (b - a) * DAYS_PER_YEAR
+				+ leapYearsBetween(a, b);
+		}
+	}
+
 	public int daysBetween(Date o) {
-		if(compare(o) == 0) {
+		if(compareTo(o) == 0) {
 			return 0;
-		} else if(compare(o) == 1) {
+		} else if(compareTo(o) == 1) {
 			// flip around
 			return o.daysBetween(this);
 		} else {
-			int days = 0;
-			Date counter = copy();
-			while(counter.getYear() < o.getYear()) {
-				days += counter.daysInYear();
-				counter.setYear(counter.getYear() + 1);
-			}
-			while(counter.getMonth() < o.getMonth()) {
-				days += counter.daysInMonth();
-				counter.setMonth(counter.getMonth() + 1);
-			}
-			days += o.getDay() - counter.getDay();
-			return days;
+			// o > this
+			return daysBetweenYears(getYear(), o.getYear())
+				+ o.dayOfYear() - dayOfYear();
 		}
 	}
 

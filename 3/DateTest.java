@@ -3,19 +3,39 @@ import org.junit.Test;
 
 public class DateTest {
 	@Test
-	public void equals() {
+	public void equalsTest() {
 		assertEquals(new Date(1998, 4, 30), new Date(1998, 4, 30));
 		assertEquals(new Date(2017, 11, 1), new Date(2017, 11, 1));
 		assertNotEquals(new Date(2017, 11, 1), new Date(2017, 11, 2));
 	}
 
 	@Test
-	public void constructors() {
+	public void constructorsTest() {
+		// attribute setting is tested with UnvalidatedDateTest
+		// here we assure that daysSinceEpoch and y/m/d constructors
+		// are equal
 		assertEquals(new Date(17430), new Date(2017, 9, 21));
 		assertEquals(new Date(365),   new Date(1971, 1, 1));
 		assertEquals(new Date(0),   new Date(1970, 1, 1));
 		assertEquals(new Date(10346), new Date(1998, 4, 30));
 		assertEquals(new Date(16283), new Date(2014, 8, 1));
+	}
+
+	@Test
+	public void daysBetweenTest() {
+		// https://www.timeanddate.com/date/durationresult.html?m1=1&d1=1&y1=1970&m2=9&d2=22&y2=2017
+		assertEquals(17431, new Date(2017, 9, 22).daysBetween(
+			new Date(1970, 1, 1)));
+		assertEquals(7085, new Date(1998, 4, 30).daysBetween(
+			new Date(2017, 9, 22)));
+		assertEquals(3229, new Date(1996, 2, 29).daysBetween(
+			new Date(2004, 12, 31)));
+		assertEquals(8303, new Date(1987, 5, 8).daysBetween(
+			new Date(2010, 1, 30)));
+		assertEquals(21187, new Date(1952, 1, 28).daysBetween(
+			new Date(2010, 1, 30)));
+		assertEquals(40177, new Date(1900, 1, 30).daysBetween(
+			new Date(2010, 1, 30)));
 	}
 
 	@Test
@@ -53,11 +73,15 @@ public class DateTest {
 	@Test
 	public void dayOfWeekTest() {
 		assertEquals("Sunday", new Date(2005, 8, 7).getDayOfWeek());
+		assertEquals("Monday", new Date(1900, 1, 1).getDayOfWeek());
+		assertEquals("Tuesday", new Date(1970, 2, 3).getDayOfWeek());
+		assertEquals("Thursday", new Date(1998, 4, 30).getDayOfWeek());
 		assertEquals("Monday", new Date(1753, 1, 1).getDayOfWeek());
 		assertEquals("Monday", new Date(2017, 9, 11).getDayOfWeek());
 		assertEquals("Tuesday", new Date(2017, 9, 12).getDayOfWeek());
 		assertEquals("Thursday", new Date(2017, 9, 21).getDayOfWeek());
 
+		// run through a whole week
 		assertEquals("Sunday",    new Date(2017, 9, 17).getDayOfWeek());
 		assertEquals("Monday",    new Date(2017, 9, 18).getDayOfWeek());
 		assertEquals("Tuesday",   new Date(2017, 9, 19).getDayOfWeek());
@@ -77,5 +101,19 @@ public class DateTest {
 		assertNextDay(new Date(2017, 12, 31), new Date(2018, 1, 1));
 		assertNextDay(new Date(2005, 2, 28), new Date(2005, 3, 1));
 		assertNextDay(new Date(2004, 2, 28), new Date(2004, 2, 29));
+	}
+
+	public void assertNextMonth(Date d1, Date d2) {
+		d1.nextMonth();
+		assertEquals(d2, d1);
+	}
+
+	@Test
+	public void nextMonthTest() {
+		assertNextMonth(new Date(2017, 12, 31), new Date(2018, 1, 31));
+		assertNextMonth(new Date(2017, 1, 31), new Date(2017, 3, 3));
+		assertNextMonth(new Date(2005, 2, 28), new Date(2005, 3, 28));
+		assertNextMonth(new Date(2004, 2, 29), new Date(2004, 3, 29));
+		assertNextMonth(new Date(1999, 3, 3), new Date(1999, 4, 3));
 	}
 }

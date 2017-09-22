@@ -12,7 +12,7 @@ public class UnvalidatedDate extends AbstractDate {
 	}
 
 	public boolean validateMonth() {
-		return getMonth() > 0 && getMonth() <= MONTHS_IN_YEAR;
+		return getMonth() > 0 && getMonth() <= MONTHS_PER_YEAR;
 	}
 
 	/**
