@@ -35,5 +35,38 @@ public class Birthday {
 
 	public static void main(String[] args) {
 		Date birthday = promptDate("What month, day, and year were you born? ");
+
+		System.out.println(
+			"You were born on "
+			+ birthday
+			+ ", which was a "
+			+ birthday.getDayOfWeek()
+		);
+
+		if(birthday.isLeapYear()) {
+			System.out.println(
+				birthday.getYear()
+				+ " was a leap year."
+			);
+		}
+
+		Date nextBirthday = birthday.copy();
+		Date today = new Date();
+		//Date today = new Date(2010, 1, 30);
+		nextBirthday.setYear(today.getYear());
+		if(nextBirthday.compare(today) == 0) {
+			System.out.println("Happy birthday! You are now age "
+				+ (today.getYear() - birthday.getYear())
+				+ ".");
+		} else {
+			if(nextBirthday.compare(today) == -1) {
+				nextBirthday.nextYear();
+			}
+			System.out.println("It will be your birthday in "
+				+ today.daysBetween(nextBirthday)
+				+ " days.");
+		}
+		System.out.println("You are " + birthday.daysBetween(today)
+			+ " days old.");
 	}
 }
