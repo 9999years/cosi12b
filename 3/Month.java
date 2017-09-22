@@ -1,3 +1,11 @@
+/**
+ * Stores a month and performs a couple month-related calculations.
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 public enum Month {
 	January   ( 1, 31),
 	February  ( 2, 28),

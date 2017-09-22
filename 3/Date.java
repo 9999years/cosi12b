@@ -1,3 +1,11 @@
+/**
+ * Stores a date and performs various date-related calculations.
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 import java.util.TimeZone;
 import java.lang.Math;
 
@@ -53,11 +61,17 @@ public class Date extends AbstractDate {
 	protected Month month;
 
 	public int getMonth() { return month.toInt(); }
-	public Month getRichMonth() { return month; }
+	protected Month getRichMonth() { return month; }
 	public String getMonthName() { return month.toString(); }
 
-	public void setMonth(int month)   { this.month = Month.get(month); }
-	public void setMonth(Month month) { this.month = month; }
+	public void setMonth(int month) {
+		this.month = Month.get(month);
+		enforceMonthInvariants();
+	}
+	public void setMonth(Month month) {
+		this.month = month;
+		enforceMonthInvariants();
+	}
 
 	Date(int year, int month, int day) {
 		super(year, month, day);
@@ -150,13 +164,7 @@ public class Date extends AbstractDate {
 		setYear(getYear() + 1);
 	}
 
-	public void nextMonth() {
-		Month nextMonth = getRichMonth().next();
-		setMonth(nextMonth);
-		if(nextMonth == Month.January) {
-			// roll over year
-			nextYear();
-		}
+	protected void enforceMonthInvariants() {
 		// if you call nextMonth on eg. jan 31, you go to feb 31,
 		// an invalid date. this makes jan 31 -> mar 3 instead
 		if(getDay() > daysInMonth()) {
@@ -164,6 +172,16 @@ public class Date extends AbstractDate {
 			// recurse!
 			nextMonth();
 		}
+	}
+
+	public void nextMonth() {
+		Month nextMonth = getRichMonth().next();
+		setMonth(nextMonth);
+		if(nextMonth == Month.January) {
+			// roll over year
+			nextYear();
+		}
+		enforceMonthInvariants();
 	}
 
 	public void nextDay() {
@@ -182,7 +200,7 @@ public class Date extends AbstractDate {
 		return new Date(getYear(), getMonth(), getDay());
 	}
 
-	public static int daysBetweenYears(int a, int b) {
+	protected static int daysBetweenYears(int a, int b) {
 		if(a > b) {
 			return daysBetweenYears(b, a);
 		} else {
