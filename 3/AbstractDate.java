@@ -1,5 +1,5 @@
-abstract class AbstractDate {
-	static final int MONTHS_IN_YEAR = 12;
+abstract class AbstractDate implements Comparable<AbstractDate> {
+	static final int MONTHS_PER_YEAR = 12;
 	static final int LEAP_YEAR_FREQUENCY = 4;
 	static final int FEBRUARY_LEAP_DAY = 29;
 
@@ -9,6 +9,9 @@ abstract class AbstractDate {
 
 	static final Month MIN_MONTH = Month.January;
 	static final Month MAX_MONTH = Month.December;
+
+	// max day isnt really... a "thing"
+	static final int MIN_DAY = 1;
 
 	protected int year;
 	protected int month;
@@ -66,17 +69,6 @@ abstract class AbstractDate {
 			getYear(), getMonth(), getDay());
 	}
 
-	public boolean equals(Object o) {
-		if(o instanceof AbstractDate) {
-			AbstractDate d = (AbstractDate) o;
-			return getYear()      == d.getYear()
-				&& getMonth() == d.getMonth()
-				&& getDay()   == d.getDay();
-		} else {
-			return false;
-		}
-	}
-
 	protected int compareInt(int a, int b) {
 		if(a == b) {
 			return 0;
@@ -108,28 +100,19 @@ abstract class AbstractDate {
 	 *  this is a complete MESS
 	 *  should probably convert to days as int and then compare directly?
 	 */
-	public int compare(Object o) {
-		if(equals(o)) {
-			return 0;
+	public int compareTo(AbstractDate o) {
+		// compare years, months, then days
+		if(compareYear(o) != 0) {
+			return compareYear(o);
+		} else if(compareMonth(o) != 0) {
+			return compareMonth(o);
 		} else {
-			AbstractDate d = (AbstractDate) o;
-			int year = compareYear(d);
-			if(year == 1) {
-				return 1;
-			} else if(year == -1) {
-				return -1;
-			} else {
-				// years identical
-				int month = compareMonth(d);
-				if(month == 1) {
-					return 1;
-				} else if(month == -1) {
-					return -1;
-				} else {
-					// months identical
-					return compareDay(d);
-				}
-			}
+			return compareDay(o);
 		}
+	}
+
+	public boolean equals(Object o) {
+		return o instanceof AbstractDate
+			&& compareTo((AbstractDate) o) == 0;
 	}
 }

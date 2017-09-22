@@ -41,6 +41,7 @@ public class Birthday {
 			+ birthday
 			+ ", which was a "
 			+ birthday.getDayOfWeek()
+			+ "."
 		);
 
 		if(birthday.isLeapYear()) {
@@ -52,14 +53,21 @@ public class Birthday {
 
 		Date nextBirthday = birthday.copy();
 		Date today = new Date();
-		//Date today = new Date(2010, 1, 30);
+		// testing!
+		today = new Date(2010, 1, 30);
+
+		// next birthday is this year
 		nextBirthday.setYear(today.getYear());
+
 		if(nextBirthday.compare(today) == 0) {
 			System.out.println("Happy birthday! You are now age "
 				+ (today.getYear() - birthday.getYear())
 				+ ".");
 		} else {
+			// birthday is not today
 			if(nextBirthday.compare(today) == -1) {
+				// birthday already happened this year,
+				// increment the year!
 				nextBirthday.nextYear();
 			}
 			System.out.println("It will be your birthday in "
