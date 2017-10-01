@@ -17,9 +17,11 @@ run: main
 	java $(common_opts) Aviary
 
 test:
-	javac $(javac_opts) $(common_opts) $(udate)Test.java
-	java  $(common_opts) $(junit_ops) $(udate)Test
-	javac $(javac_opts) $(common_opts) $(date)Test.java
-	java  $(common_opts) $(junit_ops) $(date)Test
+	javac $(javac_opts) $(common_opts) WorldPointTest.java
+	java  $(common_opts)  $(junit_ops) WorldPointTest
+	javac $(javac_opts) $(common_opts) AbstractBirdTest.java
+	java  $(common_opts)  $(junit_ops) AbstractBirdTest
+	javac $(javac_opts) $(common_opts) BirdTest.java
+	java  $(common_opts)  $(junit_ops) BirdTest
 clean:
-	$(rm) *.class
+	rm *.class
