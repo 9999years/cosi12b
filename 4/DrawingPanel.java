@@ -1,6 +1,3 @@
-
-
-
 /**
 	The DrawingPanel class provides a simple interface for drawing persistent
 	images using a Graphics object.  An internal BufferedImage object is used
@@ -2985,4 +2982,3 @@ implements ActionListener, MouseMotionListener, Runnable, WindowListener {
 		os.write(i16 >> 8 & 0xff);
 	}
 }
-
