@@ -1,3 +1,11 @@
+/**
+ * a bird-like object with a color, position, and movement vector
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 import java.awt.Point;
 import java.awt.Color;
 
@@ -5,7 +13,6 @@ public abstract class AbstractBird implements BirdBehavior {
 	protected Point position;
 	protected Point delta = new Point(0, 0);
 	protected Color color;
-	protected int movement_speed;
 
 	public Point getPosition() {
 		 return position;
@@ -19,13 +26,13 @@ public abstract class AbstractBird implements BirdBehavior {
 	public Color getColor() {
 		 return color;
 	}
-	public void setColor(Color c) {
+	protected void setColor(Color c) {
 		 color = c;
 	}
-	public void setMovement(int dx, int dy) {
+	protected void setMovement(int dx, int dy) {
 		 setMovement(new Point(dx, dy));
 	}
-	public void setMovement(Point d) {
+	protected void setMovement(Point d) {
 		 delta = d;
 	}
 

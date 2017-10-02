@@ -1,3 +1,12 @@
+/**
+ * vulture class; moves counter-clockwise in a square of 1-unit sides
+ * colored black
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 import java.awt.Color;
 import java.awt.Point;
 
