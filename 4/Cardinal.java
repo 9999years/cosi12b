@@ -1,3 +1,6 @@
+import java.awt.Color;
+import java.awt.Point;
+
 /**
  * Cardinal that flies vertically up and down; turning at the aviary edges
  *
@@ -5,10 +8,6 @@
  * @version 1.0.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
-
-import java.awt.Color;
-import java.awt.Point;
-
 public class Cardinal extends Bird {
 	Cardinal(int x, int y) {
 		super(x, y);

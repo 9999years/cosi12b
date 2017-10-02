@@ -1,3 +1,6 @@
+import java.awt.Point;
+import java.awt.Color;
+
 /**
  * Assignment spec; what a bird should do
  *
@@ -5,18 +8,16 @@
  * @version 1.0.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
-
-import java.awt.Point;
-import java.awt.Color;
-
-public interface BirdBehavior extends AviaryConstants {
+public interface BirdBehavior {
 	/**
 	 * fetch the bird's color as a java.awt.Color
+	 * @return a Color representing the bird's color
 	 */
 	Color getColor();
 
 	/**
 	 * fetch the bird's position to integer position as a java.awt.Point
+	 * @return a Point representing the bird's position
 	 */
 	Point getPosition();
 
