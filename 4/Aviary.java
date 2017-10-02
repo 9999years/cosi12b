@@ -15,10 +15,10 @@ public class Aviary {
 
 		//create several birds
 		Bird[] birds = {
-			new Cardinal(7,4), new Cardinal(3, 8),
-			new Hummingbird(2, 9), new Hummingbird(16, 11),
-			new Bluebird(4, 15), new Bluebird(8, 1),
-			new Vulture(3, 2), new Vulture(18, 14)
+			new Cardinal   (7,  4), new Cardinal   ( 3,  8),
+			new Hummingbird(2,  9), new Hummingbird(16, 11),
+			new Bluebird   (4, 15), new Bluebird   ( 8,  1),
+			new Vulture    (3,  2), new Vulture    (18, 14)
 		};
 
 		while (true) {
@@ -30,7 +30,9 @@ public class Aviary {
 			for (Bird bird : birds) {
 				bird.fly();
 				g.setColor(bird.getColor());
+				System.out.println(bird.getColor());
 				Point pos = bird.getPosition();
+				System.out.println(pos);
 				g.fillOval(
 					(int) pos.getX() * AviaryConstants.PIXELS,
 					(int) pos.getY() * AviaryConstants.PIXELS,
