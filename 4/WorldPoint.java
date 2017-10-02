@@ -140,8 +140,8 @@ public class WorldPoint {
 
 	public Point toPoint() {
 		return new Point(
-			worldOrigin.x + position.x,
-			worldOrigin.y + position.y
+			position.x,
+			position.y
 		);
 	}
 

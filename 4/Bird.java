@@ -1,4 +1,5 @@
 import java.awt.Point;
+import java.awt.Color;
 
 /**
  * a bird with an aviary it's confined to

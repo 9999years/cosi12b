@@ -17,6 +17,8 @@ run: main
 	java $(common_opts) Aviary
 
 test:
+	javac $(javac_opts) $(common_opts) MiscTest.java
+	java  $(common_opts)  $(junit_ops) MiscTest
 	javac $(javac_opts) $(common_opts) WorldPointTest.java
 	java  $(common_opts)  $(junit_ops) WorldPointTest
 	javac $(javac_opts) $(common_opts) AbstractBirdTest.java
