@@ -1,3 +1,6 @@
+import java.awt.Color;
+import java.awt.Point;
+
 /**
  * vulture class; moves counter-clockwise in a square of 1-unit sides
  * colored black
@@ -6,10 +9,6 @@
  * @version 1.0.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
-
-import java.awt.Color;
-import java.awt.Point;
-
 public class Vulture extends Bird {
 	Vulture(int x, int y) {
 		super(x, y);

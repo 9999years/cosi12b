@@ -1,3 +1,6 @@
+import java.awt.Color;
+import java.util.Random;
+
 /**
  * hummingbird class; moves to a random location within the arena every turn
  * colored magenta
@@ -6,10 +9,6 @@
  * @version 1.0.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
-
-import java.awt.Color;
-import java.util.Random;
-
 public class Hummingbird extends Bird {
 	protected Random generator = new Random();
 

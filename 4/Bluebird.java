@@ -1,3 +1,6 @@
+import java.awt.Color;
+import java.awt.Point;
+
 /**
  * Bluebird class; zig-zags up and down by 1 unit and bounces left and right
  * across the arena
@@ -7,10 +10,6 @@
  * @version 1.0.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
-
-import java.awt.Color;
-import java.awt.Point;
-
 public class Bluebird extends Bird {
 	Bluebird(int x, int y) {
 		super(x, y);

@@ -1,5 +1,13 @@
 import java.awt.Point;
 
+/**
+ * a point confined to a certain area, capable of detecting when it's on an
+ * edge or a corner
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class WorldPoint {
 	enum Side {
 		None,
@@ -30,6 +38,12 @@ public class WorldPoint {
 	 */
 	protected Point worldEnd;
 
+	/**
+	 * @param position the point's starting position
+	 * @param worldSize the world's size; coordinates up to worldSize.x - 1,
+	 * worldSize.y - 1 are legal values
+	 * @throws IllegalArgumentException when position is beyond the worldSize
+	 */
 	WorldPoint(Point position, Point worldSize)
 			throws IllegalArgumentException {
 		// end = orig + size - <1, 1>
@@ -49,6 +63,11 @@ public class WorldPoint {
 	public boolean onBottomEdge() {
 		return vertical == Side.Bottom;
 	}
+
+	/**
+	 * on the top or the bottom; not a vertical-facing (eg up-down) edge
+	 * like the left and right edges
+	 */
 	public boolean onVerticalEdge() {
 		return vertical != Side.None;
 	}
@@ -59,6 +78,11 @@ public class WorldPoint {
 	public boolean onRightEdge() {
 		return horizontal == Side.Right;
 	}
+
+	/**
+	 * on the left or the right; not a horizontal-facing (eg left-right) edge
+	 * like the top and bottom edges
+	 */
 	public boolean onHorizontalEdge() {
 		return horizontal != Side.None;
 	}
@@ -72,6 +96,8 @@ public class WorldPoint {
 
 	/**
 	 * makes sure edge variables correctly reflect position
+	 * throws IllegalArgumentException which bubbles up call stack if
+	 * necessary for error handling
 	 */
 	protected void updateEdges() throws IllegalArgumentException {
 		if(
@@ -107,6 +133,10 @@ public class WorldPoint {
 		}
 	}
 
+	/**
+	 * changes the point's position entirely
+	 * @param l the new location
+	 */
 	public void setPosition(Point l) throws IllegalArgumentException {
 		position = l;
 		updateEdges();
@@ -116,6 +146,10 @@ public class WorldPoint {
 		setPosition(new Point(x, y));
 	}
 
+	/**
+	 * moves the point's position relative to its current position via a delta
+	 * @param delta how much to move the point relative to its current position
+	 */
 	public void move(Point delta) throws IllegalArgumentException {
 		setPosition(
 			position.x + delta.x,
@@ -138,6 +172,7 @@ public class WorldPoint {
 	}
 
 	/**
+	 * something like:
 	 * java.awt.Point[x=0,y=0] between java.awt.Point[x=0,y=0] and
 	 * java.awt.Point[x=19,y=19]
 	 */

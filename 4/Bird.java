@@ -1,3 +1,6 @@
+import java.awt.Point;
+import java.awt.Color;
+
 /**
  * a modified AbstractBird confined to a certain aviary (in this case, 20x20
  * units); guarenteed to not exceed [0, AviarySize)
@@ -8,33 +11,39 @@
  * @version 1.0.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
-
-import java.awt.Point;
-import java.awt.Color;
-
-/**
- * a bird with an aviary it's confined to
- */
 public abstract class Bird extends AbstractBird {
 	protected WorldPoint position;
 	public static final Point AviarySize = new Point(
 		AviaryConstants.SIZE,
 		AviaryConstants.SIZE);
 
-	public Point getPosition() { return position.toPoint(); }
+	public Point getPosition() {
+		return position.toPoint();
+	}
 	protected void setPosition(int x, int y) {
 		setPosition(new Point(x, y));
 	}
-	protected void setPosition(Point p) { position.setPosition(p); }
+	protected void setPosition(Point p) {
+		position.setPosition(p);
+	}
 
-	// new method
-	public WorldPoint getRichPosition() { return position; }
+	// new method for Bird
+	/**
+	 * provides a richer interface, can tell if the bird is on the edge of
+	 * the aviary
+	 */
+	public WorldPoint getRichPosition() {
+		return position;
+	}
 
 	Bird(int x, int y) {
 		position = new WorldPoint(new Point(x, y), AviarySize);
 	}
 
-	protected void move() {
+	/**
+	 * movement is a little different
+	 */
+	protected void move() throws IllegalArgumentException {
 		position.move(delta);
 	}
 }
