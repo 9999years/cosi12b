@@ -7,13 +7,27 @@ public abstract class AbstractBird implements BirdBehavior {
 	protected Color color;
 	protected int movement_speed;
 
-	public Point getPosition()               { return position;            }
-	protected void setPosition(Point p)      { setPosition(p.x, p.y);      }
-	protected void setPosition(int x, int y) { position.setLocation(x, y); }
-	public Color getColor()                  { return color;               }
-	public void setColor(Color c)            { color = c;                  }
-	public void setMovement(int dx, int dy)  { setMovement(new Point(dx, dy)); }
-	public void setMovement(Point d)         { delta = d;                  }
+	public Point getPosition() {
+		 return position;
+	}
+	protected void setPosition(Point p) {
+		 setPosition(p.x, p.y);
+	}
+	protected void setPosition(int x, int y) {
+		 position.setLocation(x, y);
+	}
+	public Color getColor() {
+		 return color;
+	}
+	public void setColor(Color c) {
+		 color = c;
+	}
+	public void setMovement(int dx, int dy) {
+		 setMovement(new Point(dx, dy));
+	}
+	public void setMovement(Point d) {
+		 delta = d;
+	}
 
 	AbstractBird() { }
 

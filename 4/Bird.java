@@ -10,12 +10,14 @@ public abstract class Bird extends AbstractBird {
 		AviaryConstants.SIZE,
 		AviaryConstants.SIZE);
 
-	public Point getPosition()               { return position.toPoint();    }
-	protected void setPosition(int x, int y) { setPosition(new Point(x, y)); }
-	protected void setPosition(Point p)      { position.setPosition(p);      }
+	public Point getPosition() { return position.toPoint(); }
+	protected void setPosition(int x, int y) {
+		setPosition(new Point(x, y));
+	}
+	protected void setPosition(Point p) { position.setPosition(p); }
 
 	// new method
-	public WorldPoint getRichPosition()      { return position;              }
+	public WorldPoint getRichPosition() { return position; }
 
 	Bird(int x, int y) {
 		position = new WorldPoint(new Point(x, y), AviarySize);
