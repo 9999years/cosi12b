@@ -1,3 +1,11 @@
+/**
+ * Cardinal that flies vertically up and down; turning at the aviary edges
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 import java.awt.Color;
 import java.awt.Point;
 

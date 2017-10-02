@@ -1,3 +1,14 @@
+/**
+ * a modified AbstractBird confined to a certain aviary (in this case, 20x20
+ * units); guarenteed to not exceed [0, AviarySize)
+ * position field (accessable as a WorldPoint with getRichPosition()) can
+ * detect edge status of bird
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 import java.awt.Point;
 import java.awt.Color;
 
