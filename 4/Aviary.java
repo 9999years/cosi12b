@@ -30,9 +30,7 @@ public class Aviary {
 			for (Bird bird : birds) {
 				bird.fly();
 				g.setColor(bird.getColor());
-				System.out.println(bird.getColor());
 				Point pos = bird.getPosition();
-				System.out.println(pos);
 				g.fillOval(
 					(int) pos.getX() * AviaryConstants.PIXELS,
 					(int) pos.getY() * AviaryConstants.PIXELS,
@@ -41,7 +39,7 @@ public class Aviary {
 				);
 
 			}
-			panel.sleep(500);
+			panel.sleep(100);
 		}
 	}
 }
