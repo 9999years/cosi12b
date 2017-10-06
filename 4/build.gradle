@@ -1,0 +1,53 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext.junitPlatformVersion = '1.0.0'
+ext.junitJupiterVersion  = '5.0.0'
+
+apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'application'
+
+run {
+	mainClassName = 'Aviary'
+}
+
+jar {
+	baseName = 'Aviary'
+	version = '1.0.0-SNAPSHOT'
+	manifest {
+		attributes(
+			'Implementation-Title': baseName,
+			'Implementation-Version': version,
+			'Main-Class': 'Aviary'
+		)
+	}
+}
+
+junitPlatform {
+	filters {
+		engines {
+			 include 'junit-jupiter'
+		}
+		tags {
+			// include 'fast'
+			exclude 'slow'
+		}
+	}
+	 enableStandardTestTask true
+}
+
+dependencies {
+	testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+}

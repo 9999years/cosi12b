@@ -1,5 +1,5 @@
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.awt.Point;
 
@@ -21,6 +21,7 @@ public class WorldPointTest {
 		assertFalse(p.onBottomEdge());
 		assertTrue(p.onCorner());
 
+		// size - 1
 		p = make(19, 19);
 		assertTrue(p.onEdge());
 		assertFalse(p.onTopEdge());

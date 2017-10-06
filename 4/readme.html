@@ -1,0 +1,25 @@
+<pre><code>Rebecca Turner
+2017-10-01
+PA4</code></pre>
+<h1 id="files">Files</h1>
+<p>Main files are in <code>src/main/java</code> and can be compiled with <code>gradle build</code> and run with <code>gradle run</code>.</p>
+<p>Tests are in <code>src/test/java</code> and can be run with <code>gradle test</code>.</p>
+<h1 id="birds">Birds</h1>
+<p>The assignment requires the implementation of several species of bird objects that all have shared traits (<code>Color getColor()</code>, <code>Point getPosition()</code>, and <code>void fly()</code>), represented by the <code>BirdBehavior</code> interface. <code>BirdBehavior</code> represents the assignment’s requirements; what the <code>Aviary</code> program requires from a <code>Bird</code>.</p>
+<p><code>BirdBehavior</code> is implemented by <code>AbstractBird</code>, an abstract class that outlines several getter and setter methods which can be used by all the individual birds.</p>
+<p><code>AbstractBird</code> lays out the following properties:</p>
+<ul>
+<li>State:</li>
+<li>Readable color</li>
+<li>Readable position</li>
+<li>Readable movement vector</li>
+<li>Behavior:</li>
+<li>A <code>fly()</code> method, which by default calls <code>turn()</code> and <code>move()</code>
+<ul>
+<li><code>turn()</code> provides a space for logic to change the movement vector (a <code>Point</code>)</li>
+<li><code>move()</code> shifts the bird’s position by the movement vector</li>
+</ul></li>
+</ul>
+<p>Sub-classes are meant to override <code>turn()</code> and <code>move()</code>; An alternative design would have left them blank in <code>AbstractBird</code>, letting the compiler enforce their implementation. (Because <code>AbstractBird</code> is, well, abstract, it’s not required to implement the entire <code>BirdBehavior</code> interface; leaving <code>turn()</code> and <code>move()</code> out of <code>AbstractBird</code> would make the subclasses implement the methods before compiling.) This approach was abandoned because several types of birds require only one type of movement; the cardinal, bluebird, and vultures only ever turn and the hummingbird only moves without any consistent turning pattern. To keep the sub-classes slim (<code>Cardinal.java</code> only contains five statements and one branch), implementations of <code>turn()</code> and <code>move()</code> I thought would be maximally useful to all sub-classes were provided.</p>
+<p>The <code>AbstractBird</code> is extended by another abstract class, <code>Bird</code>, with the same behavior and one major difference; a <code>Bird</code> is confined to an aviary, a pre-defined world with coordinates it will never venture out of. Internally, this means that the <code>Point position</code> field is replaced with a <code>WorldPoint position</code> field which ensures its position will never venture past the aviary and provides methods for determining which edges of the aviary, if any, the bird is on (several birds required these to reverse course when approaching an edge).</p>
+<p>Both <code>Bird</code> and <code>AbstractBird</code> are abstract because they miss key functionalities; notably, the very things the assignment stipulates: a color and the ability to fly. What these classes provide, however, is a rich framework for building flying and coloring behavior into subclasses that represent real birds. The rich framework allows subclasses to be quite short — the <code>Bluebird</code>’s flying logic is six statements long, including the initialization setup. However, a bird with an undefined color and undefined flying ability is meaningless, and so <code>Bird</code> and <code>AbstractBird</code> are abstract classes to prevent similarly meaningless instantiations.</p>

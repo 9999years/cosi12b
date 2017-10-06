@@ -2,6 +2,13 @@
     2017-10-01
     PA4
 
+# Files
+
+Main files are in `src/main/java` and can be compiled with `gradle build` and
+run with `gradle run`.
+
+Tests are in `src/test/java` and can be run with `gradle test`.
+
 # Birds
 
 The assignment requires the implementation of several species of bird objects
@@ -22,7 +29,8 @@ individual birds.
   * Readable movement vector
 * Behavior:
   * A `fly()` method, which by default calls `turn()` and `move()`
-    * `turn()` provides a space for logic to change the movement vector
+    * `turn()` provides a space for logic to change the movement vector (a
+      `Point`)
     * `move()` shifts the bird’s position by the movement vector
 
 Sub-classes are meant to override `turn()` and `move()`; An alternative design
