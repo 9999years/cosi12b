@@ -56,38 +56,8 @@ public class Birthday {
 		return d.validate();
 	}
 
-	public static Date getToday(String[] args) {
-		Date today;
-		if(args.length >= 2 && (
-				args[0].equals("-d")
-				|| args[0].equals("--date"))) {
-			if(args.length == 2) {
-				today = parseDate(args[1]);
-			} else if(args.length == 4) {
-				today = parseDate(String.join(" ",
-					Arrays.asList(args).subList(1, 4)));
-			}
-
-			if(today == null) {
-				System.exit(-1);
-			}
-			System.out.println("Let's pretend today is "
-				+ today.getDayOfWeek()
-				+ ", "
-				+ today.getMonthName()
-				+ " "
-				+ today.getDay()
-				+ ", "
-				+ today.getYear()
-				+ ".");
-			return today;
-		} else {
-			today = new Date();
-		}
-	}
-
 	public static void main(String[] args) {
-		Date today = getToday(args);
+		Date today = new Date();
 
 		Date birthday = promptDate("What month, day, and year were you born? ");
 

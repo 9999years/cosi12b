@@ -2,3 +2,6 @@
 *.class
 **/docs/**
 *.jar
+**/.gradle/**
+**/gradle/**
+**/build/**

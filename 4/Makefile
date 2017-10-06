@@ -9,21 +9,5 @@ docs: FORCE
 
 FORCE:
 
-main: FORCE
-	javac $(javac_opts) $(common_opts) *.java
-
-run: main
-	javac $(javac_opts) $(common_opts) Aviary.java
-	java $(common_opts) Aviary
-
-test:
-	javac $(javac_opts) $(common_opts) MiscTest.java
-	java  $(common_opts)  $(junit_ops) MiscTest
-	javac $(javac_opts) $(common_opts) WorldPointTest.java
-	java  $(common_opts)  $(junit_ops) WorldPointTest
-	javac $(javac_opts) $(common_opts) AbstractBirdTest.java
-	java  $(common_opts)  $(junit_ops) AbstractBirdTest
-	javac $(javac_opts) $(common_opts) BirdTest.java
-	java  $(common_opts)  $(junit_ops) BirdTest
-clean:
-	rm *.class
+zip:
+	7z a -wsrc/main/java -mx=5 -tzip pa4.zip @zipfiles.txt
