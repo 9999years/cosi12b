@@ -7,14 +7,18 @@ else
 	rm=rm
 endif
 
-docs: FORCE
-	javadoc $(javac_opts) $(common_opts) -d docs LetterInventory.java
+LetterInventory=LetterInventory.java
+LetterInventoryTest=LetterInventoryTest.java
+FrequencyAnalysis=FrequencyAnalysis.java
+
+docs: FORCE $(LetterInventory)
+	javadoc $(javac_opts) $(common_opts) -d docs $(LetterInventory)
 FORCE:
-main:
-	javac $(javac_opts) $(common_opts) LetterInventory.java
-run: main
-	javac $(javac_opts) $(common_opts)  FrequencyAnalysis.java
-	java $(common_opts) FrequencyAnalysis
+main: $(LetterInventory)
+	javac $(javac_opts) $(common_opts) $(LetterInventory)
+run: main $(FrequencyAnalysis)
+	javac $(javac_opts) $(common_opts) $(FrequencyAnalysis)
+	java $(common_opts) $(FrequencyAnalysis)
 test: mytests
 	javac $(javac_opts) $(common_opts) Test1.java
 	java  $(common_opts)               Test1
@@ -23,7 +27,7 @@ test: mytests
 	javac $(javac_opts) $(common_opts) Test3.java
 	java  $(common_opts)               Test3
 mytests:
-	javac $(javac_opts) $(common_opts) LetterInventoryTest.java
+	javac $(javac_opts) $(common_opts) $(LetterInventoryTest)
 	java  $(common_opts) org.junit.runner.JUnitCore LetterInventoryTest
 clean:
 	$(rm) *.class
