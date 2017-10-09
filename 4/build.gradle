@@ -11,41 +11,34 @@ repositories {
 	mavenCentral()
 }
 
-ext.junitPlatformVersion = '1.0.0'
-ext.junitJupiterVersion  = '5.0.0'
-
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'application'
 
+mainClassName = 'Aviary'
+
 run {
-	mainClassName = 'Aviary'
+	mainClassName = mainClassName
 }
 
 jar {
-	baseName = 'Aviary'
+	baseName = mainClassName
 	version = '1.0.0-SNAPSHOT'
 	manifest {
 		attributes(
 			'Implementation-Title': baseName,
 			'Implementation-Version': version,
-			'Main-Class': 'Aviary'
+			'Main-Class': mainClassName
 		)
 	}
 }
 
 junitPlatform {
-	filters {
-		engines {
-			 include 'junit-jupiter'
-		}
-		tags {
-			// include 'fast'
-			exclude 'slow'
-		}
-	}
 	 enableStandardTestTask true
 }
+
+ext.junitPlatformVersion = '1.0.0'
+ext.junitJupiterVersion  = '5.0.0'
 
 dependencies {
 	testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
