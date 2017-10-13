@@ -1,6 +1,9 @@
 import java.util.HashSet;
 
+/**
+ * node with an index and probabilities from its context to the next tokens
+ */
 public class Node<T> {
-	T value;
-	HashSet<NodeLink<T>> links;
+	int inx;
+	HashSet<Edge<T>> possibilities;
 }
