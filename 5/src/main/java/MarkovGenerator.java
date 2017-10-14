@@ -68,8 +68,13 @@ public class MarkovGenerator<T> {
 		}
 
 		for(int limit = Math.max(0, inx1 - length);
-				inx1 > limit; inx1--) {
+				inx1 > limit; inx1--, inx2--) {
 			if(!corpus.get(inx2).equals(corpus.get(inx1))) {
+				System.out.println(
+					corpus.get(inx1)
+					+ " != "
+					+ corpus.get(inx2)
+				);
 				return false;
 			}
 		}
