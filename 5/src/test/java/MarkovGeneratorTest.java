@@ -15,6 +15,7 @@ public class MarkovGeneratorTest {
 
 	@Test
 	void matchTest() {
+		//                           0  1  2  3  4  5
 		Integer[] a = new Integer[] {1, 2, 3, 1, 2, 3};
 		matchTest(a, 2, 5, true);
 		matchTest(a, 0, 3, true);
@@ -22,10 +23,13 @@ public class MarkovGeneratorTest {
 		matchTest(a, 5, 2, true);
 		matchTest(a, 3, 0, true);
 		matchTest(a, 4, 1, true);
+
 		matchTest(a, 0, 0, true);
 		matchTest(a, 5, 5, true);
 
 		// <0 inx
 		matchTest(a, 5, -1, false);
+		matchTest(a, 3, 4, false);
+		matchTest(a, 1, 3, false);
 	}
 }
