@@ -11,15 +11,7 @@ public class CharGenerator extends MarkovGenerator<Integer> {
 	}
 
 	int getNextChar() {
-		int n = super.next();
-		System.out.println("seed is: "
-			+ new String(
-				corpus.subList(inx - length, inx)
-					.stream()
-					.mapToInt(i -> i)
-					.toArray(),
-				0, length)
-		);
-		return n;
+		System.out.println(getPossibilities);
+		return super.next();
 	}
 }
