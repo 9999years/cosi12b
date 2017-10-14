@@ -2,7 +2,6 @@ package becca.markov;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.HashSet;
 import java.lang.Math;
 
 public class MarkovGenerator<T> {
@@ -53,28 +52,25 @@ public class MarkovGenerator<T> {
 		return length + rand.nextInt(corpus.size() - length);
 	}
 
-	protected boolean matches(int inx1, int inx2) {
-		if(inx1 < 0 || inx2 < 0) {
+	protected boolean matches(int i, int j) {
+		if(i < 0 || j < 0) {
 			return false;
 		}
 
-		if(inx1 > inx2) {
+		// ensure i < j
+		if(i > j) {
 			// swap
-			int tmp = inx1;
-			inx1 = inx2;
-			inx2 = tmp;
-		} else if(inx1 == inx2) {
+			int tmp = i;
+			i = j;
+			j = tmp;
+		} else if(i == j) {
 			return true;
 		}
 
-		for(int limit = Math.max(0, inx1 - length);
-				inx1 > limit; inx1--, inx2--) {
-			if(!corpus.get(inx2).equals(corpus.get(inx1))) {
-				System.out.println(
-					corpus.get(inx1)
-					+ " != "
-					+ corpus.get(inx2)
-				);
+		for(int limit = Math.max(0, i - length);
+				i > limit;
+				i--, j--) {
+			if(!corpus.get(j).equals(corpus.get(i))) {
 				return false;
 			}
 		}
@@ -82,11 +78,40 @@ public class MarkovGenerator<T> {
 		return true;
 	}
 
-	public T next() {
+	protected ArrayList<Integer> getPossibilities() {
 		if(inx < 0) {
 			inx = startingIndex();
 		}
-		return corpus.get(0);
+
+		ArrayList<Integer> possibilities = new ArrayList<>();
+
+		for(int i = 0; i < corpus.size() - 1; i++) {
+			if(matches(inx, i)) {
+				possibilities.add(i);
+			}
+		}
+
+		return possibilities;
+	}
+
+	protected int nextIndex() {
+		if(inx < 0) {
+			inx = startingIndex();
+		}
+
+		ArrayList<Integer> possibilities = getPossibilities();
+		if(possibilities.size() == 0) {
+			inx = startingIndex();
+			return nextIndex();
+		}
+
+		inx = possibilities.get(rand.nextInt(possibilities.size())) + 1;
+
+		return inx;
+	}
+
+	public T next() {
+		return corpus.get(nextIndex());
 	}
 
 	public String toString() {
