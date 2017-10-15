@@ -49,7 +49,7 @@ public class MarkovGenerator<T> {
 	}
 
 	protected int startingIndex() {
-		return length + rand.nextInt(corpus.size() - length);
+		return rand.nextInt(corpus.size() - length);
 	}
 
 	protected boolean matches(int i, int j) {
@@ -67,9 +67,9 @@ public class MarkovGenerator<T> {
 			return true;
 		}
 
-		for(int limit = Math.max(0, i - length);
-				i > limit;
-				i--, j--) {
+		for(int limit = Math.min(i + length, corpus.size());
+				i < limit;
+				i++, j++) {
 			if(!corpus.get(j).equals(corpus.get(i))) {
 				return false;
 			}
@@ -87,7 +87,7 @@ public class MarkovGenerator<T> {
 
 		for(int i = 0; i < corpus.size() - 1; i++) {
 			if(matches(inx, i)) {
-				possibilities.add(i);
+				possibilities.add(i + 1);
 			}
 		}
 
@@ -105,7 +105,7 @@ public class MarkovGenerator<T> {
 			return nextIndex();
 		}
 
-		inx = possibilities.get(rand.nextInt(possibilities.size())) + 1;
+		inx = possibilities.get(rand.nextInt(possibilities.size()));
 
 		return inx;
 	}
