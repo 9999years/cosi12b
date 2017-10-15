@@ -55,10 +55,8 @@ public class MarkovGenerator<T> {
 	protected boolean matches(int i, int j) {
 		if(i < 0 || j < 0) {
 			return false;
-		}
-
-		// ensure i < j
-		if(i > j) {
+		} else if(i > j) {
+			// ensure i < j
 			// swap
 			int tmp = i;
 			i = j;
@@ -67,14 +65,17 @@ public class MarkovGenerator<T> {
 			return true;
 		}
 
-		for(int limit = Math.min(i + length, corpus.size());
-				i < limit;
+		// compare i, j and increment
+		// create a limit variable to ensure i < j < corpus.size
+		for(int limit = Math.min(j + length, corpus.size());
+				j < limit;
 				i++, j++) {
-			if(!corpus.get(j).equals(corpus.get(i))) {
+			if(!corpus.get(i).equals(corpus.get(j))) {
 				return false;
 			}
 		}
 
+		// all comparisons successful
 		return true;
 	}
 
