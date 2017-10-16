@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.FileNotFoundException;
 
-import java.io.UnsupportedEncodingException;
-
 public class RandomWriter {
 	public static void main(String[] args) {
 		MarkovArguments arguments = new MarkovArguments();
