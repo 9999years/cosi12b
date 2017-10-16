@@ -19,13 +19,12 @@ import java.lang.StringBuilder;
 public class CharGenerator extends MarkovGenerator<Integer> {
 	CharGenerator(String source, int k, int seed) {
 		this(source, k);
-		super.seed(seed);
+		seed(seed);
 	}
 
 	CharGenerator(String source, int k) {
 		// convert source string to Integer array of codepoints
-		super(k);
-		consume(source.codePoints());
+		super(source.codePoints(), k);
 	}
 
 	int getNextChar() {

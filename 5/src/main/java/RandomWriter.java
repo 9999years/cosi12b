@@ -235,8 +235,6 @@ class MarkovArguments {
 			return new String(
 				Files.readAllBytes(inputFile.toPath()),
 				StandardCharsets.UTF_8);
-		} catch(FileNotFoundException e) {
-			return "";
 		} catch(IOException e) {
 			return "";
 		}

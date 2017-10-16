@@ -2,8 +2,8 @@ package becca.markov;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 import java.util.stream.BaseStream;
+import java.util.Iterator;
 import java.util.Random;
 import java.lang.Math;
 
@@ -26,6 +26,14 @@ public class MarkovGenerator<T> {
 	 */
 	protected int inx = -1;
 
+	/**
+	 * approximately one billion constructors so args are:
+	 * [U corpus] int length [int seed]
+	 * and U = T[]
+	 *       | Iterator<T>
+	 *       | BaseStream<T, S extends BaseStream<T, S>>
+	 *       | List<T>
+	 */
 	MarkovGenerator(int length) {
 		this.length = length;
 		corpus = new ArrayList<T>();
@@ -42,8 +50,38 @@ public class MarkovGenerator<T> {
 	}
 
 	MarkovGenerator(T[] corpus, int length, int seed) {
-		this(corpus, length);
-		seed(seed);
+		this(length, seed);
+		consume(corpus);
+	}
+
+	MarkovGenerator(Iterator<T> corpus, int length) {
+		this(length);
+		consume(corpus);
+	}
+
+	MarkovGenerator(Iterator<T> corpus, int length, int seed) {
+		this(length, seed);
+		consume(corpus);
+	}
+
+	<S extends BaseStream<T, S>> MarkovGenerator(BaseStream<T, S> corpus, int length) {
+		this(length);
+		consume(corpus);
+	}
+
+	<S extends BaseStream<T, S>> MarkovGenerator(BaseStream<T, S> corpus, int length, int seed) {
+		this(length, seed);
+		consume(corpus);
+	}
+
+	MarkovGenerator(List<T> corpus, int length) {
+		this(length);
+		consume(corpus);
+	}
+
+	MarkovGenerator(List<T> corpus, int length, int seed) {
+		this(length, seed);
+		consume(corpus);
 	}
 
 	public void seed(long seed) {
@@ -51,7 +89,8 @@ public class MarkovGenerator<T> {
 	}
 
 	/**
-	 * absorb an element T at the end of the corpus
+	 * absorb an element T at the end of the corpus from a singlet or
+	 * array/stream/list/iterator
 	 */
 	public void consume(T t) {
 		corpus.add(t);
@@ -67,7 +106,10 @@ public class MarkovGenerator<T> {
 		i.forEachRemaining(t -> consume(t));
 	}
 
-	public void consume(BaseStream<T, S extends BaseStream<T, S>> s) {
+	/**
+	 * for IntStream and the like, e.g. from String.codePoints()
+	 */
+	public <S extends BaseStream<T, S>> void consume(BaseStream<T, S> s) {
 		consume(s.iterator());
 	}
 
