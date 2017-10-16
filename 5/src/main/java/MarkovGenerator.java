@@ -128,7 +128,7 @@ public class MarkovGenerator<T> {
 	 * assign a new starting index to inx
 	 */
 	protected void newStartingIndex() {
-		inx = rand.nextInt(corpus.size() - length);
+		inx = rand.nextInt(corpus.size() - length) + length;
 	}
 
 	protected void ensureIndexValid() {
@@ -181,7 +181,7 @@ public class MarkovGenerator<T> {
 
 		for(int i = 0; i < corpus.size() - length; i++) {
 			if(matches(inx, i)) {
-				possibilities.add(i + 1);
+				possibilities.add(i + length + 1);
 			}
 		}
 
