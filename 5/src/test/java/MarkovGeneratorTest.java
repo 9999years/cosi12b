@@ -13,7 +13,7 @@ public class MarkovGeneratorTest {
 			+ inx1 + " and " + inx2);
 	}
 
-	//@Test
+	@Test
 	void matchTest() {
 		//                           0  1  2  3  4  5
 		Integer[] a = new Integer[] {1, 2, 3, 1, 2, 3};

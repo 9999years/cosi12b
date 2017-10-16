@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 public class CharGeneratorTest {
-	//@Test
+	@Test
 	void integrationTest() {
 		String src = "Now imagine doing a level k analysis by"
 			+ " determining the probability with which each"
@@ -19,29 +19,34 @@ public class CharGeneratorTest {
 			+ " probabilities revealed by the analysis.";
 
 		assertEquals(
-			"ha 'oshieea kc'stetod rvo5ern be oyie Te",
+			"yets  aoapyhpbligeitAe dtpaerslvittlac )",
 			new CharGenerator(src, 0, 9320493).next(40),
 			"k=0 integration test"
 		);
 		assertEquals(
-			"ce blelly e Tobarabye w r' chee Sanil ot",
+			"o blelly e Tobarabye w r' chee Sanil ote",
 			new CharGenerator(src, 1, 9320493).next(40),
 			"k=1 integration test"
 		);
 		assertEquals(
-			"ability with which each character based on"
-			+ " the probabilities reveal that 'r' follows"
-			+ " ''Sawyer for ex",
-			new CharGenerator(src, 5, 9320492).next(100),
+			"ossing andoine prevel k character. After",
+			new CharGenerator(src, 2, 5).next(40),
+			"k=2 integration test"
+		);
+		// corpus isn't long enough to make these useful
+		// buuuut they test the index generation i guess
+		assertEquals(
+			"ties reveal that 'r' follows ''Sawyer fo",
+			new CharGenerator(src, 5, 9320492).next(40),
 			"k=5 integration test"
 		);
 		assertEquals(
-			"t characters (the seed) and the probabil",
+			"racters (the seed) and the probability w",
 			new CharGenerator(src, 5, 9320493).next(40),
 			"k=5 integration test"
 		);
 		assertEquals(
-			" each characters (the seed) and the prob",
+			"acter follows every possible sequence of",
 			new CharGenerator(src, 10, 9320493).next(40),
 			"k=10 integration test"
 		);
