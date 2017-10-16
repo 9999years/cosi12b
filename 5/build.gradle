@@ -43,6 +43,10 @@ test {
     }
 }
 
+task zip(type:Exec) {
+	commandLine '7z', 'a', '-mx=5', '-tzip', 'pa5.zip', 'src/*/*/*.java', 'build.gradle'
+}
+
 ext.junitPlatformVersion = '1.0.0'
 ext.junitJupiterVersion  = '5.0.0'
 

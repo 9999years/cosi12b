@@ -1,8 +1,21 @@
 package becca.markov;
 
-import java.lang.Math;
 import java.lang.StringBuilder;
 
+/**
+ * markov chain class for strings; operates on characters internally because
+ * java `String`s, due to being encoded in utf-16, encode codepoints above
+ * U+FFFF as two 2-byte `char`s; this means that:
+ *
+ * 1. a String of .length() N is not guarenteed to be N codepoints long
+ * 2. the N-th character of a String S is not guarenteed to be retrieved with
+ *    S[N]
+ * 3. a java `char` cannot represent any Unicode codepoint
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class CharGenerator extends MarkovGenerator<Integer> {
 	CharGenerator(String source, int k, int seed) {
 		this(source, k);
@@ -10,7 +23,9 @@ public class CharGenerator extends MarkovGenerator<Integer> {
 	}
 
 	CharGenerator(String source, int k) {
-		super(source.codePoints().boxed().toArray(Integer[]::new), k);
+		// convert source string to Integer array of codepoints
+		super(k);
+		consume(source.codePoints());
 	}
 
 	int getNextChar() {
@@ -18,7 +33,7 @@ public class CharGenerator extends MarkovGenerator<Integer> {
 	}
 
 	/**
-	 * get the string representation of the next n characters from the
+	 * get the string representation of the next n codepoints from the
 	 * generator
 	 */
 	String next(int n) {
