@@ -1,14 +1,18 @@
 package becca.markov;
 
 import java.util.ArrayList;
+// just for constructors
 import java.util.List;
 import java.util.stream.BaseStream;
 import java.util.Iterator;
 import java.util.Random;
+// min
 import java.lang.Math;
 
 /**
- * generic markov generator class for arbitrary sequences
+ * generic markov generator class for arbitrary sequences of elements of type
+ * T; can be constructed with an array of T[], an Iterator<T>, a Stream<T>
+ * (including an IntStream if T is Integer, etc), or a List<T>
  *
  * @author Rebecca Turner
  * @version 1.0.0
@@ -35,6 +39,9 @@ public class MarkovGenerator<T> {
 	 *       | List<T>
 	 */
 	MarkovGenerator(int length) {
+		if(length < 0) {
+			throw new IllegalArgumentException("Length cannot be less than 0!");
+		}
 		this.length = length;
 		corpus = new ArrayList<T>();
 	}
@@ -125,11 +132,12 @@ public class MarkovGenerator<T> {
 	}
 
 	protected void ensureIndexValid() {
-		if(inx < 0) { newStartingIndex(); }
+		if(inx < 0 || inx >= corpus.size()) { newStartingIndex(); }
 	}
 
 	/**
-	 * do the next `length` elements in the corpus match at locations i and j?
+	 * do the next `length` elements in the corpus match at locations i and
+	 * j?
 	 */
 	protected boolean matches(int i, int j) {
 		if(i < 0 || j < 0) {
@@ -144,9 +152,13 @@ public class MarkovGenerator<T> {
 			return true;
 		}
 
+		if(j + length > corpus.size() || i + length > corpus.size()) {
+			return false;
+		}
+
 		// compare i, j and increment
 		// create a limit variable to ensure i < j < corpus.size
-		for(int limit = Math.min(j + length, corpus.size());
+		for(int limit = j + length;
 				j < limit;
 				i++, j++) {
 			if(!corpus.get(i).equals(corpus.get(j))) {
@@ -167,7 +179,7 @@ public class MarkovGenerator<T> {
 
 		ArrayList<Integer> possibilities = new ArrayList<>();
 
-		for(int i = 0; i < corpus.size() - 1; i++) {
+		for(int i = 0; i < corpus.size() - length; i++) {
 			if(matches(inx, i)) {
 				possibilities.add(i + 1);
 			}
@@ -181,16 +193,8 @@ public class MarkovGenerator<T> {
 	 */
 	protected int nextIndex() {
 		ensureIndexValid();
-
 		ArrayList<Integer> possibilities = getPossibilities();
-
-		if(possibilities.size() == 0) {
-			newStartingIndex();
-			return nextIndex();
-		}
-
 		inx = possibilities.get(rand.nextInt(possibilities.size()));
-
 		return inx;
 	}
 

@@ -7,6 +7,20 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.FileNotFoundException;
 
+/**
+ * RandomWriter program
+ *
+ * usage: java RandomWriter k len in out [seed]
+ *   k    (int): Markov analysis (trail / memory) length
+ *   len  (int): Num. of output characters
+ *   in   (str): Source filename
+ *   out  (str): Output filename
+ *   seed (int): Random seed
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class RandomWriter {
 	public static void main(String[] args) {
 		MarkovArguments arguments = new MarkovArguments();

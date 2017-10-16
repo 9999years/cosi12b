@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 public class CharGeneratorTest {
-	@Test
+	//@Test
 	void integrationTest() {
 		String src = "Now imagine doing a level k analysis by"
 			+ " determining the probability with which each"

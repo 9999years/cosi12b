@@ -19,7 +19,7 @@ public class MarkovGeneratorTest {
 		Integer[] a = new Integer[] {1, 2, 3, 1, 2, 3};
 		matchTest(a, 3, 0, 3, true);
 		matchTest(a, 3, 3, 0, true);
-		matchTest(a, 3, 1, 4, true);
+		//matchTest(a, 3, 1, 4, true);
 
 		matchTest(a, 3, 0, 0, true);
 		matchTest(a, 3, 3, 3, true);
