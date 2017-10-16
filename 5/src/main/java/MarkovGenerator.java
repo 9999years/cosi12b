@@ -136,13 +136,11 @@ public class MarkovGenerator<T> {
 	}
 
 	/**
-	 * do the next `length` elements in the corpus match at locations i and
-	 * j?
+	 * do the previous `length` elements in the corpus match at locations i
+	 * and j?
 	 */
 	protected boolean matches(int i, int j) {
-		if(i < 0 || j < 0) {
-			return false;
-		} else if(i > j) {
+		if(i > j) {
 			// ensure i < j
 			// swap
 			int tmp = i;
@@ -152,15 +150,17 @@ public class MarkovGenerator<T> {
 			return true;
 		}
 
-		if(j + length > corpus.size() || i + length > corpus.size()) {
+		if(i < length || j < length) {
+			return false;
+		} else if(j > corpus.size() || i > corpus.size()) {
 			return false;
 		}
 
 		// compare i, j and increment
 		// create a limit variable to ensure i < j < corpus.size
-		for(int limit = j + length;
-				j < limit;
-				i++, j++) {
+		for(int limit = i - length;
+				i > limit;
+				i--, j--) {
 			if(!corpus.get(i).equals(corpus.get(j))) {
 				return false;
 			}
@@ -179,7 +179,7 @@ public class MarkovGenerator<T> {
 
 		ArrayList<Integer> possibilities = new ArrayList<>();
 
-		for(int i = 0; i < corpus.size() - length; i++) {
+		for(int i = length; i < corpus.size(); i++) {
 			if(matches(inx, i)) {
 				possibilities.add(i + 1);
 			}
