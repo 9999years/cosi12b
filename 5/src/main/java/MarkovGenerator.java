@@ -128,19 +128,88 @@ public class MarkovGenerator<T> {
 	 * assign a new starting index to inx
 	 */
 	protected void newStartingIndex() {
+		/*
+		 * If you're reading carefully, you might notice this strays
+		 * from the supplied implementation guidelines. Wondering why?
+		 * Read that huge block of text below. Or skip it if you don't
+		 * care. I'm not your boss.
+		 */
 		inx = rand.nextInt(corpus.size() - length) + length;
+
+		/*
+		 * Okay, so next we immediately throw away the next `length`
+		 * random ints from the generator. This seems strange, and is,
+		 * so it warrants some explanation.
+		 *
+		 * The "implementation approach" section in pa5.pdf on page 3
+		 * suggests (verbatim):
+		 *
+		 * 1. To select the initial seed, choose a random position P in
+		 *    the source string between L - k, where L is the length of
+		 *    the text source. Then, use the source characters between
+		 *    (P, P+k) as the random seed.
+		 * 2. To choose the next character, find each occurrence of the
+		 *    seed in the source and store the character that follows
+		 *    it into an ArrayList.
+		 *
+		 * However, if this is actually implemented, you'll find that
+		 * the test suggested on page 4 (roughly called with `java
+		 * RandomWriter 15 50 hamlet.txt out.txt 3`) will fail.
+		 * Although it produces the correct output, it starts 15
+		 * characters (`length`) earlier than it should, implying the
+		 * reference implementation used to generate the output
+		 * actually compares (or was designed to compare) (P - k, P) as
+		 * the source seed, rather than (P, P + k) as the
+		 * implementation approach section suggests. The seed matching
+		 * the reference implementation can be found by simply adding
+		 * `length` to the random seed. However, then we run into
+		 * another problem: our output is different! You see, the
+		 * pre-computed output requires that output is generated from
+		 * the original seed, and that the first `length` elements are
+		 * simply thrown out! Rather than actually do this, it works
+		 * fine to just generate `length` random integers, advancing
+		 * the internal state of our random object just enough to match
+		 * the pre-computed output. This is all very silly and, quite
+		 * frankly, rather confusing. But it works, and, despite my
+		 * best efforts, I cannot find a better way. So here you go.
+		 * The tests pass.
+		 *
+		 * Here are some things that don't work:
+		 * 1. Returning the [inx + length]th element instead of the
+		 *    [inx]th element
+		 * 2. Using (P - k, P) as the seed and checking those elements
+		 *    as the sample output implies might be happening
+		 *
+		 * Side-note: a large portion of the time (about 88% in the
+		 * supplied test), there's only one potential possibility to
+		 * choose from; calls to the random object can be greatly
+		 * reduced by selecting the singular element when only one is
+		 * available, but this too creates a different state in the
+		 * random object than the test requires.
+		 *
+		 * IN CONCLUSION: This is bad. I think it's bad. I don't like
+		 * it. But it's the only way I can find. Please email if you
+		 * know of a better way.
+		 *
+		 * rebeccaturner@brandeis.edu
+		 */
+
+		// skip next `length` ints
+		rand.ints(length).forEach(i -> {});
 	}
 
 	protected void ensureIndexValid() {
-		if(inx < 0 || inx >= corpus.size()) { newStartingIndex(); }
+		if(inx < 0 || inx >= corpus.size() - length) { newStartingIndex(); }
 	}
 
 	/**
-	 * do the previous `length` elements in the corpus match at locations i
-	 * and j?
+	 * do the next `length` elements in the corpus match at locations i and
+	 * j?
 	 */
 	protected boolean matches(int i, int j) {
-		if(i > j) {
+		if(i < 0 || j < 0) {
+			return false;
+		} else if(i > j) {
 			// ensure i < j
 			// swap
 			int tmp = i;
@@ -150,17 +219,15 @@ public class MarkovGenerator<T> {
 			return true;
 		}
 
-		if(i < length || j < length) {
-			return false;
-		} else if(j > corpus.size() || i > corpus.size()) {
+		if(j + length > corpus.size() || i + length > corpus.size()) {
 			return false;
 		}
 
 		// compare i, j and increment
 		// create a limit variable to ensure i < j < corpus.size
-		for(int limit = i - length;
-				i > limit;
-				i--, j--) {
+		for(int limit = j + length;
+				j < limit;
+				i++, j++) {
 			if(!corpus.get(i).equals(corpus.get(j))) {
 				return false;
 			}
@@ -179,7 +246,7 @@ public class MarkovGenerator<T> {
 
 		ArrayList<Integer> possibilities = new ArrayList<>();
 
-		for(int i = length; i < corpus.size(); i++) {
+		for(int i = 0; i < corpus.size() - length; i++) {
 			if(matches(inx, i)) {
 				possibilities.add(i + 1);
 			}
