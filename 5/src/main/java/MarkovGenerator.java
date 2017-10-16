@@ -181,7 +181,7 @@ public class MarkovGenerator<T> {
 
 		for(int i = 0; i < corpus.size() - length; i++) {
 			if(matches(inx, i)) {
-				possibilities.add(i + length + 1);
+				possibilities.add(i + 1);
 			}
 		}
 
