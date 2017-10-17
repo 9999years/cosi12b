@@ -1,0 +1,56 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'application'
+
+mainClassName = 'becca.markov.RandomWriter'
+
+run {
+	mainClassName = mainClassName
+}
+
+jar {
+	baseName = mainClassName
+	version = '1.0.0-SNAPSHOT'
+	manifest {
+		attributes(
+			'Implementation-Title': baseName,
+			'Implementation-Version': version,
+			'Main-Class': mainClassName
+		)
+	}
+}
+
+junitPlatform {
+	 enableStandardTestTask true
+}
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+task zip(type:Exec) {
+	commandLine '7z', 'a', '-mx=5', '-tzip', 'pa5.zip', 'src/*/*/*.java', 'build.gradle'
+}
+
+ext.junitPlatformVersion = '1.0.0'
+ext.junitJupiterVersion  = '5.0.0'
+
+dependencies {
+	testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+}
