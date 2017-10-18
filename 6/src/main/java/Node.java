@@ -36,9 +36,9 @@ public class Node {
 	 */
 	protected List<NodePriority> priorities;
 	/**
-	 * id of best match
+	 * current match
 	 */
-	protected int match = -1;
+	protected Node match = null;
 
 	Node(String name, List<Integer> preferences) {
 		init();
