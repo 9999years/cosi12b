@@ -40,7 +40,8 @@ public class Node {
 	 */
 	protected Node match = null;
 
-	Node(String name, List<Integer> preferences) {
+	Node(String name) {
+		this.name = name;
 		init();
 	}
 
