@@ -15,7 +15,7 @@ apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'application'
 
-mainClassName = 'becca.markov.RandomWriter'
+mainClassName = 'becca.markov.Node'
 
 run {
 	mainClassName = mainClassName
@@ -44,7 +44,7 @@ test {
 }
 
 task zip(type:Exec) {
-	commandLine '7z', 'a', '-mx=5', '-tzip', 'pa5.zip', 'src/*/*/*.java', 'build.gradle'
+	commandLine '7z', 'a', '-mx=5', '-tzip', 'pa6.zip', 'src/*/*/*.java', 'build.gradle'
 }
 
 ext.junitPlatformVersion = '1.0.0'
