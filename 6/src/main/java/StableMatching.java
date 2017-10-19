@@ -1,32 +1,29 @@
 package becca.smp;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-
-public class NodeSetTest {
+public class StableMatching {
 	static void assertSetMatches(NodeSet setA, int[][] matches) {
-		for(int match[] : matches) {
-			assertEquals(
-				setA.get(match[0]).id,
-				match[0],
-				"ensuring ids are correct"
-			);
-			assertEquals(
-				match[1],
-				setA.get(match[1]).id,
-				"ensuring ids are correct"
-			);
-			assertEquals(
-				setA.get(match[0]).match,
-				setA.get(match[1]),
-				"ensuring a's match is b"
-			);
-			assertEquals(
-				setA.get(match[0]),
-				setA.get(match[1]).match,
-				"ensuring b's match is a"
-			);
-		}
+		//for(int match[] : matches) {
+			//assertEquals(
+				//setA.get(match[0]).id,
+				//match[0],
+				//"ensuring ids are correct"
+			//);
+			//assertEquals(
+				//match[1],
+				//setA.get(match[1]).id,
+				//"ensuring ids are correct"
+			//);
+			//assertEquals(
+				//setA.get(match[0]).match,
+				//setA.get(match[1]),
+				//"ensuring a's match is b"
+			//);
+			//assertEquals(
+				//setA.get(match[0]),
+				//setA.get(match[1]).match,
+				//"ensuring b's match is a"
+			//);
+		//}
 	}
 
 	static NodeSet constructSet(int[][] dat) {
@@ -49,8 +46,7 @@ public class NodeSetTest {
 		assertSetMatches(setA, matches);
 	}
 
-	@Test
-	void integrationTest() {
+	public static void main(String args[]) {
 		verifySets(
 			new int[][] {
 				{3, 2, 0, 1}, // 0
@@ -101,10 +97,5 @@ public class NodeSetTest {
 				{7, 2}
 			}
 		);
-	}
-
-	@Test
-	public static void simpleTest() {
-		assertEquals(1, 1);
 	}
 }

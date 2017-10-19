@@ -23,6 +23,7 @@ public class IsolatedNode {
 
 	IsolatedNode(Object name) {
 		this.name = name;
+		priorities = new ArrayList<>();
 	}
 
 	IsolatedNode(Object name, int id) {
