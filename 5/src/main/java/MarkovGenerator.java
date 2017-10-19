@@ -134,6 +134,7 @@ public class MarkovGenerator<T> {
 		 * Read that huge block of text below. Or skip it if you don't
 		 * care. I'm not your boss.
 		 */
+
 		inx = rand.nextInt(corpus.size() - length) + length;
 
 		/*
