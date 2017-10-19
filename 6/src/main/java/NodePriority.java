@@ -9,7 +9,7 @@ public class NodePriority {
 		this.node = node;
 	}
 
-	equals(Object o) {
+	boolean equals(Object o) {
 		return o instanceof NodePriority
 			&& node.equals(((NodePriority) o).node);
 	}
