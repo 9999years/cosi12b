@@ -3,23 +3,50 @@ package becca.smp;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
 public class NodeSetFactory {
-	protected List<IsolatedNode> nodes = new ArrayList<>();
+	protected List<IsolatedNode> nodes;
+	protected IsolatedNode last;
+
+	NodeSetFactory() {
+		reset();
+	}
+
+	public void reset() {
+		nodes = new ArrayList<>();
+		last = null;
+	}
 
 	/**
 	 * add a node to the set
 	 */
-	public void add(String name) {
+	public void add(Object name) {
+		last = new IsolatedNode(name, nodes.size());
 		// index is a fine id more or less
-		nodes.add(new IsolatedNode(name, nodes.size()));
+		nodes.add(last);
 	}
 
 	/**
 	 * add a preference to the end of the pref list of the last node added
 	 */
 	public void addPref(int id) {
-		nodes.get(nodes.size()).priorities.add(id);
+		last.priorities.add(id);
+	}
+
+	public void addPrefs(int[] ids) {
+		last.priorities.addAll(
+			// int[] -> Integer[]
+			IntStream
+				.of(ids)
+				.boxed()
+				.collect(Collectors.toList())
+		);
+	}
+
+	public IsolatedNode getLast() {
+		return last;
 	}
 
 	public NodeSet getSet() {

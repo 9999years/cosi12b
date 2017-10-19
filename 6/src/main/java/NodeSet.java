@@ -23,8 +23,14 @@ public class NodeSet {
 		return nodes.get(id);
 	}
 
+	public void unmatchAll() {
+		for(Node n : nodes) {
+			n.unmatch();
+		}
+	}
+
 	/**
-	 * return type ??
+	 * MUTABLY modifies BOTH sets IN PLACE
 	 */
 	public static void match(NodeSet A, NodeSet B) {
 		Iterator<Node> unmatchedANodes = A.getUnmatchedNodes();
