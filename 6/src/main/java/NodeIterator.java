@@ -2,11 +2,11 @@ package becca.smp;
 
 import java.util.List;
 import java.util.Iterator;
-import java.util.Predicate;
+import java.util.function.Predicate;
 import java.util.NoSuchElementException;
 
 public class NodeIterator implements Iterator<Node> {
-	NodeSet nodes;
+	List<Node> nodes;
 	Iterator<Node> itr;
 	Predicate<Node> pred;
 
@@ -19,10 +19,14 @@ public class NodeIterator implements Iterator<Node> {
 	 */
 	protected Node next;
 
-	NodeIterator(NodeSet nodes, Predicate<Node> pred) {
+	NodeIterator(List<Node> nodes, Predicate<Node> pred) {
 		this.nodes = nodes;
 		this.pred = pred;
 		itr = this.nodes.iterator();
+	}
+
+	NodeIterator(NodeSet nodes, Predicate<Node> pred) {
+		this(nodes.nodes, pred);
 	}
 
 	protected void ensureIterator() {
@@ -33,12 +37,12 @@ public class NodeIterator implements Iterator<Node> {
 	}
 
 	/**
-	 * finds and caches the next element in this.next if it exists
+	 * finds and caches the next element in this.next if applicable
 	 */
-	boolean hasNext() {
+	public boolean hasNext() {
 		ensureIterator();
 		next = rawNext();
-		while(!pred.test(n)) {
+		while(!pred.test(next)) {
 			if(travelled == nodes.size()) {
 				// we've travelled the whole list and found no
 				// new elements
@@ -55,7 +59,7 @@ public class NodeIterator implements Iterator<Node> {
 		return itr.next();
 	}
 
-	Node next() {
+	public Node next() {
 		if(hasNext()) {
 			Node n = next;
 			// make sure we dont accidentally use this.next twice
@@ -68,7 +72,7 @@ public class NodeIterator implements Iterator<Node> {
 		}
 	}
 
-	void remove() {
+	public void remove() {
 		itr.remove();
 		travelled--;
 	}

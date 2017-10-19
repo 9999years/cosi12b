@@ -1,7 +1,10 @@
 package becca.smp;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Iterator;
+
+import java.lang.IllegalStateException;
 
 // make nodeCount an array which matches to different sets
 // so it can still be static and set variable isnt really relevant
@@ -12,11 +15,6 @@ public class Node extends IsolatedNode {
 	 * which set this node belongs to
 	 */
 	public NodeSet set;
-	/**
-	 * list of all the nodes
-	 * TODO determine per-set or for all
-	 */
-	//protected static List<Node> allNodes;
 	/**
 	 * ranked list of node preferences in opposite set; stores IDs
 	 */
@@ -33,27 +31,26 @@ public class Node extends IsolatedNode {
 
 	Node(Object name) {
 		super(name);
+		init();
 	}
 
-	protected init() {
+	protected void init() {
 		priorities = new LinkedList<NodePriority>();
 	}
 
-	protected void initId() {
-		id = ++nodeCount;
-		//allNodes.add(this);
-	}
-
-	//public int getMatchId() {
-		//return match.id;
-	//}
-
 	public NodePriority getTopChoice() {
+		if(priorities == null) {
+			throw new IllegalStateException("priorities field null!");
+		}
 		return priorities.get(0);
 	}
 
+	public Node getMatch() {
+		return match;
+	}
+
 	public boolean isMatched() {
-		return getMatch() != -1;
+		return getMatch() != null;
 	}
 
 	public void match(Node n) {
@@ -62,15 +59,23 @@ public class Node extends IsolatedNode {
 	}
 
 	public void unmatch() {
-		match.match = null;
-		match = null;
+		if(match != null) {
+			match.match = null;
+			match = null;
+		}
 	}
 
 	public void removePreference(Node n) {
+		if(priorities == null) {
+			throw new IllegalStateException("priorities field null!");
+		}
 		priorities.remove(n);
 	}
 
 	public void removePreferencesAfter(Node n) {
+		if(priorities == null) {
+			throw new IllegalStateException("priorities field null!");
+		}
 		boolean removing = false;
 		Iterator<NodePriority> itr = priorities.iterator();
 		itr.forEachRemaining(np -> {

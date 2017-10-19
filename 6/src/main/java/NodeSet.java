@@ -1,13 +1,14 @@
 package becca.smp;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 
-public class NodeSet; {
+public class NodeSet {
 	List<Node> nodes;
 
 	NodeSet() {
-		set = new ArrayList<>();
+		nodes = new ArrayList<>();
 	}
 
 	NodeSet(List<Node> nodes) {
@@ -22,6 +23,21 @@ public class NodeSet; {
 		return nodes.get(id);
 	}
 
-	//protected void ensureInvariants() {
-	//}
+	/**
+	 * return type ??
+	 */
+	public static void match(NodeSet A, NodeSet B) {
+		Iterator<Node> unmatchedANodes = A.getUnmatchedNodes();
+
+		unmatchedANodes.forEachRemaining(a -> {
+			Node topChoice = a.getTopChoice().node;
+			if(topChoice.isMatched()) {
+				// unmatches both
+				topChoice.unmatch();
+			}
+			topChoice.match(a);
+			// doubly-remove links
+			topChoice.removePreferencesAfter(a);
+		});
+	}
 }
