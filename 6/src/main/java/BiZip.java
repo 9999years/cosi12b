@@ -28,7 +28,7 @@ public class BiZip<T, U> {
 	}
 
 	BiZip(List<T> lt, List<U> lu) {
-		this(lt.Iterator(), lu.iterator());
+		this(lt.iterator(), lu.iterator());
 	}
 
 	public boolean hasNext() {

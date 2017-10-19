@@ -77,15 +77,15 @@ public class Node extends IsolatedNode {
 			throw new IllegalStateException("priorities field null!");
 		}
 		boolean removing = false;
-		Iterator<NodePriority> itr = priorities.iterator();
-		itr.forEachRemaining(np -> {
-			if(!removing && n.equals(np.node)) {
+		for(Iterator<NodePriority> itr = priorities.iterator();
+			itr.hasNext(); ) {
+			if(!removing && itr.next().node.equals(n)) {
 				removing = true;
 			}
-			if(removing) {
+			if(removing == true) {
 				itr.remove();
 			}
-		});
+		}
 	}
 
 	public boolean equals(Object o) {
