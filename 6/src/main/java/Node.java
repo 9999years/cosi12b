@@ -7,25 +7,11 @@ import java.util.List;
 // so it can still be static and set variable isnt really relevant
 // input file indexes per-set, not globally
 
-public class Node {
+public class Node extends IsolatedNode {
 	/**
 	 * which set this node belongs to
 	 */
-	public int set;
-	/**
-	 * UNIQUE id of this node
-	 * TODO determine if id is per-set or for all nodes
-	 */
-	public int id;
-	/**
-	 * name of this node; purely cosmetic
-	 * TODO maybe support object descriptors?
-	 */
-	public String name;
-	/**
-	 * total amount of nodes; used for determining id
-	 */
-	protected static int nodeCount = 0;
+	public NodeSet set;
 	/**
 	 * list of all the nodes
 	 * TODO determine per-set or for all
@@ -40,9 +26,13 @@ public class Node {
 	 */
 	protected Node match = null;
 
-	Node(String name) {
-		this.name = name;
-		init();
+	Node(IsolatedNode n) {
+		this(n.name);
+		id = n.id;
+	}
+
+	Node(Object name) {
+		super(name);
 	}
 
 	protected void init() {
