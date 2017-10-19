@@ -22,7 +22,7 @@ public class NodeSetFactory {
 		nodes.get(nodes.size()).priorities.add(id);
 	}
 
-	public void getSet() {
+	public NodeSet getSet() {
 		NodeSet set = new NodeSet();
 		List<Node> promoted = new ArrayList<>(nodes.size());
 
@@ -30,7 +30,7 @@ public class NodeSetFactory {
 			promoted.add(new Node(n));
 		}
 
-		new BiZip<Node, IsolatedNode>(nodes, promoted)
+		new BiZip<Node, IsolatedNode>(promoted, nodes)
 			.forEachRemaining((node, isolated) -> {
 				// make node's set field point to the result
 				// set
@@ -39,7 +39,7 @@ public class NodeSetFactory {
 				// in `nodes`; construct a new priority for
 				// each inx in isolated.priorities
 				for(int i = 0;
-					i < isolated.priorities.length;
+					i < isolated.priorities.size();
 					i++) {
 					// index is priority and an index
 					node.priorities.add(new NodePriority(
