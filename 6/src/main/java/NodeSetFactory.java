@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.stream.IntStream;
 import java.util.stream.Collectors;
 
+import java.lang.IllegalStateException;
+
 public class NodeSetFactory {
 	protected List<IsolatedNode> nodes;
 	protected IsolatedNode last;
@@ -32,10 +34,16 @@ public class NodeSetFactory {
 	 * add a preference to the end of the pref list of the last node added
 	 */
 	public void addPref(int id) {
+		if(last == null) {
+			throw new IllegalStateException("No last element!");
+		}
 		last.priorities.add(id);
 	}
 
 	public void addPrefs(int[] ids) {
+		if(last == null) {
+			throw new IllegalStateException("No last element!");
+		}
 		last.priorities.addAll(
 			// int[] -> Integer[]
 			IntStream

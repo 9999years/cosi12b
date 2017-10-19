@@ -15,7 +15,7 @@ apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'application'
 
-mainClassName = 'becca.smp.NodeSet'
+mainClassName = 'becca.smp.StableMatching'
 
 run {
 	mainClassName = mainClassName
