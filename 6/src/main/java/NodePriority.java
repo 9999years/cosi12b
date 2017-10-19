@@ -8,4 +8,9 @@ public class NodePriority {
 		this.priority = priority;
 		this.node = node;
 	}
+
+	equals(Object o) {
+		return o instanceof NodePriority
+			&& node.equals(((NodePriority) o).node);
+	}
 }

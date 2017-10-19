@@ -35,17 +35,52 @@ public class Node extends IsolatedNode {
 		super(name);
 	}
 
-	protected void init() {
+	protected init() {
+		priorities = new LinkedList<NodePriority>();
+	}
+
+	protected void initId() {
 		id = ++nodeCount;
 		//allNodes.add(this);
 	}
 
-	public int getMatchId() {
-		return match;
+	//public int getMatchId() {
+		//return match.id;
+	//}
+
+	public NodePriority getTopChoice() {
+		return priorities.get(0);
 	}
 
 	public boolean isMatched() {
 		return getMatch() != -1;
+	}
+
+	public void match(Node n) {
+		match = n;
+		n.match = this;
+	}
+
+	public void unmatch() {
+		match.match = null;
+		match = null;
+	}
+
+	public void removePreference(Node n) {
+		priorities.remove(n);
+	}
+
+	public void removePreferencesAfter(Node n) {
+		boolean removing = false;
+		Iterator<NodePriority> itr = priorities.iterator();
+		itr.forEachRemaining(np -> {
+			if(!removing && n.equals(np.node)) {
+				removing = true;
+			}
+			if(removing) {
+				itr.remove();
+			}
+		});
 	}
 
 	public boolean equals(Object o) {

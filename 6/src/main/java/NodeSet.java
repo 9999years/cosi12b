@@ -5,8 +5,6 @@ import java.util.Iterator;
 
 public class NodeSet; {
 	List<Node> nodes;
-	//List<Node> emptyPrefs;
-	//List<Node> matched;
 
 	NodeSet() {
 		set = new ArrayList<>();
@@ -17,6 +15,7 @@ public class NodeSet; {
 	}
 
 	public Iterator<Node> getUnmatchedNodes() {
+		return new NodeIterator(nodes, n -> !n.isMatched());
 	}
 
 	public Node get(int id) {
