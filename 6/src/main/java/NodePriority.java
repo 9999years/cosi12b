@@ -20,10 +20,11 @@ public class NodePriority {
 	}
 
 	public String toString() {
-		return "becca.smp.NodePriority[priority="
-			+ priority
-			+ ", node="
-			+ node
-			+ "]";
+		return Integer.toString(node.id);
+		//return "becca.smp.NodePriority[priority="
+			//+ priority
+			//+ ", node="
+			//+ node
+			//+ "]";
 	}
 }

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import java.lang.StringBuilder;
+
 public class NodeSet {
 	List<Node> nodes;
 
@@ -33,12 +35,12 @@ public class NodeSet {
 	 * MUTABLY modifies BOTH sets IN PLACE
 	 */
 	public static void match(NodeSet A, NodeSet B) {
-		System.out.println(
-			"matching set of "
-			+ A.nodes.size()
-			+ " nodes with a set of "
-			+ B.nodes.size()
-			+ " nodes");
+		//System.out.println(
+			//"matching set of "
+			//+ A.nodes.size()
+			//+ " nodes with a set of "
+			//+ B.nodes.size()
+			//+ " nodes");
 
 		Iterator<Node> unmatchedANodes = A.getUnmatchedNodes();
 
@@ -49,7 +51,9 @@ public class NodeSet {
 			topChoice.match(a);
 			// doubly-remove links
 			topChoice.removePreferencesAfter(a);
-			System.out.println("getting next unmatched node");
+			//System.out.println(a + " is now matched with node " + a.match);
+			//System.out.println(a + "'s priorities are " + a.priorities);
+			System.out.println(A.getMatchStatus());
 		});
 	}
 
@@ -57,5 +61,28 @@ public class NodeSet {
 		return "becca.smp.NodeSet[nodes="
 			+ nodes
 			+ "]";
+	}
+
+	public String getMatchStatus() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(
+			"id | matchid | priority | priorities\n" + 
+			"---+---------+----------|------------\n");
+
+		for(Node n : nodes) {
+			builder.append(String.format(
+				"%2d | %7s | %8s | %s\n",
+				n.id,
+				n.isMatched()
+					? Integer.toString(n.match.id)
+					: "",
+				n.isMatched()
+					? Integer.toString(n.getMatchPriority())
+					: "",
+				n.priorities));
+		}
+
+		builder.append("\n");
+		return builder.toString();
 	}
 }
