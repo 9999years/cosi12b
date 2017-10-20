@@ -45,6 +45,20 @@ public class Node extends IsolatedNode {
 		return priorities.get(0);
 	}
 
+	public int getMatchPriority() {
+		if(match == null) {
+			return -1;
+		}
+
+		for(NodePriority np : priorities) {
+			if(np.equals(match)) {
+				return np.priority;
+			}
+		}
+
+		return -1;
+	}
+
 	public Node getMatch() {
 		return match;
 	}
@@ -81,11 +95,17 @@ public class Node extends IsolatedNode {
 		for(Iterator<NodePriority> itr = priorities.iterator();
 				itr.hasNext(); ) {
 			NodePriority np = itr.next();
-			System.out.println("Examining/removing " + np);
+			//System.out.println("Examining " + np);
 			if(!removing && np.node.equals(n)) {
+				if(itr.hasNext()) {
+					np = itr.next();
+				} else {
+					return;
+				}
 				removing = true;
 			}
 			if(removing == true) {
+				//System.out.println("(removing)");
 				itr.remove();
 			}
 		}
@@ -99,8 +119,9 @@ public class Node extends IsolatedNode {
 	public String toString() {
 		return "becca.smp.Node[id="
 			+ id
-			+ ", matchId="
-			+ (match == null ? -1 : match.id)
+			+ (isMatched()
+				?  ", matchId=" + match.id
+				: "")
 			+ "]";
 	}
 }
