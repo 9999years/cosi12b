@@ -20,9 +20,12 @@ public class NodeIterator implements Iterator<Node> {
 	protected Node next;
 
 	NodeIterator(List<Node> nodes, Predicate<Node> pred) {
+		if(nodes.size() == 0) {
+			throw new IllegalArgumentException("Node list is empty!");
+		}
 		this.nodes = nodes;
 		this.pred = pred;
-		itr = this.nodes.iterator();
+		ensureIterator();
 	}
 
 	NodeIterator(NodeSet nodes, Predicate<Node> pred) {
@@ -30,20 +33,25 @@ public class NodeIterator implements Iterator<Node> {
 	}
 
 	protected void ensureIterator() {
-		if(!itr.hasNext()) {
+		if(itr == null || !itr.hasNext()) {
 			// get a fresh copy if we're at the end
 			itr = nodes.iterator();
 		}
+	}
+
+	protected Node rawNext() {
+		ensureIterator();
+		travelled++;
+		return itr.next();
 	}
 
 	/**
 	 * finds and caches the next element in this.next if applicable
 	 */
 	public boolean hasNext() {
-		ensureIterator();
 		next = rawNext();
 		while(!pred.test(next)) {
-			if(travelled == nodes.size()) {
+			if(travelled >= nodes.size()) {
 				// we've travelled the whole list and found no
 				// new elements
 				next = null;
@@ -51,12 +59,8 @@ public class NodeIterator implements Iterator<Node> {
 			}
 			next = rawNext();
 		}
+		travelled = 0;
 		return true;
-	}
-
-	protected Node rawNext() {
-		travelled++;
-		return itr.next();
 	}
 
 	public Node next() {
