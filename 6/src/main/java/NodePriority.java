@@ -18,4 +18,12 @@ public class NodePriority {
 			return false;
 		}
 	}
+
+	public String toString() {
+		return "becca.smp.NodePriority[priority="
+			+ priority
+			+ ", node="
+			+ node
+			+ "]";
+	}
 }

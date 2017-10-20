@@ -78,10 +78,15 @@ public class NodeSetFactory {
 					i++) {
 					// index is priority and an index
 					node.priorities.add(new NodePriority(
-						i, promoted.get(isolated.priorities.get(i))
+						i,
+						promoted.get(
+							isolated.priorities.get(i)
+						)
 					));
 				}
 			});
+
+		set.nodes = promoted;
 
 		return set;
 	}

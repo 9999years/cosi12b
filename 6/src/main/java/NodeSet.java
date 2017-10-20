@@ -33,17 +33,29 @@ public class NodeSet {
 	 * MUTABLY modifies BOTH sets IN PLACE
 	 */
 	public static void match(NodeSet A, NodeSet B) {
+		System.out.println(
+			"matching set of "
+			+ A.nodes.size()
+			+ " nodes with a set of "
+			+ B.nodes.size()
+			+ " nodes");
+
 		Iterator<Node> unmatchedANodes = A.getUnmatchedNodes();
 
 		unmatchedANodes.forEachRemaining(a -> {
+			System.out.println(a);
 			Node topChoice = a.getTopChoice().node;
-			if(topChoice.isMatched()) {
-				// unmatches both
-				topChoice.unmatch();
-			}
+			// unmatches and then matches
 			topChoice.match(a);
 			// doubly-remove links
 			topChoice.removePreferencesAfter(a);
+			System.out.println("getting next unmatched node");
 		});
+	}
+
+	public String toString() {
+		return "becca.smp.NodeSet[nodes="
+			+ nodes
+			+ "]";
 	}
 }

@@ -54,6 +54,7 @@ public class Node extends IsolatedNode {
 	}
 
 	public void match(Node n) {
+		unmatch();
 		match = n;
 		n.match = this;
 	}
@@ -78,8 +79,10 @@ public class Node extends IsolatedNode {
 		}
 		boolean removing = false;
 		for(Iterator<NodePriority> itr = priorities.iterator();
-			itr.hasNext(); ) {
-			if(!removing && itr.next().node.equals(n)) {
+				itr.hasNext(); ) {
+			NodePriority np = itr.next();
+			System.out.println("Examining/removing " + np);
+			if(!removing && np.node.equals(n)) {
 				removing = true;
 			}
 			if(removing == true) {
@@ -91,5 +94,13 @@ public class Node extends IsolatedNode {
 	public boolean equals(Object o) {
 		return o instanceof Node
 			&& ((Node) o).id == id;
+	}
+
+	public String toString() {
+		return "becca.smp.Node[id="
+			+ id
+			+ ", matchId="
+			+ (match == null ? -1 : match.id)
+			+ "]";
 	}
 }
