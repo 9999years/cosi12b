@@ -63,6 +63,10 @@ public class NodeSet {
 			+ "]";
 	}
 
+	/**
+	 * a table displaying the id, match id, match priority, and array of
+	 * priority ids
+	 */
 	public String getMatchStatus() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(
