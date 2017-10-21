@@ -29,6 +29,11 @@ public class Node extends IsolatedNode {
 		id = n.id;
 	}
 
+	Node(Object name, int id) {
+		this(name);
+		this.id = id;
+	}
+
 	Node(Object name) {
 		super(name);
 		init();
@@ -80,6 +85,7 @@ public class Node extends IsolatedNode {
 		}
 	}
 
+	// TODO test this it's being used in rpa
 	public void removePreference(Node n) {
 		if(priorities == null) {
 			throw new IllegalStateException("priorities field null!");
@@ -91,21 +97,19 @@ public class Node extends IsolatedNode {
 		if(priorities == null) {
 			throw new IllegalStateException("priorities field null!");
 		}
+
 		boolean removing = false;
 		for(Iterator<NodePriority> itr = priorities.iterator();
 				itr.hasNext(); ) {
 			NodePriority np = itr.next();
 			//System.out.println("Examining " + np);
 			if(!removing && np.node.equals(n)) {
-				if(itr.hasNext()) {
-					np = itr.next();
-				} else {
-					return;
-				}
 				removing = true;
+				continue;
 			}
 			if(removing == true) {
 				//System.out.println("(removing)");
+				np.node.removePreference(this);
 				itr.remove();
 			}
 		}

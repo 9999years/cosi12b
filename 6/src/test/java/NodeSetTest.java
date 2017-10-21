@@ -6,11 +6,6 @@ import org.junit.jupiter.api.Test;
 public class NodeSetTest {
 	static void assertSetMatches(NodeSet setA, int[][] matches) {
 		for(int match[] : matches) {
-			System.out.println("asserting ids "
-				+ match[0]
-				+ " and "
-				+ match[1]
-				+ " match");
 			assertEquals(
 				setA.get(match[0]).id,
 				match[0],
@@ -79,6 +74,27 @@ public class NodeSetTest {
 
 		verifySets(
 			new int[][] {
+				{3, 0, 1, 2},
+				{1, 2, 0, 3},
+				{1, 3, 2, 0},
+				{2, 0, 3, 1}
+			},
+			new int[][] {
+				{3, 0, 2, 1},
+				{0, 2, 1, 3},
+				{0, 1, 2, 3},
+				{3, 0, 2, 1},
+			},
+			new int[][] {
+				{0, 3},
+				{1, 2},
+				{2, 1},
+				{3, 0}
+			}
+		);
+
+		verifySets(
+			new int[][] {
 				{2, 3, 1, 0, 5, 6, 4},
 				{5, 3, 1, 2, 4, 0, 6},
 				{5, 2, 4, 6, 1, 3, 0},
@@ -106,5 +122,6 @@ public class NodeSetTest {
 				{6, 1}
 			}
 		);
+
 	}
 }
