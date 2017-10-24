@@ -7,8 +7,8 @@ import java.util.Iterator;
 
 public class NodePriorityTest {
 	void equalsTest(int pA, int pB, int idA, int idB, boolean expected) {
-		NodePriority a = new NodePriority(pA, new Node(null, idA));
-		NodePriority b = new NodePriority(pB, new Node(null, idB));
+		NodePriority a = new NodePriority(pA, new Node(null, null, idA));
+		NodePriority b = new NodePriority(pB, new Node(null, null, idB));
 		if(expected) {
 			assertEquals(a, b);
 		} else {

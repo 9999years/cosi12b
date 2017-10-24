@@ -8,12 +8,12 @@ import java.util.Iterator;
 public class NodeTest {
 	Node createNodeWithPriorities(int[] priorities) {
 		// stub node
-		Node n = new Node(null);
+		Node n = new Node(null, null, 0);
 		// create priorities
 		for(int i = 0; i < priorities.length; i++) {
 			n.priorities.add(
-				//               priority        id
-				new NodePriority(i, new Node(null, priorities[i]))
+				new NodePriority(i, new Node(
+					null, null, priorities[i]))
 			);
 		}
 		return n;
@@ -31,7 +31,7 @@ public class NodeTest {
 			int[] expected, int[] priorities, int removeAfter) {
 		Node n = createNodeWithPriorities(priorities);
 		// remove
-		n.removePreferencesAfter(new Node(null, removeAfter));
+		n.removePreferencesAfter(new Node(null, null, removeAfter));
 		// check
 		checkPriorities(expected, n);
 	}
@@ -61,7 +61,7 @@ public class NodeTest {
 		System.out.println("BEGIN");
 		System.out.println(n.priorities);
 		System.out.println("removing " + remove);
-		n.removePreference(new Node(null, remove));
+		n.removePreference(new Node(null, null, remove));
 		System.out.println(n.priorities);
 		checkPriorities(expected, n);
 	}
@@ -87,13 +87,45 @@ public class NodeTest {
 
 	void getTopChoiceTest(int expected, int[] priorities) {
 		Node n = createNodeWithPriorities(priorities);
-		assertEquals(expected, n.getTopChoice());
+		assertEquals(expected, n.getTopChoice().node.id);
 	}
 
 	@Test
 	void getTopChoiceTest() {
 		getTopChoiceTest(0, new int[] {0, 1, 2, 3});
 		getTopChoiceTest(9, new int[] {9, 8, 129});
-		getTopChoiceTest(9, new int[] {3});
+		getTopChoiceTest(3, new int[] {3});
+	}
+
+	void equalsTest(Node a, Node b, boolean expected) {
+		if(expected) {
+			assertEquals(a, b);
+		} else {
+			assertNotEquals(a, b);
+		}
+	}
+
+	@Test
+	void equalsTest() {
+		equalsTest(
+			new Node(null, null, 0),
+			new Node(null, null, 0),
+			true);
+		equalsTest(
+			new Node(null, null, 1),
+			new Node(null, null, 0),
+			false);
+		equalsTest(
+			new Node(null, null, 999),
+			new Node(null, null, 999),
+			true);
+		equalsTest(
+			new Node("name1", new NodeSet(), 0),
+			new Node("name2", new NodeSet(), 0),
+			true);
+		equalsTest(
+			new Node("name1", new NodeSet(), 1),
+			new Node("name2", new NodeSet(), 0),
+			false);
 	}
 }
