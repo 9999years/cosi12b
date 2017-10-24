@@ -7,11 +7,15 @@ import java.util.Objects;
 
 import java.lang.IllegalStateException;
 
-// make nodeCount an array which matches to different sets
-// so it can still be static and set variable isnt really relevant
-// input file indexes per-set, not globally
-
-public class Node extends IsolatedNode {
+public class Node {
+	/**
+	 * unique per-set id of this node
+	 */
+	public int id;
+	/**
+	 * display name of this node; purely cosmetic
+	 */
+	public Object name;
 	/**
 	 * which set this node belongs to
 	 */
@@ -25,23 +29,47 @@ public class Node extends IsolatedNode {
 	 */
 	protected Node match = null;
 
-	Node(IsolatedNode n) {
-		this(n.name);
-		id = n.id;
+	/**
+	 * precondition: n is not null
+	 * @param n the IsolatedNode to construct a real node from
+	 */
+	Node(IsolatedNode n, NodeSet parent) {
+		this(n.name, parent, n.id);
+		set.nodes.add(this);
 	}
 
-	Node(Object name, int id) {
-		this(name);
+	/**
+	 * precondition: id doesn't collide with any other node ids in
+	 * parent.nodes
+	 */
+	Node(Object name, NodeSet parent, int id) {
+		this.name = name;
 		this.id = id;
-	}
-
-	Node(Object name) {
-		super(name);
+		this.set = parent;
 		init();
 	}
 
 	protected void init() {
 		priorities = new LinkedList<NodePriority>();
+	}
+
+	/**
+	 * precondition: other.nodes is fully constructed, ie has references to
+	 * all nodes which will exist in the set
+	 */
+	protected void promotePriorities(
+			List<Integer> priorityIndices, NodeSet other) {
+		Iterator<Integer> itr = priorityIndices.iterator();
+		for(int i = 0; itr.hasNext(); i++) {
+			// index in B.set.nodes
+			int indexB = itr.next();
+			priorities.add(
+				new NodePriority(
+					i, // priority
+					other.nodes.get(indexB)
+				)
+			);
+		}
 	}
 
 	public NodePriority getTopChoice() {

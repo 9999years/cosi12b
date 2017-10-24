@@ -5,19 +5,17 @@ import java.util.List;
 
 /**
  * a node isolated from a greater context; has no set it belongs to or
- * knowledge of other nodes
+ * knowledge of other nodes. contains an int id, object name, and list of
+ * priorities specified as ids, with the index implicitly being the priority;
+ * essentially a specialized 3-tuple class
+ * @See Node
  */
 public class IsolatedNode {
-	/**
-	 * unique per-set id of this node
-	 */
 	public int id;
-	/**
-	 * display name of this node; purely cosmetic
-	 */
 	public Object name;
 	/**
-	 * ranked list of node preferences in opposite set; stores IDs
+	 * ranked list of node preferences in opposite set; stores IDs. index
+	 * is implicitly the priority
 	 */
 	public List<Integer> priorities;
 
