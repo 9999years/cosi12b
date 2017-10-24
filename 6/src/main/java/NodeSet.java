@@ -11,11 +11,23 @@ public class NodeSet {
 	NodeSet other;
 
 	NodeSet() {
-		nodes = new ArrayList<>();
+		this(0);
+	}
+
+	NodeSet(int nodeCount) {
+		nodes = new ArrayList<Node>(nodeCount);
 	}
 
 	NodeSet(List<Node> nodes) {
 		this.nodes = nodes;
+	}
+
+	public void add(IsolatedNode n) {
+		nodes.add(new Node(n, this));
+	}
+
+	public void add(Object name, int id) {
+		nodes.add(new Node(name, this, id));
 	}
 
 	public Iterator<Node> getUnmatchedNodes() {

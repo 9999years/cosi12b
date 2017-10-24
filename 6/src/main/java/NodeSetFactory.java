@@ -61,14 +61,13 @@ public class NodeSetFactory {
 	}
 
 	protected void calcSet() {
-		Objects.requireNonNull(set.other);
-		List<Node> promoted = new ArrayList<>(nodes.size());
+		Objects.requireNonNull(nodes);
+
+		set = new NodeSet(nodes.size());
 
 		for(IsolatedNode n : nodes) {
-			promoted.add(new Node(n, set));
+			set.add(n);
 		}
-
-		set = new NodeSet(promoted);
 	}
 
 	public NodeSet getSet() {
@@ -85,17 +84,21 @@ public class NodeSetFactory {
 	protected static void link(NodeSetFactory A) {
 		Objects.requireNonNull(A.set);
 		Objects.requireNonNull(A.set.other);
-		A.calcSet();
 		new BiZip<Node, IsolatedNode>(A.set.nodes, A.nodes)
 			.forEachRemaining(NodeSetFactory::link);
 	}
 
 	public static void link(NodeSetFactory A, NodeSetFactory B) {
-		Objects.requireNonNull(A.set);
-		Objects.requireNonNull(B.set);
+		// promote isolated nodes to real nodes and replace the set
+		// field
+		A.calcSet();
+		B.calcSet();
+
+		// ensure sets point to each other
 		A.set.other = B.set;
 		B.set.other = A.set;
 
+		// promote priority lists
 		link(A);
 		link(B);
 	}
