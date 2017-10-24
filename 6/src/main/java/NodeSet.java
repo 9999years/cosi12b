@@ -8,6 +8,7 @@ import java.lang.StringBuilder;
 
 public class NodeSet {
 	List<Node> nodes;
+	NodeSet other;
 
 	NodeSet() {
 		nodes = new ArrayList<>();
@@ -32,7 +33,7 @@ public class NodeSet {
 	}
 
 	/**
-	 * MUTABLY modifies BOTH sets IN PLACE
+	 * modifies BOTH sets IN PLACE
 	 */
 	public static void match(NodeSet A, NodeSet B) {
 		//System.out.println(
@@ -51,8 +52,6 @@ public class NodeSet {
 			topChoice.match(a);
 			// doubly-remove links
 			topChoice.removePreferencesAfter(a);
-			//System.out.println(a + " is now matched with node " + a.match);
-			//System.out.println(a + "'s priorities are " + a.priorities);
 			System.out.println(A.getMatchStatus());
 		});
 	}

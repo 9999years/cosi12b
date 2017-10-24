@@ -13,7 +13,6 @@ public class NodeSetFactory {
 	protected List<IsolatedNode> nodes;
 	protected IsolatedNode last;
 	NodeSet set;
-	NodeSet other;
 
 	NodeSetFactory() {
 		reset();
@@ -62,7 +61,7 @@ public class NodeSetFactory {
 	}
 
 	protected void calcSet() {
-		Objects.requireNonNull(other);
+		Objects.requireNonNull(set.other);
 		List<Node> promoted = new ArrayList<>(nodes.size());
 
 		for(IsolatedNode n : nodes) {
@@ -76,26 +75,28 @@ public class NodeSetFactory {
 		return set;
 	}
 
-	protected static void link(
-			Node node, IsolatedNode isolated, NodeSet other) {
-		node.promotePriorities(isolated.priorities, other);
+	protected static void link(Node node, IsolatedNode isolated) {
+		node.promotePriorities(isolated.priorities);
 	}
 
-	protected static void link(
-			List<Node> nodes, List<IsolatedNode> isolated,
-			NodeSet other) {
-		new BiZip<Node, IsolatedNode>(nodes, isolated)
-			.forEachRemaining((n, i) -> link(n, i, other));
-
+	/**
+	 * links a factory with a non-null other field
+	 */
+	protected static void link(NodeSetFactory A) {
+		Objects.requireNonNull(A.set);
+		Objects.requireNonNull(A.set.other);
+		A.calcSet();
+		new BiZip<Node, IsolatedNode>(A.set.nodes, A.nodes)
+			.forEachRemaining(NodeSetFactory::link);
 	}
 
 	public static void link(NodeSetFactory A, NodeSetFactory B) {
-		A.other = B.set;
-		B.other = A.set;
-		A.calcSet();
-		B.calcSet();
+		Objects.requireNonNull(A.set);
+		Objects.requireNonNull(B.set);
+		A.set.other = B.set;
+		B.set.other = A.set;
 
-		link(A.set.nodes, A.nodes, B.set);
-		link(B.set.nodes, B.nodes, A.set);
+		link(A);
+		link(B);
 	}
 }
