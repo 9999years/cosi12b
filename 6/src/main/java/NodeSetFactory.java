@@ -10,7 +10,12 @@ import java.lang.IllegalStateException;
 
 public class NodeSetFactory {
 	protected List<IsolatedNode> nodes;
+	/** index = node id
+	 * each element is a list of ids ordered by priority
+	 */
+	//protected List<List<Integer>> nodePriorities;
 	protected IsolatedNode last;
+	NodeSet set;
 
 	NodeSetFactory() {
 		reset();
@@ -57,37 +62,45 @@ public class NodeSetFactory {
 		return last;
 	}
 
-	public NodeSet getSet() {
-		NodeSet set = new NodeSet();
+	protected void calcSet() {
+		set = new NodeSet();
 		List<Node> promoted = new ArrayList<>(nodes.size());
-
-		for(IsolatedNode n : nodes) {
-			promoted.add(new Node(n));
-		}
-
-		new BiZip<Node, IsolatedNode>(promoted, nodes)
-			.forEachRemaining((node, isolated) -> {
-				// make node's set field point to the result
-				// set
-				node.set = set;
-				// isolated.priorities gives indexes to `Node`s
-				// in `nodes`; construct a new priority for
-				// each inx in isolated.priorities
-				for(int i = 0;
-					i < isolated.priorities.size();
-					i++) {
-					// index is priority and an index
-					node.priorities.add(new NodePriority(
-						i,
-						promoted.get(
-							isolated.priorities.get(i)
-						)
-					));
-				}
-			});
-
 		set.nodes = promoted;
 
+		for(IsolatedNode n : nodes) {
+			Node node = new Node(n);
+			node.set = set;
+			promoted.add(node);
+		}
+	}
+
+	public NodeSet getSet() {
 		return set;
+	}
+
+	public static void link(NodeSetFactory A, NodeSetFactory B) {
+		A.calcSet();
+		B.calcSet();
+
+		new QuadZip<Node, Node, IsolatedNode, IsolatedNode>(
+			A.set.nodes, // real
+			B.set.nodes,
+			A.nodes, // isolated
+			B.nodes
+		).forEachRemaining(Na -> Nb -> Ia -> Ib -> {
+			// Na is real node in A.set.nodes
+			// Ia is isolated node in A.nodes
+			Iterator<Integer> itr = Ia.priorities.iterator();
+			for(int i = 0; itr.hasNext(); i++) {
+				// index in B.set.nodes
+				int indexB = itr.next();
+				Na.priorities.add(
+					new NodePriority(
+						i, // priority
+						B.set.nodes.get(indexB)
+					)
+				);
+			}
+		});
 	}
 }

@@ -9,6 +9,9 @@ public class NodePriority {
 		this.node = node;
 	}
 
+	/**
+	 * compares nodes only, not priorities
+	 */
 	public boolean equals(Object o) {
 		if(o instanceof NodePriority) {
 			return node.equals(((NodePriority) o).node);

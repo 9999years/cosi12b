@@ -3,6 +3,7 @@ package becca.smp;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Objects;
 
 import java.lang.IllegalStateException;
 
@@ -44,9 +45,7 @@ public class Node extends IsolatedNode {
 	}
 
 	public NodePriority getTopChoice() {
-		if(priorities == null) {
-			throw new IllegalStateException("priorities field null!");
-		}
+		Objects.requireNonNull(priorities, "priorities field null!");
 		return priorities.get(0);
 	}
 
@@ -85,18 +84,13 @@ public class Node extends IsolatedNode {
 		}
 	}
 
-	// TODO test this it's being used in rpa
 	public void removePreference(Node n) {
-		if(priorities == null) {
-			throw new IllegalStateException("priorities field null!");
-		}
+		Objects.requireNonNull(priorities, "priorities field null!");
 		priorities.remove(n);
 	}
 
 	public void removePreferencesAfter(Node n) {
-		if(priorities == null) {
-			throw new IllegalStateException("priorities field null!");
-		}
+		Objects.requireNonNull(priorities, "priorities field null!");
 
 		boolean removing = false;
 		for(Iterator<NodePriority> itr = priorities.iterator();
