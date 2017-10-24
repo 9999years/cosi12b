@@ -21,6 +21,7 @@ public class NodeSetFactory {
 
 	public void reset() {
 		nodes = new ArrayList<>();
+		set = new NodeSet();
 		last = null;
 	}
 
@@ -62,12 +63,13 @@ public class NodeSetFactory {
 
 	protected void calcSet() {
 		Objects.requireNonNull(other);
-		set = new NodeSet();
-		set.nodes = new ArrayList<>(nodes.size());
+		List<Node> promoted = new ArrayList<>(nodes.size());
 
 		for(IsolatedNode n : nodes) {
-			set.nodes.add(new Node(n, set));
+			promoted.add(new Node(n, set));
 		}
+
+		set = new NodeSet(promoted);
 	}
 
 	public NodeSet getSet() {

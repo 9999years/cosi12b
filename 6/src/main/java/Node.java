@@ -138,8 +138,16 @@ public class Node {
 	}
 
 	public boolean equals(Object o) {
-		return o instanceof Node
-			&& ((Node) o).id == id;
+		if(o instanceof Node) {
+			return ((Node) o).id == id;
+		} else if(o instanceof NodePriority) {
+			// lets a more natural correspondence work between
+			// nodes and priorities, which are *essentially*
+			// wrappers around a node
+			return ((NodePriority) o).node.id == id;
+		} else {
+			return false;
+		}
 	}
 
 	public String toString() {

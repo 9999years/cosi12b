@@ -55,7 +55,7 @@ public class NodeSetTest {
 		assertSetMatches(setA, matches);
 	}
 
-	//@Test
+	@Test
 	void integrationTest() {
 		verifySets(
 			new int[][] {
