@@ -58,11 +58,7 @@ public class NodeTest {
 	void removePreferenceTest(
 			int[] expected, int[] priorities, int remove) {
 		Node n = createNodeWithPriorities(priorities);
-		System.out.println("BEGIN");
-		System.out.println(n.priorities);
-		System.out.println("removing " + remove);
 		n.removePreference(new Node(null, null, remove));
-		System.out.println(n.priorities);
 		checkPriorities(expected, n);
 	}
 
