@@ -1,6 +1,8 @@
 package becca.smp;
 
-public class NodePriority {
+import java.lang.Comparable;
+
+public class NodePriority implements Comparable<NodePriority> {
 	int priority;
 	Node node;
 
@@ -20,6 +22,19 @@ public class NodePriority {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * compares *priorities* only, in contrast with equals
+	 *
+	 * sorry!!
+	 *
+	 * here's the reasoning: we want to be able to sort lists of
+	 * `NodePriority`s by *priority*, but when we need equality we only
+	 * care about the node
+	 */
+	public int compareTo(NodePriority o) {
+		return new Integer(priority).compareTo(o.priority);
 	}
 
 	public String toString() {

@@ -54,11 +54,11 @@ public class Node {
 	}
 
 	/**
-	 * precondition: other.nodes is fully constructed, ie has references to
-	 * all nodes which will exist in the set
+	 * precondition: set.other.nodes is fully constructed, ie has
+	 * references to all nodes which will exist in the set
 	 */
-	protected void promotePriorities(
-			List<Integer> priorityIndices, NodeSet other) {
+	protected void promotePriorities(List<Integer> priorityIndices) {
+		Objects.requireNonNull(set.other.nodes);
 		Iterator<Integer> itr = priorityIndices.iterator();
 		for(int i = 0; itr.hasNext(); i++) {
 			// index in B.set.nodes
@@ -66,7 +66,7 @@ public class Node {
 			priorities.add(
 				new NodePriority(
 					i, // priority
-					other.nodes.get(indexB)
+					set.other.nodes.get(indexB)
 				)
 			);
 		}
@@ -89,6 +89,19 @@ public class Node {
 		}
 
 		return -1;
+	}
+
+	public boolean inPriorities(Node n) {
+		return priorities.contains(n);
+	}
+
+	public NodePriority getPriority(Node n) {
+		for(NodePriority np : priorities) {
+			if(n.equals(np)) {
+				return np;
+			}
+		}
+		return null;
 	}
 
 	public Node getMatch() {
@@ -144,7 +157,7 @@ public class Node {
 			// lets a more natural correspondence work between
 			// nodes and priorities, which are *essentially*
 			// wrappers around a node
-			return ((NodePriority) o).node.id == id;
+			return equals(((NodePriority) o).node);
 		} else {
 			return false;
 		}
