@@ -42,7 +42,7 @@ public class NodeSetTest {
 		return factory;
 	}
 
-	static void verifySets(
+	static NodeSet verifySets(
 			int[][] datA,
 			int[][] datB,
 			int[][] matches) {
@@ -55,10 +55,48 @@ public class NodeSetTest {
 
 		NodeSet.match(setA, setB);
 		assertSetMatches(setA, matches);
+
+		return setA;
 	}
 
-	@Test
-	void integrationTest() {
+	static void verifySets(
+			int[][] datA,
+			int[][] datB,
+			int[][] matches,
+			double abPriority,
+			double baPriority) {
+		NodeSet setA = verifySets(datA, datB, matches);
+		assertEquals(abPriority, setA.getMeanPriority(), 0.0001);
+		NodeSet.match(setA.other, setA);
+		assertEquals(baPriority, setA.getMeanPriority(), 0.0001);
+	}
+
+	static void integrationTest() {
+
+		// short.dat
+		verifySets(
+			new int[][] { // men
+				{3, 0, 1, 2},
+				{1, 2, 0, 3},
+				{1, 3, 2, 0},
+				{2, 0, 3, 1}
+			},
+			new int[][] { // women
+				{3, 0, 2, 1},
+				{0, 2, 1, 3},
+				{0, 1, 2, 3},
+				{3, 0, 2, 1},
+			},
+			new int[][] {
+				{0, 3},
+				{1, 2},
+				{2, 1},
+				{3, 0}
+			},
+			1.5, // men favored
+			1.75 // women favored
+		);
+
 		verifySets(
 			new int[][] {
 				{3, 2, 0, 1}, // 0
@@ -77,27 +115,6 @@ public class NodeSetTest {
 				{1, 1},
 				{2, 0},
 				{3, 3}
-			}
-		);
-
-		verifySets(
-			new int[][] {
-				{3, 0, 1, 2},
-				{1, 2, 0, 3},
-				{1, 3, 2, 0},
-				{2, 0, 3, 1}
-			},
-			new int[][] {
-				{3, 0, 2, 1},
-				{0, 2, 1, 3},
-				{0, 1, 2, 3},
-				{3, 0, 2, 1},
-			},
-			new int[][] {
-				{0, 3},
-				{1, 2},
-				{2, 1},
-				{3, 0}
 			}
 		);
 
