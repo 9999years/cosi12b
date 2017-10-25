@@ -31,7 +31,7 @@ public class NodeSet {
 		other = null;
 		matched = false;
 	}
-	
+
 	public void reset() {
 		init(DEFAULT_CAPACITY);
 	}
@@ -87,7 +87,7 @@ public class NodeSet {
 				matchedNodes++;
 			}
 		}
-		return (double) totalPriority / matchedNodes;
+		return 1.0 + (double) totalPriority / matchedNodes;
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class NodeSet {
 				builder.append(String.format(
 					"%11s | %6d | %s\n",
 					n.name,
-					Integer.toString(n.getMatchPriority()),
+					n.getMatchPriority(),
 					n.match.name));
 			} else {
 				builder.append(String.format(
@@ -115,7 +115,7 @@ public class NodeSet {
 		}
 
 		builder.append("\n");
-		builder.append(String.format("Mean choice = %f\n", 
+		builder.append(String.format("Mean choice = %f\n",
 			getMeanPriority()));
 
 		return builder.toString();
