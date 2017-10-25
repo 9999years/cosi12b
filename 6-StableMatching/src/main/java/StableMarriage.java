@@ -1,6 +1,7 @@
 package becca.smp;
 
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +20,11 @@ public class StableMarriage {
 	 */
 	public static final int EXIT_USAGE = 64;
 	/**
+	 * data format error
+	 */
+
+	public static final int EXIT_DATAERR = 65;
+	/**
 	 * input/output error
 	 */
 	public static final int EXIT_IOERR = 74;
@@ -28,14 +34,35 @@ public class StableMarriage {
 	 * like "Joe: "
 	 */
 	public static final Pattern NAME_PATTERN = Pattern.compile(
-		"\\b[^:]+(?=:\\p{Zs}+)");
-	public static final String END_STRING = "END\n";
+		"\\b(?<name>[^:]+)(?<extra>:\\p{Zs}+)");
+	public static final String END_STRING = "END";
 
 	public static final int MIN_ARGS = 1;
 	public static final int MAX_ARGS = 1;
 	public static final int INPUTFILE_INDEX = 0;
 	public static final String USAGE =
 		"Usage: java StableMarriage INPUTFILE";
+
+	protected static void parseNameLine(
+			NodeSetFactory factory, String line) {
+		Matcher matcher = NAME_PATTERN.matcher(line);
+		if(matcher.lookingAt()) {
+			// get name
+			factory.add(matcher.group("name"));
+			Scanner input = new Scanner(
+				line.substring(matcher.end()));
+			// get preferences
+			while(input.hasNextInt()) {
+				factory.addPref(input.nextInt());
+			}
+		} else {
+			error("Invalid input file format; Name must be"
+				+ " non-empty and followed by a colon, and"
+				+ " section-end lines must contain ONLY the"
+				+ " word \"END\". Invalid line:\n" + line);
+			usage(EXIT_DATAERR);
+		}
+	}
 
 	/**
 	 * takes the next portion of lines beginning with a name followed by a
@@ -44,15 +71,12 @@ public class StableMarriage {
 	 */
 	protected static NodeSetFactory getNextSegment(Scanner input) {
 		NodeSetFactory factory = new NodeSetFactory();
-		while(input.hasNext()) {
-			if(input.hasNext(END_STRING)) {
+		while(input.hasNextLine()) {
+			String line = input.nextLine();
+			if(line.equals(END_STRING)) {
 				break;
-			}
-			// get name
-			factory.add(input.next(NAME_PATTERN));
-			// get preferences
-			while(input.hasNextInt()) {
-				factory.addPref(input.nextInt());
+			} else {
+				parseNameLine(factory, line);
 			}
 		}
 		return factory;
@@ -124,21 +148,22 @@ public class StableMarriage {
 			exitIllegalFilename();
 		}
 
-		NodeSet A = null;
+		NodeSet men = null;
 		try {
-			A = parse(new Scanner(new File(inputFile)));
+			men = parse(new Scanner(new File(inputFile)));
 		} catch(FileNotFoundException e) {
 			// bogus
 			// guaranteed to not be thrown by checkReadFilename
 			 exitIllegalFilename();
 		}
 
-		NodeSet B = A.other;
-		NodeSet.match(A, B);
+		NodeSet women = men.other;
+
+		NodeSet.match(men, women);
 		System.out.println("Matches with men prioritized:");
-		System.out.println(A.getMatchStatus());
-		NodeSet.match(B, A);
+		System.out.println(men.getMatchStatus());
+		NodeSet.match(women, men);
 		System.out.println("Matches with women prioritized:");
-		System.out.println(B.getMatchStatus());
+		System.out.println(women.getMatchStatus());
 	}
 }
