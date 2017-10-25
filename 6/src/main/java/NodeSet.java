@@ -12,6 +12,8 @@ public class NodeSet {
 	List<Node> nodes;
 	NodeSet other;
 
+	protected boolean matched;
+
 	NodeSet() {
 		init(DEFAULT_CAPACITY);
 	}
@@ -27,6 +29,7 @@ public class NodeSet {
 	protected void init(int size) {
 		nodes = new ArrayList<>(size);
 		other = null;
+		matched = false;
 	}
 	
 	public void reset() {
@@ -45,6 +48,8 @@ public class NodeSet {
 		for(Node n : nodes) {
 			n.unmatch();
 		}
+
+		matched = false;
 	}
 
 	/**
@@ -60,12 +65,25 @@ public class NodeSet {
 			// doubly-remove links
 			topChoice.removePreferencesAfter(a);
 		});
+
+		A.matched = B.matched = true;
 	}
 
 	public String toString() {
 		return "becca.smp.NodeSet[nodes="
 			+ nodes
 			+ "]";
+	}
+
+	public double getMeanPriority() {
+		if(!matched) {
+			throw new IllegalStateException("NodeSet must be matched to have a mean priority!");
+		}
+		int totalPriority = 0;
+		for(Node n : nodes) {
+			totalPriority += n.getMatchPriority();
+		}
+		return (double) totalPriority / nodes.size();
 	}
 
 	/**
@@ -75,23 +93,24 @@ public class NodeSet {
 	public String getMatchStatus() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(
-			"id | matchid | priority | priorities\n" +
-			"---+---------+----------+-----------\n");
+			"Name        | Choice | Partner\n" +
+			"------------+--------+------------\n");
 
 		for(Node n : nodes) {
-			builder.append(String.format(
-				"%2d | %7s | %8s | %s\n",
-				n.id,
-				n.isMatched()
-					? Integer.toString(n.match.id)
-					: "",
-				n.isMatched()
-					? Integer.toString(n.getMatchPriority())
-					: "",
-				n.priorities));
+			if(n.isMatched()) {
+				builder.append(String.format(
+					"%11s | %6d | %s\n",
+					n.name,
+					Integer.toString(n.getMatchPriority()),
+					n.match.name));
+			} else {
+			}
 		}
 
 		builder.append("\n");
+		builder.append(String.format("Mean choice = %f\n", 
+			getMeanPriority()));
+
 		return builder.toString();
 	}
 }
