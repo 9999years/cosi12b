@@ -35,7 +35,6 @@ public class Node {
 	 */
 	Node(IsolatedNode n, NodeSet parent) {
 		this(n.name, parent, n.id);
-		set.nodes.add(this);
 	}
 
 	/**
@@ -54,10 +53,11 @@ public class Node {
 	}
 
 	/**
-	 * precondition: set.other.nodes is fully constructed, ie has
-	 * references to all nodes which will exist in the set
+	 * precondition: other.nodes is fully constructed, ie has references to
+	 * all nodes which will exist in the set
 	 */
-	protected void promotePriorities(List<Integer> priorityIndices) {
+	protected void promotePriorities(
+			List<Integer> priorityIndices) {
 		Objects.requireNonNull(set.other.nodes);
 		Iterator<Integer> itr = priorityIndices.iterator();
 		for(int i = 0; itr.hasNext(); i++) {
@@ -89,19 +89,6 @@ public class Node {
 		}
 
 		return -1;
-	}
-
-	public boolean inPriorities(Node n) {
-		return priorities.contains(n);
-	}
-
-	public NodePriority getPriority(Node n) {
-		for(NodePriority np : priorities) {
-			if(n.equals(np)) {
-				return np;
-			}
-		}
-		return null;
 	}
 
 	public Node getMatch() {
@@ -157,7 +144,7 @@ public class Node {
 			// lets a more natural correspondence work between
 			// nodes and priorities, which are *essentially*
 			// wrappers around a node
-			return equals(((NodePriority) o).node);
+			return ((NodePriority) o).node.id == id;
 		} else {
 			return false;
 		}

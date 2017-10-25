@@ -26,47 +26,34 @@ public class NodeSetFactory {
 
 	/**
 	 * add a node to the set
+	 * @return id of new element
 	 */
-	public void add(Object name) {
-		last = new IsolatedNode(name, nodes.size());
+	public int add(Object name) {
 		// index is a fine id more or less
+		last = new IsolatedNode(name, nodes.size());
 		nodes.add(last);
+		return last.id;
 	}
 
 	/**
 	 * add a preference to the end of the pref list of the last node added
 	 */
 	public void addPref(int id) {
-		if(last == null) {
-			throw new IllegalStateException("No last element!");
-		}
+		Objects.requireNonNull(last, "add() not called!");
 		last.priorities.add(id);
-	}
-
-	public void addPrefs(int[] ids) {
-		if(last == null) {
-			throw new IllegalStateException("No last element!");
-		}
-		last.priorities.addAll(
-			// int[] -> Integer[]
-			IntStream
-				.of(ids)
-				.boxed()
-				.collect(Collectors.toList())
-		);
 	}
 
 	public IsolatedNode getLast() {
 		return last;
 	}
 
-	protected void calcSet() {
-		Objects.requireNonNull(nodes);
-
+	protected void preCalc() {
 		set = new NodeSet(nodes.size());
+	}
 
+	protected void calcSet() {
 		for(IsolatedNode n : nodes) {
-			set.add(n);
+			set.nodes.add(new Node(n, set));
 		}
 	}
 
@@ -78,27 +65,26 @@ public class NodeSetFactory {
 		node.promotePriorities(isolated.priorities);
 	}
 
-	/**
-	 * links a factory with a non-null other field
-	 */
-	protected static void link(NodeSetFactory A) {
-		Objects.requireNonNull(A.set);
-		Objects.requireNonNull(A.set.other);
-		new BiZip<Node, IsolatedNode>(A.set.nodes, A.nodes)
+	protected static void link(List<Node> nodes, List<IsolatedNode> isolated) {
+		new BiZip<Node, IsolatedNode>(nodes, isolated)
 			.forEachRemaining(NodeSetFactory::link);
+
+	}
+
+	protected static void link(NodeSetFactory A) {
+		link(A.set.nodes, A.nodes);
 	}
 
 	public static void link(NodeSetFactory A, NodeSetFactory B) {
-		// promote isolated nodes to real nodes and replace the set
-		// field
-		A.calcSet();
-		B.calcSet();
+		A.preCalc();
+		B.preCalc();
 
-		// ensure sets point to each other
 		A.set.other = B.set;
 		B.set.other = A.set;
 
-		// promote priority lists
+		A.calcSet();
+		B.calcSet();
+
 		link(A);
 		link(B);
 	}

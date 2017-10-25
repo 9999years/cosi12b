@@ -7,27 +7,30 @@ import java.util.Iterator;
 import java.lang.StringBuilder;
 
 public class NodeSet {
+	public static final int DEFAULT_CAPACITY = 10;
+
 	List<Node> nodes;
 	NodeSet other;
 
 	NodeSet() {
-		this(0);
+		init(DEFAULT_CAPACITY);
 	}
 
-	NodeSet(int nodeCount) {
-		nodes = new ArrayList<Node>(nodeCount);
+	NodeSet(int size) {
+		init(size);
 	}
 
 	NodeSet(List<Node> nodes) {
 		this.nodes = nodes;
 	}
 
-	public void add(IsolatedNode n) {
-		nodes.add(new Node(n, this));
+	protected void init(int size) {
+		nodes = new ArrayList<>(size);
+		other = null;
 	}
-
-	public void add(Object name, int id) {
-		nodes.add(new Node(name, this, id));
+	
+	public void reset() {
+		init(DEFAULT_CAPACITY);
 	}
 
 	public Iterator<Node> getUnmatchedNodes() {
@@ -45,26 +48,17 @@ public class NodeSet {
 	}
 
 	/**
-	 * modifies BOTH sets IN PLACE
+	 * MUTABLY modifies BOTH sets IN PLACE
 	 */
 	public static void match(NodeSet A, NodeSet B) {
-		//System.out.println(
-			//"matching set of "
-			//+ A.nodes.size()
-			//+ " nodes with a set of "
-			//+ B.nodes.size()
-			//+ " nodes");
-
 		Iterator<Node> unmatchedANodes = A.getUnmatchedNodes();
 
 		unmatchedANodes.forEachRemaining(a -> {
-			System.out.println(a);
 			Node topChoice = a.getTopChoice().node;
 			// unmatches and then matches
 			topChoice.match(a);
 			// doubly-remove links
 			topChoice.removePreferencesAfter(a);
-			System.out.println(A.getMatchStatus());
 		});
 	}
 
@@ -81,8 +75,8 @@ public class NodeSet {
 	public String getMatchStatus() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(
-			"id | matchid | priority | priorities\n" + 
-			"---+---------+----------|------------\n");
+			"id | matchid | priority | priorities\n" +
+			"---+---------+----------+-----------\n");
 
 		for(Node n : nodes) {
 			builder.append(String.format(
