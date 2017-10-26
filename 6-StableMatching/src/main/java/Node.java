@@ -7,27 +7,52 @@ import java.util.Objects;
 
 import java.lang.IllegalStateException;
 
+/**
+ * a node in a stable matching problem; has a name, a unique id, a NodeSet it
+ * belongs to, and a list of priorities which wrap other nodes it would like to
+ * be matched with
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class Node {
 	/**
 	 * unique per-set id of this node
 	 */
-	public int id;
+	protected int id;
 	/**
 	 * display name of this node; purely cosmetic
 	 */
-	public Object name;
+	protected Object name;
 	/**
 	 * which set this node belongs to
 	 */
-	public NodeSet set;
+	protected NodeSet set;
 	/**
-	 * ranked list of node preferences in opposite set; stores IDs
+	 * ranked list of node priorities in opposite set; stores IDs
 	 */
 	protected List<NodePriority> priorities;
 	/**
 	 * current match
 	 */
 	protected Node match = null;
+
+	public int getID() {
+		return id;
+	}
+
+	public Object getName() {
+		return name;
+	}
+
+	public NodeSet getSet() {
+		return set;
+	}
+
+	public List<NodePriority> getPriorities() {
+		return priorities;
+	}
 
 	/**
 	 * precondition: n is not null
@@ -58,7 +83,7 @@ public class Node {
 	 */
 	protected void promotePriorities(
 			List<Integer> priorityIndices) {
-		Objects.requireNonNull(set.other.nodes);
+		Objects.requireNonNull(set.getOtherSet().nodes);
 		Iterator<Integer> itr = priorityIndices.iterator();
 		for(int i = 0; itr.hasNext(); i++) {
 			// index in B.set.nodes
@@ -66,7 +91,7 @@ public class Node {
 			priorities.add(
 				new NodePriority(
 					i, // priority
-					set.other.nodes.get(indexB)
+					set.getOtherSet().nodes.get(indexB)
 				)
 			);
 		}
@@ -84,7 +109,7 @@ public class Node {
 
 		for(NodePriority np : priorities) {
 			if(np.equals(match)) {
-				return np.priority;
+				return np.getPriority();
 			}
 		}
 
@@ -112,26 +137,24 @@ public class Node {
 		}
 	}
 
-	public void removePreference(Node n) {
+	public void removePriority(Node n) {
 		Objects.requireNonNull(priorities, "priorities field null!");
 		priorities.remove(n);
 	}
 
-	public void removePreferencesAfter(Node n) {
+	public void removePrioritiesAfter(Node n) {
 		Objects.requireNonNull(priorities, "priorities field null!");
 
 		boolean removing = false;
 		for(Iterator<NodePriority> itr = priorities.iterator();
 				itr.hasNext(); ) {
 			NodePriority np = itr.next();
-			//System.out.println("Examining " + np);
-			if(!removing && np.node.equals(n)) {
+			if(!removing && np.getNode().equals(n)) {
 				removing = true;
 				continue;
 			}
 			if(removing == true) {
-				//System.out.println("(removing)");
-				np.node.removePreference(this);
+				np.getNode().removePriority(this);
 				itr.remove();
 			}
 		}
@@ -139,12 +162,12 @@ public class Node {
 
 	public boolean equals(Object o) {
 		if(o instanceof Node) {
-			return ((Node) o).id == id;
+			return ((Node) o).getID() == getID();
 		} else if(o instanceof NodePriority) {
 			// lets a more natural correspondence work between
 			// nodes and priorities, which are *essentially*
 			// wrappers around a node
-			return ((NodePriority) o).node.id == id;
+			return equals(((NodePriority) o).node);
 		} else {
 			return false;
 		}

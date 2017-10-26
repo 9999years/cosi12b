@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * class for zipping multiple collections; elements past the size of the
- * shorter collection are discarded
+ * class for zipping two collections together and iterating over them at the
+ * same time; elements past the size of the shorter collection are discarded
  */
 public class BiZip<T, U> {
 	protected Iterator<T> it;
