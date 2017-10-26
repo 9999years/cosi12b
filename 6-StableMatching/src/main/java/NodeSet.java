@@ -1,18 +1,40 @@
 package becca.smp;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import java.lang.StringBuilder;
 
+/**
+ * a set of nodes; generally created by a NodeSetFactory
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class NodeSet {
 	public static final int DEFAULT_CAPACITY = 10;
+	public static final String TABLE_NAME_HEADER = "Name";
+	public static final String TABLE_PRIORITY_HEADER = "Choice";
+	public static final String TABLE_MATCH_HEADER = "Partner";
 
+	/**
+	 * tinker with this responsibly!
+	 */
 	List<Node> nodes;
-	NodeSet other;
-
+	protected NodeSet other;
 	protected boolean matched;
+
+	public NodeSet getOtherSet() {
+		return other;
+	}
+
+	public boolean isMatched() {
+		return matched;
+	}
 
 	NodeSet() {
 		init(DEFAULT_CAPACITY);
@@ -37,7 +59,8 @@ public class NodeSet {
 	}
 
 	public Iterator<Node> getUnmatchedNodes() {
-		return new NodeIterator(nodes, n -> !n.isMatched());
+		return new NodeIterator(nodes,
+			n -> !n.isMatched() && n.getPriorities().size() > 0);
 	}
 
 	public Node get(int id) {
@@ -59,11 +82,12 @@ public class NodeSet {
 		Iterator<Node> unmatchedANodes = A.getUnmatchedNodes();
 
 		unmatchedANodes.forEachRemaining(a -> {
-			Node topChoice = a.getTopChoice().node;
+			// get a's top choice
+			Node topChoice = a.getTopChoice().getNode();
 			// unmatches and then matches
 			topChoice.match(a);
 			// doubly-remove links
-			topChoice.removePreferencesAfter(a);
+			topChoice.removePrioritiesAfter(a);
 		});
 
 		A.matched = B.matched = true;
@@ -91,26 +115,74 @@ public class NodeSet {
 	}
 
 	/**
+	 * precondition: nodes is not empty
+	 */
+	protected String getLongestName() {
+		Function<Node, Integer> nodeLength =
+			n -> n.getName().toString().length();
+		return nodes.stream()
+			.max((a, b) ->
+				nodeLength.apply(a) - nodeLength.apply(b))
+			.get()
+			.getName()
+			.toString();
+	}
+
+	/**
 	 * a table displaying the id, match id, match priority, and array of
 	 * priority ids
 	 */
 	public String getMatchStatus() {
+		int nameWidth = Math.max(
+			TABLE_NAME_HEADER.length(),
+			getLongestName().length());
+
+		int choiceWidth = (int) Math.max(
+			TABLE_PRIORITY_HEADER.length(),
+			// number of DIGITS in largest possible choice
+			// field (max size of node list).
+			// really this is only relevant with >=100,000
+			// nodes.... but better safe than sorry!!
+			Math.floor(Math.log10(nodes.size())) + 1);
+
+		String formatString =
+			"%"
+			+ nameWidth
+			+ "s   %"
+			// length of "Choice" OR
+			+ choiceWidth
+			+ "s   %s\n";
+
+		String header = String.format(
+			formatString,
+			TABLE_NAME_HEADER,
+			TABLE_PRIORITY_HEADER,
+			TABLE_MATCH_HEADER);
+
+		// i had a generic repeatString function that i immediately
+		// applied with a "-" to get a repeatDash but it seemed like
+		// overkill
+		Function<Integer, String> repeatDash = count ->
+			String.join("", Collections.nCopies(count, "-"));
+
 		StringBuilder builder = new StringBuilder();
-		builder.append(
-			"Name        | Choice | Partner\n" +
-			"------------+--------+------------\n");
+
+		builder.append(header);
+		builder.append(repeatDash.apply(header.length()) + "\n");
 
 		for(Node n : nodes) {
 			if(n.isMatched()) {
 				builder.append(String.format(
-					"%11s | %6d | %s\n",
-					n.name,
+					formatString,
+					n.getName(),
 					n.getMatchPriority(),
-					n.match.name));
+					n.getMatch().getName()));
 			} else {
 				builder.append(String.format(
-					"%11s |   --   | nobody\n",
-					n.name));
+					formatString,
+					n.getName(),
+					"--",
+					"nobody"));
 			}
 		}
 

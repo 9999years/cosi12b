@@ -8,6 +8,14 @@ import java.io.FileNotFoundException;
 
 import java.util.Scanner;
 
+/**
+ * program to match two sets of elements with priorities (the stable matching
+ * problem)
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class StableMarriage {
 	/**
 	 * exit codes from Linux sysexits.h
@@ -51,9 +59,9 @@ public class StableMarriage {
 			factory.add(matcher.group("name"));
 			Scanner input = new Scanner(
 				line.substring(matcher.end()));
-			// get preferences
+			// get priority
 			while(input.hasNextInt()) {
-				factory.addPref(input.nextInt());
+				factory.addPriority(input.nextInt());
 			}
 		} else {
 			error("Invalid input file format; Name must be"
@@ -66,7 +74,7 @@ public class StableMarriage {
 
 	/**
 	 * takes the next portion of lines beginning with a name followed by a
-	 * list of preference indicies until a line consisting of only "END"
+	 * list of priority indicies until a line consisting of only "END"
 	 * and adds them to a given factory
 	 */
 	protected static NodeSetFactory getNextSegment(Scanner input) {
@@ -99,16 +107,6 @@ public class StableMarriage {
 		// (empty string is not a file)
 		File f = new File(filename);
 		return f.isFile() && f.canRead();
-	}
-
-	/**
-	 * checks that the file is writeable and a valid path
-	 * @param filename a filename to test
-	 * @return true if filename is OK, false if not
-	 */
-	public static boolean checkWriteFilename(String filename) {
-		File f = new File(filename);
-		return filename.length() > 0 && f.canWrite() == f.isFile();
 	}
 
 	public static void usage(int code) {
@@ -157,7 +155,7 @@ public class StableMarriage {
 			 exitIllegalFilename();
 		}
 
-		NodeSet women = men.other;
+		NodeSet women = men.getOtherSet();
 
 		NodeSet.match(men, women);
 		System.out.println("Matches with men prioritized:");

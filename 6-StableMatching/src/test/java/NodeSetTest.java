@@ -35,7 +35,7 @@ public class NodeSetTest {
 		for(int i = 0; i < dat.length; i++) {
 			factory.add(i);
 			for(int p : dat[i]) {
-				factory.addPref(p);
+				factory.addPriority(p);
 			}
 		}
 

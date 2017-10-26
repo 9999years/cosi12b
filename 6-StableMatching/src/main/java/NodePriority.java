@@ -1,12 +1,29 @@
 package becca.smp;
 
+/**
+ * a 2-tuple of an integer priority (how important this match is to the node it
+ * belongs to) and a node (what node the node this NodePriority belongs to
+ * would like to be matched to)
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class NodePriority {
-	int priority;
-	Node node;
+	protected int priority;
+	protected Node node;
 
 	NodePriority(int priority, Node node) {
 		this.priority = priority;
 		this.node = node;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public Node getNode() {
+		return node;
 	}
 
 	/**
