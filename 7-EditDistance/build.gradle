@@ -17,6 +17,11 @@ apply plugin: 'application'
 
 mainClassName = 'becca.smp.EditDistance'
 
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+	options.encoding = compileJava.options.encoding
+}
+
 run {
 	mainClassName = mainClassName
 }
