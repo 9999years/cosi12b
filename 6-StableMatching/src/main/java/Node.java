@@ -109,7 +109,7 @@ public class Node {
 
 		for(NodePriority np : priorities) {
 			if(np.equals(match)) {
-				return np.getPriority();
+				return np.getPriority() + 1;
 			}
 		}
 

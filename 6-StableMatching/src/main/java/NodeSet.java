@@ -111,7 +111,7 @@ public class NodeSet {
 				matchedNodes++;
 			}
 		}
-		return 1.0 + (double) totalPriority / matchedNodes;
+		return (double) totalPriority / matchedNodes;
 	}
 
 	/**
