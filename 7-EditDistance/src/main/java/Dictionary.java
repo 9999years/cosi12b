@@ -35,6 +35,11 @@ public class Dictionary {
 	}
 
 	protected String getNext(String current, String destination) {
+		// for codepoint cur, dest in current, destination
+		// if cur != dest and the word with the dest swapped with
+		// cur is in the dictionary, return that word
+		//
+		// otherwise get a random neighbor???
 	}
 
 	public List<String> getPath(String beginning, String destination) {
