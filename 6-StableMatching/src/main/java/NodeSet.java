@@ -8,16 +8,33 @@ import java.util.function.Function;
 
 import java.lang.StringBuilder;
 
+/**
+ * a set of nodes; generally created by a NodeSetFactory
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class NodeSet {
 	public static final int DEFAULT_CAPACITY = 10;
 	public static final String TABLE_NAME_HEADER = "Name";
 	public static final String TABLE_PRIORITY_HEADER = "Choice";
 	public static final String TABLE_MATCH_HEADER = "Partner";
 
+	/**
+	 * tinker with this responsibly!
+	 */
 	List<Node> nodes;
-	NodeSet other;
-
+	protected NodeSet other;
 	protected boolean matched;
+
+	public NodeSet getOtherSet() {
+		return other;
+	}
+
+	public boolean isMatched() {
+		return matched;
+	}
 
 	NodeSet() {
 		init(DEFAULT_CAPACITY);
@@ -42,7 +59,8 @@ public class NodeSet {
 	}
 
 	public Iterator<Node> getUnmatchedNodes() {
-		return new NodeIterator(nodes, n -> !n.isMatched() && n.priorities.size() > 0);
+		return new NodeIterator(nodes,
+			n -> !n.isMatched() && n.getPriorities().size() > 0);
 	}
 
 	public Node get(int id) {
@@ -64,11 +82,12 @@ public class NodeSet {
 		Iterator<Node> unmatchedANodes = A.getUnmatchedNodes();
 
 		unmatchedANodes.forEachRemaining(a -> {
-			Node topChoice = a.getTopChoice().node;
+			// get a's top choice
+			Node topChoice = a.getTopChoice().getNode();
 			// unmatches and then matches
 			topChoice.match(a);
 			// doubly-remove links
-			topChoice.removePreferencesAfter(a);
+			topChoice.removePrioritiesAfter(a);
 		});
 
 		A.matched = B.matched = true;
@@ -100,42 +119,13 @@ public class NodeSet {
 	 */
 	protected String getLongestName() {
 		Function<Node, Integer> nodeLength =
-			n -> n.name.toString().length();
+			n -> n.getName().toString().length();
 		return nodes.stream()
 			.max((a, b) ->
 				nodeLength.apply(a) - nodeLength.apply(b))
 			.get()
-			.name
+			.getName()
 			.toString();
-	}
-
-	/**
-	 * match table for debugging
-	 */
-	protected String getDebugStatus() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(
-			"id | matchid | priority | priorities\n" +
-			"---+---------+----------+-----------\n");
-
-		for(Node n : nodes) {
-			builder.append(String.format(
-				"%2d | %7s | %8s | [",
-				n.id,
-				n.isMatched()
-					? Integer.toString(n.match.id)
-					: "",
-				n.isMatched()
-					? Integer.toString(n.getMatchPriority())
-					: ""));
-			for(NodePriority np : n.priorities) {
-				builder.append(np.node.id);
-				builder.append(", ");
-			}
-			builder.append("]\n");
-		}
-
-		return builder.toString();
 	}
 
 	/**
@@ -184,13 +174,13 @@ public class NodeSet {
 			if(n.isMatched()) {
 				builder.append(String.format(
 					formatString,
-					n.name,
+					n.getName(),
 					n.getMatchPriority(),
-					n.match.name));
+					n.getMatch().getName()));
 			} else {
 				builder.append(String.format(
 					formatString,
-					n.name,
+					n.getName(),
 					"--",
 					"nobody"));
 			}
