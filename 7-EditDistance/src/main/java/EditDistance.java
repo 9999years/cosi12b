@@ -38,10 +38,12 @@ public class EditDistance {
 	 * B
 	 */
 	public static String swapN(int n, String A, String B) {
+		int nInAOffset = A.offsetByCodePoints(0, n);
 		return
-			A.substring(0, A.offsetByCodePoints(0, n))
+			// codepoints 0..n in A
+			A.substring(0, nInAOffset)
+			// codepoint n from B
 			+ new String(Character.toChars(B.codePointAt(n)))
-			+ B.substring(B.offsetByCodePoints(0, n + 1))
-		;
+			+ A.substring(A.offsetByCodePoints(nInAOffset, 1));
 	}
 }
