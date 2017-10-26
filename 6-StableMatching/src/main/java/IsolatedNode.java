@@ -15,7 +15,7 @@ import java.util.List;
  * @version 1.0.0
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
-protected class IsolatedNode {
+public class IsolatedNode {
 	public int id;
 	public Object name;
 	/**
