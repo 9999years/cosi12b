@@ -3,6 +3,10 @@ package becca.edit;
 import java.util.Iterator;
 import java.lang.Iterable;
 
+import java.util.stream.IntStream;
+import java.util.function.Function;
+import java.util.function.Consumer;
+
 public class BiStringIterator
 		implements Iterable<BiCodePoint>, Iterator<BiCodePoint> {
 	protected Iterator<Integer> iterA;
@@ -10,8 +14,8 @@ public class BiStringIterator
 	protected int index;
 
 	BiStringIterator(String A, String B) {
-		iterA = A.codePoints();
-		iterB = B.codePoints();
+		iterA = A.codePoints().iterator();
+		iterB = B.codePoints().iterator();
 	}
 
 	public boolean hasNext() {
@@ -23,14 +27,17 @@ public class BiStringIterator
 		return new BiCodePoint(iterA.next(), iterB.next(), index);
 	}
 
+	public Iterator<BiCodePoint> iterator() {
+		return this;
+	}
+
 	/**
 	 * @param func a curried codePointA -> codePointB -> Index
 	 */
 	public void forEachRemaining(
 			//       cpA               cpB               index
 			Function<Integer, Function<Integer, Consumer<Integer>>>
-			func
-			) {
+			func) {
 		index++;
 		while(hasNext()) {
 			func
