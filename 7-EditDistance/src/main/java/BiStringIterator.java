@@ -23,8 +23,7 @@ public class BiStringIterator
 	}
 
 	public BiCodePoint next() {
-		index++;
-		return new BiCodePoint(iterA.next(), iterB.next(), index);
+		return new BiCodePoint(iterA.next(), iterB.next(), index++);
 	}
 
 	public Iterator<BiCodePoint> iterator() {
@@ -38,12 +37,12 @@ public class BiStringIterator
 			//       cpA               cpB               index
 			Function<Integer, Function<Integer, Consumer<Integer>>>
 			func) {
-		index++;
 		while(hasNext()) {
+			BiCodePoint next = next();
 			func
-				.apply(iterA.next())
-				.apply(iterB.next())
-				.accept(index);
+				.apply(next.a)
+				.apply(next.b)
+				.accept(next.index);
 		}
 	}
 }
