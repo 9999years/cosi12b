@@ -40,10 +40,12 @@ public class Dictionary {
 		// cur is in the dictionary, return that word
 		//
 		// otherwise get a random neighbor???
+		return null;
 	}
 
 	public List<String> getPath(String beginning, String destination) {
 		List<String> ret = new LinkedList<>();
 		ret.add(beginning);
+		return null;
 	}
 }
