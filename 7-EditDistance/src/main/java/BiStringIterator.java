@@ -38,11 +38,7 @@ public class BiStringIterator
 			Function<Integer, Function<Integer, Consumer<Integer>>>
 			func) {
 		while(hasNext()) {
-			BiCodePoint next = next();
-			func
-				.apply(next.a)
-				.apply(next.b)
-				.accept(next.index);
+			next().apply(func);
 		}
 	}
 }
