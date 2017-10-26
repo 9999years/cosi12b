@@ -27,54 +27,54 @@ public class NodeTest {
 		}
 	}
 
-	void removePreferencesAfterTest(
+	void removePrioritiesAfterTest(
 			int[] expected, int[] priorities, int removeAfter) {
 		Node n = createNodeWithPriorities(priorities);
 		// remove
-		n.removePreferencesAfter(new Node(null, null, removeAfter));
+		n.removePrioritiesAfter(new Node(null, null, removeAfter));
 		// check
 		checkPriorities(expected, n);
 	}
 
 	@Test
-	void removePreferencesAfterTest() {
-		removePreferencesAfterTest(
+	void removePrioritiesAfterTest() {
+		removePrioritiesAfterTest(
 			new int[] {0, 1, 2, 3, 4},
 			new int[] {0, 1, 2, 3, 4, 5, 6},
 			4
 		);
-		removePreferencesAfterTest(
+		removePrioritiesAfterTest(
 			new int[] {0},
 			new int[] {0, 1, 2, 3, 4, 5, 6},
 			0
 		);
-		removePreferencesAfterTest(
+		removePrioritiesAfterTest(
 			new int[] {0, 1, 2, 3, 4, 5, 6},
 			new int[] {0, 1, 2, 3, 4, 5, 6},
 			9
 		);
 	}
 
-	void removePreferenceTest(
+	void removePriorityTest(
 			int[] expected, int[] priorities, int remove) {
 		Node n = createNodeWithPriorities(priorities);
-		n.removePreference(new Node(null, null, remove));
+		n.removePriority(new Node(null, null, remove));
 		checkPriorities(expected, n);
 	}
 
 	@Test
-	void removePreferenceTest() {
-		removePreferenceTest(
+	void removePriorityTest() {
+		removePriorityTest(
 			new int[] {0, 1, 2, 3, 5, 6},
 			new int[] {0, 1, 2, 3, 4, 5, 6},
 			4
 		);
-		removePreferenceTest(
+		removePriorityTest(
 			new int[] {1, 2, 3, 4, 5, 6},
 			new int[] {0, 1, 2, 3, 4, 5, 6},
 			0
 		);
-		removePreferenceTest(
+		removePriorityTest(
 			new int[] {0, 1, 2, 3, 4, 5, 6},
 			new int[] {0, 1, 2, 3, 4, 5, 6},
 			9

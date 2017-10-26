@@ -5,10 +5,27 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.NoSuchElementException;
 
+/**
+ * an iterator for `NodeSet`s. note that the iteration must "drain" the
+ * predicate-satisfying nodes in the set. to find the next node, a NodeIterator
+ * iterates over the underlying NodeSet, testing each node against a
+ * user-supplied predicate and returning the next one, looping around at the
+ * set's end. if the iteration body of the client program doesn't modify the
+ * nodes so that they no longer satisfy the predicate, the program will be
+ * caught in an infinite loop. Watch out!
+ *
+ * The main use for this class is to find unmatched nodes, in NodeSet.match,
+ * which matches two `NodeSet`s, matching and modifying nodes until no
+ * unmatched nodes exist.
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
 public class NodeIterator implements Iterator<Node> {
-	List<Node> nodes;
-	Iterator<Node> itr;
-	Predicate<Node> pred;
+	protected List<Node> nodes;
+	protected Iterator<Node> itr;
+	protected Predicate<Node> pred;
 
 	/**
 	 * offset since last yielded element

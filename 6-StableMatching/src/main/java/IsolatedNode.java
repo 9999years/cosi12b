@@ -8,9 +8,14 @@ import java.util.List;
  * knowledge of other nodes. contains an int id, object name, and list of
  * priorities specified as ids, with the index implicitly being the priority;
  * essentially a specialized 3-tuple class
+ *
  * @See Node
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
-public class IsolatedNode {
+protected class IsolatedNode {
 	public int id;
 	public Object name;
 	/**
