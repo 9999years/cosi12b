@@ -44,7 +44,8 @@ test {
 }
 
 task zip(type:Exec) {
-	commandLine '7z', 'a', '-mx=5', '-tzip', 'pa6.zip', 'src/*/*/*.java', 'build.gradle'
+	commandLine '7z', 'a', '-mx=5', '-tzip', 'pa6.zip', 'src/*/*/*.java',
+	'build.gradle', 'README.md'
 }
 
 ext.junitPlatformVersion = '1.0.0'
