@@ -159,6 +159,11 @@ public class StableMarriage {
 
 		NodeSet women = men.other;
 
+		//for(Node n : men.nodes) {
+			//System.out.println(n);
+			//System.out.println(n.priorities);
+		//}
+
 		NodeSet.match(men, women);
 		System.out.println("Matches with men prioritized:");
 		System.out.println(men.getMatchStatus());
