@@ -160,6 +160,7 @@ public class StableMarriage {
 		NodeSet.match(men, women);
 		System.out.println("Matches with men prioritized:");
 		System.out.println(men.getMatchStatus());
+
 		NodeSet.match(women, men);
 		System.out.println("Matches with women prioritized:");
 		System.out.println(women.getMatchStatus());

@@ -71,6 +71,7 @@ public class NodeSetTest {
 		assertEquals(baPriority, setA.getMeanPriority(), 0.0001);
 	}
 
+	@Test
 	static void integrationTest() {
 
 		// short.dat

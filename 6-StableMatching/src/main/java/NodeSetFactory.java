@@ -19,8 +19,7 @@ import java.lang.IllegalStateException;
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
 public class NodeSetFactory {
-	protected List<IsolatedNode> nodes;
-	protected IsolatedNode last;
+	protected Node last;
 	protected NodeSet set;
 	protected boolean complete;
 
@@ -30,7 +29,6 @@ public class NodeSetFactory {
 
 	public void reset() {
 		complete = false;
-		nodes = new ArrayList<>();
 		set = new NodeSet();
 		last = null;
 	}
@@ -41,8 +39,8 @@ public class NodeSetFactory {
 	 */
 	public int add(Object name) {
 		// index is a fine id more or less
-		last = new IsolatedNode(name, nodes.size());
-		nodes.add(last);
+		last = new Node(name, set, set.getNodeCount());
+		set.add(last);
 		complete = false;
 		return last.id;
 	}
@@ -54,21 +52,11 @@ public class NodeSetFactory {
 	public void addPriority(int id) {
 		Objects.requireNonNull(last, "add() not called!");
 		complete = false;
-		last.priorities.add(id);
+		last.originalPriorities.add(id);
 	}
 
-	public IsolatedNode getLast() {
+	public Node getLast() {
 		return last;
-	}
-
-	protected void preCalc() {
-		set = new NodeSet(nodes.size());
-	}
-
-	protected void calcSet() {
-		for(IsolatedNode n : nodes) {
-			set.nodes.add(new Node(n, set));
-		}
 	}
 
 	public NodeSet getSet() {
@@ -80,31 +68,15 @@ public class NodeSetFactory {
 			+ "retrieved!");
 	}
 
-	protected static void link(Node node, IsolatedNode isolated) {
-		node.promotePriorities(isolated.priorities);
-	}
-
-	protected static void link(
-			List<Node> nodes, List<IsolatedNode> isolated) {
-		new BiZip<Node, IsolatedNode>(nodes, isolated)
-			.forEachRemaining(NodeSetFactory::link);
-
-	}
-
 	protected static void link(NodeSetFactory A) {
-		link(A.set.nodes, A.nodes);
+		A.set.iterator().forEachRemaining(
+			node -> node.resetPriorities());
 		A.complete = true;
 	}
 
 	public static void link(NodeSetFactory A, NodeSetFactory B) {
-		A.preCalc();
-		B.preCalc();
-
 		A.set.other = B.set;
 		B.set.other = A.set;
-
-		A.calcSet();
-		B.calcSet();
 
 		link(A);
 		link(B);

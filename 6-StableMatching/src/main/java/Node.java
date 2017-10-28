@@ -1,5 +1,6 @@
 package becca.smp;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
@@ -34,6 +35,11 @@ public class Node {
 	 */
 	protected List<NodePriority> priorities;
 	/**
+	 * the node's original priorities; sorted by priority and containing a
+	 * node id. used for regenerating the priorities field
+	 */
+	protected List<Integer> originalPriorities;
+	/**
 	 * current match
 	 */
 	protected Node match = null;
@@ -55,14 +61,6 @@ public class Node {
 	}
 
 	/**
-	 * precondition: n is not null
-	 * @param n the IsolatedNode to construct a real node from
-	 */
-	Node(IsolatedNode n, NodeSet parent) {
-		this(n.name, parent, n.id);
-	}
-
-	/**
 	 * precondition: id doesn't collide with any other node ids in
 	 * parent.nodes
 	 */
@@ -70,10 +68,11 @@ public class Node {
 		this.name = name;
 		this.id = id;
 		this.set = parent;
-		init();
+		originalPriorities = new ArrayList<Integer>();
+		initPriorities();
 	}
 
-	protected void init() {
+	protected void initPriorities() {
 		priorities = new LinkedList<NodePriority>();
 	}
 
@@ -81,20 +80,18 @@ public class Node {
 	 * precondition: other.nodes is fully constructed, ie has references to
 	 * all nodes which will exist in the set
 	 */
-	protected void promotePriorities(
-			List<Integer> priorityIndices) {
+	public void resetPriorities() {
 		Objects.requireNonNull(set.getOtherSet().nodes);
-		Iterator<Integer> itr = priorityIndices.iterator();
+		initPriorities();
+		Iterator<Integer> itr = originalPriorities.iterator();
 		for(int i = 0; itr.hasNext(); i++) {
-			// index in B.set.nodes
-			int indexB = itr.next();
-			priorities.add(
-				new NodePriority(
-					i, // priority
-					set.getOtherSet().nodes.get(indexB)
-				)
-			);
+			int nodeID = itr.next();
+			priorities.add(new NodePriority(
+				i, // = priority
+				set.other.nodes.get(nodeID)
+			));
 		}
+		set.matched = false;
 	}
 
 	public NodePriority getTopChoice() {
