@@ -32,18 +32,4 @@ public class EditDistance {
 		}
 		return dist;
 	}
-
-	/**
-	 * returns a string identical to A with the nth codepoint inserted from
-	 * B
-	 */
-	public static String swapN(int n, String A, String B) {
-		int nInAOffset = A.offsetByCodePoints(0, n);
-		return
-			// codepoints 0..n in A
-			A.substring(0, nInAOffset)
-			// codepoint n from B
-			+ new String(Character.toChars(B.codePointAt(n)))
-			+ A.substring(A.offsetByCodePoints(nInAOffset, 1));
-	}
 }
