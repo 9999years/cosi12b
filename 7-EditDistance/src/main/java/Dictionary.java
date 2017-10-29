@@ -42,21 +42,33 @@ public class Dictionary {
 		// if cur != dest and the word with the dest swapped with
 		// cur is in the dictionary, return that word
 		//
+		// so if we want to get from aaaa to bbbb we'll try
+		// * baaa
+		// * abaa
+		// * aaba
+		// * aaab
+		// checking if each word is in the dictionary along the way
+		//
 		// otherwise get a random neighbor???
+
 		int[] currentCodePoints = current.codePoints().toArray();
 		Set<String> neighbors = words.get(current);
 		Iterable<CodePoint> codePoints =
 			new StringIterator(destination);
+
 		for(CodePoint cp : codePoints) {
 			String candidate = cp.extract(
 				cpDestination -> index ->
 					Strings.swapN(index,
 						currentCodePoints,
-						cpDestination));
+						cpDestination)
+				);
+
 			if(neighbors.contains(candidate)) {
 				return candidate;
 			}
 		}
+
 		return null;
 	}
 

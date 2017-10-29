@@ -32,4 +32,28 @@ public class EditDistance {
 		}
 		return dist;
 	}
+
+	/**
+	 * really a comparator
+	 */
+	public static int compareThreshold(
+			String A, String B, int threshold) {
+		if(A.length() != B.length()) {
+			throw new IllegalArgumentException(
+				"Strings must be the same size!");
+		}
+
+		int dist = 0;
+		Iterable<BiCodePoint> codepoints = new BiStringIterator(A, B);
+		for(BiCodePoint cp : codepoints) {
+			if(cp.a != cp.b) {
+				dist++;
+			}
+			if(dist > threshold) {
+				return 1;
+			}
+		}
+		// uhhh
+		return dist - threshold;
+	}
 }
