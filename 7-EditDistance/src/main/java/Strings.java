@@ -1,5 +1,6 @@
 package becca.edit;
 
+import java.util.Arrays;
 
 public class Strings {
 	/**
@@ -29,7 +30,9 @@ public class Strings {
 	 * @param A a codepoint-array corresponding to a string
 	 */
 	public static String swapN(int index, int[] A, int newCodepoint) {
-		A[index] = newCodepoint;
-		return new String(A, 0, A.length);
+		// make sure we don't mess up the user's array
+		int[] a = Arrays.copyOf(A, A.length);
+		a[index] = newCodepoint;
+		return new String(a, 0, a.length);
 	}
 }
