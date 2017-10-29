@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 
 import java.util.Scanner;
 import java.util.List;
+import java.util.Collection;
+import java.util.NoSuchElementException;
+
+import java.lang.Thread;
 
 /**
  *
@@ -22,7 +26,7 @@ public class EditDistance {
 			return "Word does not exist";
 		}
 
-		List<String> path = dict.getPath(words.first, words.second);
+		Collection<String> path = dict.getPath(words.first, words.second);
 		if(path != null && path.size() > 0) {
 			return "Path = "
 				+ String.join(", ", path)
@@ -44,6 +48,19 @@ public class EditDistance {
 	}
 
 	public static void main(String args[]) throws FileNotFoundException {
+		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+			if(!(e instanceof NoSuchElementException)) {
+				// something unexpected
+				e.printStackTrace();
+			} else {
+				// ctrl-c while scanning for input
+				// (probably)
+				// gracefully exit and dont print a huge stack
+				// trace
+				System.out.println("\nBye!");
+			}
+		});
+
 		File dictionaryFile =
 			new ReadableFile("Enter name of dictionary file: ")
 			.getFile();

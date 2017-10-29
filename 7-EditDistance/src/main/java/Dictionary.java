@@ -1,7 +1,10 @@
 package becca.edit;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Deque;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -54,6 +57,7 @@ public class Dictionary {
 	}
 
 	public Set<String> neighbors(String word) {
+		ensureWord(word);
 		return words.get(word);
 	}
 
@@ -61,58 +65,58 @@ public class Dictionary {
 		return words.containsKey(word);
 	}
 
-	protected String getNext(String current, String destination) {
-		// for codepoint cur, dest in current, destination
-		// if cur != dest and the word with the dest swapped with
-		// cur is in the dictionary, return that word
-		//
-		// so if we want to get from aaaa to bbbb we'll try
-		// * baaa
-		// * abaa
-		// * aaba
-		// * aaab
-		// checking if each word is in the dictionary along the way
-		//
-		// otherwise get a random neighbor???
-
-		int[] currentCodePoints = current.codePoints().toArray();
-		Set<String> neighbors = words.get(current);
-		Iterable<CodePoint> codePoints =
-			new StringIterator(destination);
-
-		for(CodePoint cp : codePoints) {
-			String candidate = cp.extract(
-				cpDestination -> index ->
-					Strings.swapN(index,
-						currentCodePoints,
-						cpDestination)
-				);
-
-			if(neighbors.contains(candidate)) {
-				return candidate;
-			}
-		}
-
-		return null;
-	}
-
-	public List<String> getPath(String beginning, String destination) {
+	/**
+	 * get a digraph of nodes pointing towards the beginning node
+	 * not guaranteed to include all nodes in the graph, but guaranteed to
+	 * include all nodes between beginning and destination
+	 */
+	protected Map<String, String> getFlowGraph(
+			String beginning, String destination) {
 		if(!Strings.sameLength(beginning, destination)) {
 			return null;
 		}
-		List<String> ret = new LinkedList<>();
-		String next = beginning;
-		while(!next.equals(destination)) {
-			ret.add(next);
-			next = getNext(next, destination);
-			if(next == null) {
-				// no path
-				return null;
+
+		// maps a node to the node that first visited it
+		Map<String, String> visitedBy = new HashMap<>();
+
+		LinkedList<String> path = new LinkedList<>();
+		path.add(beginning);
+		while(path.size() > 0) {
+			String head = path.pop();
+			if(head.equals(destination)) {
+				// done!
+				break;
+			}
+			for(String word : neighbors(head)) {
+				if(!visitedBy.containsKey(word)) {
+					path.push(word);
+					visitedBy.put(word, head);
+				}
 			}
 		}
-		// destination
-		ret.add(next);
-		return ret;
+
+		return visitedBy;
+	}
+
+	/**
+	 * a breadth-first search on the internal graph of words
+	 */
+	public List<String> getPath(String beginning, String destination) {
+		// maps a node to the node that first visited it
+		Map<String, String> visitedBy =
+			getFlowGraph(beginning, destination);
+
+		LinkedList<String> path = new LinkedList<>();
+		// now we have our tree in visitedBy
+		// next, find the route from the destination to the beginning
+		String head = destination;
+		path.push(head);
+		while(!head.equals(beginning)) {
+			head = visitedBy.get(head);
+			path.push(head);
+		}
+
+		return path;
 	}
 
 	public String toDot() {
