@@ -23,7 +23,7 @@ public class EditDistance {
 		}
 
 		List<String> path = dict.getPath(words.first, words.second);
-		if(path.size() > 0) {
+		if(path != null && path.size() > 0) {
 			return "Path = "
 				+ String.join(", ", path)
 				+ "\nEdit distance = "

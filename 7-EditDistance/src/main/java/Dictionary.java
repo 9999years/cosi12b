@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.lang.Iterable;
 import java.util.Iterator;
 
+import java.lang.StringBuilder;
+
 public class Dictionary {
 	/**
 	 * maps words onto a set of its neighbors (words with edit distance 1)
@@ -36,14 +38,23 @@ public class Dictionary {
 
 	protected void add(String word, String neighbor) {
 		ensureWord(word);
+		ensureWord(neighbor);
 		ensureNeighbor(word, neighbor);
+		ensureNeighbor(neighbor, word);
 	}
 
 	public void add(String word) {
 		ensureWord(word);
-		words.keySet()
-			.forEach(candidate -> {
-			});
+		words.keySet().forEach(candidate -> {
+			if(!words.get(word).contains(candidate) &&
+				Strings.areNeighbors(word, candidate)) {
+				add(word, candidate);
+			}
+		});
+	}
+
+	public Set<String> neighbors(String word) {
+		return words.get(word);
 	}
 
 	public boolean contains(String word) {
@@ -86,12 +97,32 @@ public class Dictionary {
 	}
 
 	public List<String> getPath(String beginning, String destination) {
+		if(!Strings.sameLength(beginning, destination)) {
+			return null;
+		}
 		List<String> ret = new LinkedList<>();
 		String next = beginning;
-		while(next != null && !next.equals(destination)) {
-			next = getNext(next, destination);
+		while(!next.equals(destination)) {
 			ret.add(next);
+			next = getNext(next, destination);
+			if(next == null) {
+				// no path
+				return null;
+			}
 		}
+		// destination
+		ret.add(next);
 		return ret;
+	}
+
+	public String toDot() {
+		StringBuilder ret = new StringBuilder("digraph {\n");
+		for(String word : words.keySet()) {
+			ret.append(word + " -> { ");
+			ret.append(String.join(" ", words.get(word))
+				+ " };\n");
+		}
+		ret.append("}\n");
+		return ret.toString();
 	}
 }
