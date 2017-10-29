@@ -16,15 +16,12 @@ import java.lang.StringBuilder;
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
 public class NodeSet {
-	public static final int DEFAULT_CAPACITY = 10;
+	public static final int DEFAULT_CAPACITY = 16;
 	public static final String TABLE_NAME_HEADER = "Name";
 	public static final String TABLE_PRIORITY_HEADER = "Choice";
 	public static final String TABLE_MATCH_HEADER = "Partner";
 
-	/**
-	 * tinker with this responsibly!
-	 */
-	List<Node> nodes;
+	protected List<Node> nodes;
 	protected NodeSet other;
 	protected boolean matched;
 
@@ -58,27 +55,50 @@ public class NodeSet {
 		init(DEFAULT_CAPACITY);
 	}
 
+	public Node get(int id) {
+		return nodes.get(id);
+	}
+
+	public void add(Node n) {
+		matched = false;
+		nodes.add(n);
+	}
+
+	public int getNodeCount() {
+		return nodes.size();
+	}
+
 	public Iterator<Node> getUnmatchedNodes() {
 		return new NodeIterator(nodes,
 			n -> !n.isMatched() && n.getPriorities().size() > 0);
 	}
 
-	public Node get(int id) {
-		return nodes.get(id);
+	public Iterator<Node> iterator() {
+		return nodes.iterator();
 	}
 
 	public void unmatchAll() {
-		for(Node n : nodes) {
-			n.unmatch();
+		if(matched) {
+			for(Node n : nodes) {
+				n.unmatch();
+				n.resetPriorities();
+			}
 		}
 
 		matched = false;
+
+		if(other.isMatched()) {
+			other.unmatchAll();
+		}
 	}
 
 	/**
-	 * MUTABLY modifies BOTH sets IN PLACE
+	 * MUTABLY modifies BOTH sets IN PLACE after ensuring they’re unmatched
+	 * and have their original priority set
 	 */
 	public static void match(NodeSet A, NodeSet B) {
+		A.unmatchAll();
+
 		Iterator<Node> unmatchedANodes = A.getUnmatchedNodes();
 
 		unmatchedANodes.forEachRemaining(a -> {
