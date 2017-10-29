@@ -16,8 +16,10 @@ public class Dictionary {
 	 */
 	Map<String, Set<String>> words;
 
+	public static final int DEFAULT_CAPACITY = 128;
+
 	Dictionary() {
-		this(0);
+		this(DEFAULT_CAPACITY);
 	}
 
 	Dictionary(int initialCapacity) {
@@ -32,9 +34,20 @@ public class Dictionary {
 		words.get(word).add(neighbor);
 	}
 
-	public void add(String word, String neighbor) {
+	protected void add(String word, String neighbor) {
 		ensureWord(word);
 		ensureNeighbor(word, neighbor);
+	}
+
+	public void add(String word) {
+		ensureWord(word);
+		words.keySet()
+			.forEach(candidate -> {
+			});
+	}
+
+	public boolean contains(String word) {
+		return words.containsKey(word);
 	}
 
 	protected String getNext(String current, String destination) {
@@ -74,7 +87,11 @@ public class Dictionary {
 
 	public List<String> getPath(String beginning, String destination) {
 		List<String> ret = new LinkedList<>();
-		ret.add(beginning);
-		return null;
+		String next = beginning;
+		while(next != null && !next.equals(destination)) {
+			next = getNext(next, destination);
+			ret.add(next);
+		}
+		return ret;
 	}
 }

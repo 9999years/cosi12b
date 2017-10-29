@@ -6,6 +6,7 @@ import java.lang.Iterable;
 import java.util.stream.IntStream;
 import java.util.function.Function;
 import java.util.function.Consumer;
+import java.util.Arrays;
 
 public class BiStringIterator
 		implements Iterable<BiCodePoint>, Iterator<BiCodePoint> {
@@ -16,6 +17,11 @@ public class BiStringIterator
 	BiStringIterator(String A, String B) {
 		iterA = A.codePoints().iterator();
 		iterB = B.codePoints().iterator();
+	}
+
+	BiStringIterator(int[] A, int[] B) {
+		iterA = Arrays.stream(A).boxed().iterator();
+		iterB = Arrays.stream(B).boxed().iterator();
 	}
 
 	public boolean hasNext() {

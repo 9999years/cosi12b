@@ -14,12 +14,17 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'application'
+apply plugin: 'jacoco'
 
 mainClassName = 'becca.smp.EditDistance'
 
 compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile) {
 	options.encoding = compileJava.options.encoding
+}
+
+jacoco {
+	applyTo run
 }
 
 run {
@@ -38,14 +43,14 @@ jar {
 	}
 }
 
-junitPlatform {
-	 enableStandardTestTask true
-}
+//junitPlatform {
+	 //enableStandardTestTask true
+//}
 
 test {
-    testLogging {
-        exceptionFormat = 'full'
-    }
+	testLogging {
+		exceptionFormat = 'full'
+	}
 }
 
 task zip(type:Exec) {
