@@ -3,41 +3,46 @@ package becca.edit;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 public class DictionaryTest {
-	void getNextTest(
-			String expected,
+	void linksTest(
+			String[][] expected,
 			String word,
 			String destination,
-			String[] neighbors) {
+			String[] corpus) {
 		Dictionary d = new Dictionary();
-		for(String n : neighbors) {
-			d.add(word, n);
+		d.add(word);
+		d.add(destination);
+		for(String n : corpus) {
+			d.add(n);
 		}
-		assertEquals(expected, d.getNext(word, destination),
-			"Checking path from `"
-			+ word + "` to `"
-			+ destination + "`");
+		Map<String, String> graph = d.getFlowGraph(word, destination);
+		for(String[] pair : expected) {
+			assertEquals(pair[1], graph.get(pair[0]),
+				"checking node that discovered `"
+				+ pair[0] + "`");
+		}
 	}
 
 	@Test
-	void getNextTest() {
-		getNextTest("cog", "dog", "cat",
+	void linksTest() {
+		//         v-------------\
+		// dog <- dot <- cot <- cat
+		//  ^---- cog ----^
+		linksTest(new String[][] {
+				new String[] {"dot", "dog"},
+				new String[] {"cog", "dog"},
+				new String[] {"cot", "cog"},
+				new String[] {"cat", "cot"},
+			},
+			"dog", "cat",
 			new String[] {
+				"dog",
 				"dot",
-				"cog" // <-
-			});
-		getNextTest("dot", "dog", "cat",
-			new String[] {
-				"dot",
-			});
-		getNextTest("abaa", "aaaa", "bbbb",
-			new String[] {
-				"abcd",
-				"upyp",
-				"bbab",
-				"baab",
-				"..fu",
-				"abaa" // <-
+				"cot",
+				"cog",
+				"cat"
 			});
 	}
 }
