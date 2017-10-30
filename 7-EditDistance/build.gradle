@@ -14,38 +14,21 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'application'
-apply plugin: 'jacoco'
-
-mainClassName = 'becca.edit.EditDistance'
 
 compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile) {
 	options.encoding = compileJava.options.encoding
 }
 
-jacoco {
-	applyTo run
-}
-
-run {
-	mainClassName = mainClassName
-}
-
 jar {
-	baseName = mainClassName
-	version = '1.0.0-SNAPSHOT'
+	mainClassName = 'becca.edit.EditDistance'
 	manifest {
 		attributes(
-			'Implementation-Title': baseName,
-			'Implementation-Version': version,
-			'Main-Class': mainClassName
+			'Main-Class': mainClassName,
+			'Implementation-Title': mainClassName
 		)
 	}
 }
-
-//junitPlatform {
-	 //enableStandardTestTask true
-//}
 
 test {
 	testLogging {
@@ -53,9 +36,9 @@ test {
 	}
 }
 
-task zip(type:Exec) {
-	commandLine '7z', 'a', '-mx=5', '-tzip', 'pa6.zip', 'src/*/*/*.java',
-	'build.gradle', 'README.md'
+task zip(type: Zip) {
+	from '.'
+	include 'build.gradle', 'src/*/*/*.java'
 }
 
 ext.junitPlatformVersion = '1.0.0'
