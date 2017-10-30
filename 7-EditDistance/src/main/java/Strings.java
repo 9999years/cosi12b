@@ -39,8 +39,8 @@ public class Strings {
 		return new String(a, 0, a.length);
 	}
 
-	public static String fromIntArray(int[] a) {
-		return new String(a, 0, a.length);
+	public static String fromIntArray(int[] codepoints) {
+		return new String(codepoints, 0, codepoints.length);
 	}
 
 	public static int[] toIntArray(String A) {
