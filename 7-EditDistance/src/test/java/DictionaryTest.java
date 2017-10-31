@@ -77,7 +77,7 @@ public class DictionaryTest {
 		linksTest(new String[][] {
 				new String[] {"dot", "dog"},
 				new String[] {"cog", "dog"},
-				new String[] {"cot", "cog"},
+				new String[] {"cot", "dot"},
 				new String[] {"cat", "cot"},
 			},
 			"dog", "cat",
@@ -140,17 +140,13 @@ public class DictionaryTest {
 
 	@Test
 	void integrationTest() {
-		integrationTest(new String[] {"net", "nee", "lee", "lew",
-			"hew", "hem", "him", "hip"},
+		integrationTest(new String[] {"net", "pet", "pit", "pip", "hip"},
 			"net", "hip", threes);
 		integrationTest(new String[] {"tag", "nag"},
 			"tag", "nag", threes);
-		integrationTest(new String[] {"tag", "wag", "wad", "lad",
-			"lid", "tid", "tit", "cit", "cot", "cog", "dog", "dug",
-			"dun", "den", "ten", "tee", "see"},
+		integrationTest(new String[] {"tag", "tan", "ten", "tee", "see"},
 			"tag", "see", threes);
-		integrationTest(new String[] {"lop", "mop", "moo", "coo",
-			"coy"},
+		integrationTest(new String[] {"lop", "loy", "coy"},
 			"lop", "coy", threes);
 	}
 
