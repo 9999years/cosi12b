@@ -17,6 +17,17 @@ import java.lang.Thread;
  * @license AGPL3.0 gnu.org/licenses/agpl.html
  */
 public class EditDistance {
+	/**
+	 * average length of each line in dict.txt
+	 * + 1 byte for \n; use this to get a decent initial dictionary
+	 * capacity
+	 *
+	 * load factor means we'll still have to restructure the map once or
+	 * twice but still that's fine and certainly better than starting at
+	 * 128
+	 */
+	public static final double BYTES_PER_WORD = 8.35;
+
 	public static String requestAndProcess(Dictionary dict) {
 		WordPair words =
 			new WordPair("Enter two words separated by a space: ")
@@ -40,6 +51,7 @@ public class EditDistance {
 	public static Dictionary readDictionaryFile(File f)
 			throws FileNotFoundException {
 		Scanner input = new Scanner(f);
+		int capacity = (int) (f.length() / BYTES_PER_WORD);
 		Dictionary dict = new Dictionary();
 		while(input.hasNext()) {
 			dict.add(input.next());

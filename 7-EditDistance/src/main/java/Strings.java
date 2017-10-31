@@ -55,8 +55,12 @@ public class Strings {
 		return A.codePoints().boxed().iterator();
 	}
 
+	public static int length(String A) {
+		return toIntArray(A).length;
+	}
+
 	public static boolean sameLength(String A, String B) {
-		return toIntArray(A).length == toIntArray(B).length;
+		return length(A) == length(B);
 	}
 
 	public static int editDistance(String A, String B) {

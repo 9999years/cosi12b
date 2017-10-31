@@ -14,7 +14,6 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'application'
-apply plugin: 'jacoco'
 
 mainClassName = 'becca.edit.EditDistance'
 
@@ -23,24 +22,35 @@ tasks.withType(JavaCompile) {
 	options.encoding = compileJava.options.encoding
 }
 
-jacoco {
-	applyTo run
+class SimpleJar extends DefaultTask {
+	String baseName
+
+	@TaskAction
+	void createJarTask() {
+		project.tasks.create(name: baseName, type: Jar, {
+			baseName = this.baseName
+			println baseName
+
+			from(project.sourceSets.main.compileClasspath) {
+				include '**'
+			}
+
+			manifest { attributes( 'Main-Class': baseName ) }
+		}).execute()
+	}
 }
 
-run {
-	mainClassName = mainClassName
+task edJar(type: SimpleJar) {
+	baseName = 'becca.edit.EditDistance'
+}
+
+task rwJar(type: SimpleJar) {
+	baseName = 'becca.edit.RandomWalk'
 }
 
 jar {
-	baseName = mainClassName
-	version = '1.0.0-SNAPSHOT'
-	manifest {
-		attributes(
-			'Implementation-Title': baseName,
-			'Implementation-Version': version,
-			'Main-Class': mainClassName
-		)
-	}
+	baseName = 'becca.edit.EditDistance'
+	manifest { attributes( 'Main-Class': baseName ) }
 }
 
 //junitPlatform {
@@ -53,9 +63,10 @@ test {
 	}
 }
 
-task zip(type:Exec) {
-	commandLine '7z', 'a', '-mx=5', '-tzip', 'pa6.zip', 'src/*/*/*.java',
-	'build.gradle', 'README.md'
+task zip(type: Zip) {
+	from '.'
+	include 'src/**/*.java'
+	include 'build.gradle'
 }
 
 ext.junitPlatformVersion = '1.0.0'
