@@ -6,43 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Strings {
-	/**
-	 * returns a string identical to A with the indexth codepoint inserted
-	 * from B
-	 *
-	 * precondition: A and B are at least index codepoints long
-	 */
-	public static String swapN(int index, String A, String B) {
-		// offset of n-th codepoint in the underlying
-		// char[]
-		return swapN(index, A,
-			B.codePointAt(B.offsetByCodePoints(0, index)));
-	}
-
-	/**
-	 * returns a string identical to A with the indexth codepoint replaced
-	 * with `newCodepoint`
-	 *
-	 * precondition: A is at least index codepoints long
-	 */
-	public static String swapN(int index, String A, int newCodepoint) {
-		return swapN(index, A.codePoints().toArray(), newCodepoint);
-	}
-
-	/**
-	 * @param A a codepoint-array corresponding to a string
-	 */
-	public static String swapN(int index, int[] A, int newCodepoint) {
-		// make sure we don't mess up the user's array
-		int[] a = Arrays.copyOf(A, A.length);
-		a[index] = newCodepoint;
-		return new String(a, 0, a.length);
-	}
-
-	public static String fromIntArray(int[] codepoints) {
-		return new String(codepoints, 0, codepoints.length);
-	}
-
 	public static int[] toIntArray(String A) {
 		return A.codePoints().toArray();
 	}
@@ -55,10 +18,25 @@ public class Strings {
 		return A.codePoints().boxed().iterator();
 	}
 
-	public static boolean sameLength(String A, String B) {
-		return toIntArray(A).length == toIntArray(B).length;
+	/**
+	 * the number of codepoints in a string; won't report erroneous lengths
+	 * for strings with astral codepoints
+	 *
+	 * not unicode normalized so still flawed but a bit better than the
+	 * default
+	 */
+	public static int length(String A) {
+		return toIntArray(A).length;
 	}
 
+	public static boolean sameLength(String A, String B) {
+		return length(A) == length(B);
+	}
+
+	/**
+	 * get the edit distance between two strings; only replacements
+	 * allowed, insertions / deletions not in spec
+	 */
 	public static int editDistance(String A, String B) {
 		int[] a = toIntArray(A);
 		int[] b = toIntArray(B);
@@ -77,6 +55,11 @@ public class Strings {
 		return dist;
 	}
 
+	/**
+	 * *marginally* faster specialized case of editDistance() which skips
+	 * iterating over the last portion of the string if the edit distance
+	 * is discovered to be greater than 1
+	 */
 	public static boolean areNeighbors(String A, String B) {
 		int[] a = toIntArray(A);
 		int[] b = toIntArray(B);
