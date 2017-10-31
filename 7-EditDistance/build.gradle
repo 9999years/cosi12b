@@ -21,7 +21,7 @@ tasks.withType(JavaCompile) {
 }
 
 jar {
-	mainClassName = 'becca.edit.EditDistance'
+	baseName = mainClassName = 'becca.edit.Dotter'
 	manifest {
 		attributes(
 			'Main-Class': mainClassName,
