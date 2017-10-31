@@ -42,7 +42,8 @@ public class EditDistance {
 			return "Path = "
 				+ String.join(", ", path)
 				+ "\nEdit distance = "
-				+ Strings.editDistance(words.first, words.second);
+				+ Strings.editDistance(
+					words.first, words.second);
 		} else {
 			return "No solution";
 		}

@@ -33,7 +33,7 @@ public class DictionaryTest {
 		linksTest(new String[][] {
 				new String[] {"dot", "dog"},
 				new String[] {"cog", "dog"},
-				new String[] {"cot", "cog"},
+				new String[] {"cot", "dot"},
 				new String[] {"cat", "cot"},
 			},
 			"dog", "cat",
