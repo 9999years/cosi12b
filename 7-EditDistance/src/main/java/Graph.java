@@ -104,14 +104,14 @@ public abstract class Graph <T> {
 		LinkedList<T> path = new LinkedList<>();
 		path.add(start);
 		while(path.size() > 0) {
-			T head = path.pop();
+			T head = path.poll();
 			if(head.equals(end)) {
 				// done!
 				break;
 			}
 			for(T node : neighbors(head)) {
 				if(!visitedBy.containsKey(node)) {
-					path.push(node);
+					path.add(node);
 					visitedBy.put(node, head);
 				}
 			}
@@ -125,8 +125,7 @@ public abstract class Graph <T> {
 	 */
 	public List<T> getPath(T start, T end) {
 		// maps a node to the node that first visited it
-		Map<T, T> visitedBy =
-			getFlowGraph(start, end);
+		Map<T, T> visitedBy = getFlowGraph(start, end);
 
 		LinkedList<T> path = new LinkedList<>();
 		// now we have our tree in visitedBy
@@ -134,6 +133,7 @@ public abstract class Graph <T> {
 		// b/c otherwise we have to reverse the list before returning
 		// it
 		T head = end;
+		path.clear();
 		path.push(head);
 		while(!head.equals(start)) {
 			head = visitedBy.get(head);
