@@ -132,9 +132,12 @@ public class DictionaryTest {
 			d.add(n);
 		}
 		String[] path = d.getPath(start, end).toArray(new String[] {});
-		assertArrayEquals(expected, path,
-			"checking path between `"
-			+ start + "` and `" + end + "`");
+		assertEquals(expected.length, path.length, "checking length of path is as expected");
+		assertArrayEquals(expected, path, () ->
+			"checking path between `" + start + "` and `" + end
+			+ "`; length is correct but elements differ; full "
+			+ "arrays are: \nexpected: " + Arrays.toString(expected)
+			+ "actual:   " + Arrays.toString(path));
 		pathConcisenessTest(path);
 	}
 
@@ -144,7 +147,7 @@ public class DictionaryTest {
 			"net", "hip", threes);
 		integrationTest(new String[] {"tag", "nag"},
 			"tag", "nag", threes);
-		integrationTest(new String[] {"tag", "tan", "ten", "tee", "see"},
+		integrationTest(new String[] {"tag", "tog", "toe", "tee", "see"},
 			"tag", "see", threes);
 		integrationTest(new String[] {"lop", "loy", "coy"},
 			"lop", "coy", threes);

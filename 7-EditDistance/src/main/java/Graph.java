@@ -7,7 +7,13 @@
 package becca.edit;
 
 import java.util.List;
+
+// stacks
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+// maps
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -115,20 +121,20 @@ public abstract class Graph <T> {
 		// maps a node to the node that first visited it
 		Map<T, T> visitedBy = new HashMap<>();
 
-		LinkedList<T> path = new LinkedList<>();
+		Queue<T> path = new LinkedList<>();
 		path.add(start);
 		while(path.size() > 0) {
-			T head = path.poll();
-			if(head.equals(end)) {
+			if(path.peek().equals(end)) {
 				// done!
 				break;
 			}
-			for(T node : neighbors(head)) {
+			for(T node : neighbors(path.peek())) {
 				if(!visitedBy.containsKey(node)) {
 					path.add(node);
-					visitedBy.put(node, head);
+					visitedBy.put(node, path.peek());
 				}
 			}
+			path.remove();
 		}
 
 		return visitedBy;
@@ -139,31 +145,39 @@ public abstract class Graph <T> {
 	 */
 	public List<T> getPath(T start, T end) {
 		// maps a node to the node that first visited it
-		Map<T, T> visitedBy = getFlowGraph(start, end);
+		// get the graph flowing from the end to the start
+		// so we can build up our output with a stack
+		Map<T, T> visitedBy = getFlowGraph(end, start);
 
-		LinkedList<T> path = new LinkedList<>();
-		// now we have our tree in visitedBy
-		// next, find the route from the end to the start
-		// b/c otherwise we have to reverse the list before returning
-		// it
-		T head = end;
-		path.clear();
-		path.push(head);
-		while(!head.equals(start)) {
-			head = visitedBy.get(head);
-			path.push(head);
+		Stack<T> path = new Stack<>();
+		// now we have our tree in visitedBy and we can just follow it
+		// until we find our end
+		path.push(start);
+		while(!path.peek().equals(end)) {
+			path.push(visitedBy.get(path.peek()));
 		}
 
+		// a stack is a list
 		return path;
 	}
 
 	/**
 	 * method to export the graph to the AT&amp;T GraphViz dot language
+	 *
+	 * i recommend rendering graphs with neato; dot will waste time trying
+	 * to rank everything and probably crash something in the process
+	 *
+	 * @param properties extra text to add after the graph declaration
+	 * @see <a href="http://www.graphviz.org/doc/info/attrs.html">GraphViz
+	 * attributes documentation</a>
 	 */
-	public String toDot() {
-		StringBuilder ret = new StringBuilder("digraph {\n");
+	public String toDot(String properties) {
+		StringBuilder ret = new StringBuilder(
+			"graph {\ngraph [overlap=false];\n");
+		ret.append(properties);
+		ret.append("\n");
 		for(T node : nodes.keySet()) {
-			ret.append(node + " -> { ");
+			ret.append(node + " -- { ");
 			Iterable<String> itr =
 				nodes.get(node)
 				.stream()
@@ -173,5 +187,9 @@ public abstract class Graph <T> {
 		}
 		ret.append("}\n");
 		return ret.toString();
+	}
+
+	public String toDot() {
+		return toDot("");
 	}
 }
