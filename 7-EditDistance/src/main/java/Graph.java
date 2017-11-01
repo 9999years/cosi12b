@@ -1,22 +1,29 @@
+/**
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 package becca.edit;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Arrays;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Deque;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
 import java.lang.Iterable;
-import java.util.Iterator;
 
 import java.lang.StringBuilder;
 
+/**
+ * a generic graph object built by a neighboring function areNeighbors and a
+ * validity function pathMayExist. implemented with a HashMap and a HashSet.
+ *
+ * @see java.util.HashMap
+ * @see java.util.HashSet
+ */
 public abstract class Graph <T> {
 	/**
 	 * maps nodes onto a set of its neighbors (nodes with edit distance 1)
@@ -65,17 +72,24 @@ public abstract class Graph <T> {
 	 * the same length does not *ensure* a path exists between the two
 	 * nodes, but being different lengths ensures a path does *not* exist
 	 * between the two nodes
+	 *
+	 * feel free to override this with return true;
 	 */
 	protected abstract boolean pathMayExist(T a, T b);
 
+	/**
+	 * set addition; also ensures neighbors are properly updated ---
+	 * unfortunately that means this runs in O(n), and adding n nodes takes
+	 * O(n^2) time :-(
+	 */
 	public void add(T node) {
 		ensureNode(node);
-		nodes.keySet().forEach(candidate -> {
+		for(T candidate : nodes.keySet()) {
 			if(!nodes.get(node).contains(candidate) &&
 				areNeighbors(node, candidate)) {
 				add(node, candidate);
 			}
-		});
+		}
 	}
 
 	public Set<T> neighbors(T node) {
@@ -143,6 +157,9 @@ public abstract class Graph <T> {
 		return path;
 	}
 
+	/**
+	 * method to export the graph to the AT&amp;T GraphViz dot language
+	 */
 	public String toDot() {
 		StringBuilder ret = new StringBuilder("digraph {\n");
 		for(T node : nodes.keySet()) {

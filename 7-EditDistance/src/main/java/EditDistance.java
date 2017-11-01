@@ -1,3 +1,9 @@
+/**
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 package becca.edit;
 
 import java.io.File;
@@ -11,10 +17,9 @@ import java.util.NoSuchElementException;
 import java.lang.Thread;
 
 /**
- *
- * @author Rebecca Turner
- * @version 1.0.0
- * @license AGPL3.0 gnu.org/licenses/agpl.html
+ * client program for finding a path between two words through a dictionary via
+ * neighboring words. only operates on words of identical length, not quite the
+ * levensthein distance
  */
 public class EditDistance {
 	/**
