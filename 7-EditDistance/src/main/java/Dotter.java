@@ -1,9 +1,3 @@
-/**
- * @author Rebecca Turner
- * @version 1.0.0
- * @license AGPL3.0 gnu.org/licenses/agpl.html
- */
-
 package becca.edit;
 
 import java.io.File;
@@ -16,12 +10,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-/**
- * client program to convert a dictionary file to a GraphViz dot graph of
- * neighboring nodes
- *
- * @see becca.edit.Graph#toDot
- */
 public class Dotter {
 	public static final String usage =
 		"Usage: java Dotter DICTIONARY_FILE";

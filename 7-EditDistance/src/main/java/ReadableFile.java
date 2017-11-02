@@ -1,9 +1,3 @@
-/**
- * @author Rebecca Turner
- * @version 1.0.0
- * @license AGPL3.0 gnu.org/licenses/agpl.html
- */
-
 package becca.edit;
 
 import java.io.File;
@@ -12,12 +6,6 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Optional;
 
-/**
- * class to determine if a filename represents a readable file and convert it
- * to a File if so
- *
- * @see java.io.File
- */
 public class ReadableFile {
 	protected File file = null;
 	String prompt = null;
@@ -47,10 +35,6 @@ public class ReadableFile {
 		}
 	}
 
-	/**
-	 * prints the prompt and reads a filename from the user until they
-	 * enter a valid one
-	 */
 	public File getFile() {
 		Scanner input = new Scanner(System.in);
 		Optional<File> ret = checkReadFilename(null);

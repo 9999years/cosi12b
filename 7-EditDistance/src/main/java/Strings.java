@@ -1,9 +1,3 @@
-/**
- * @author Rebecca Turner
- * @version 1.0.0
- * @license AGPL3.0 gnu.org/licenses/agpl.html
- */
-
 package becca.edit;
 
 import java.util.Arrays;
@@ -11,17 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * utility class of string methods, specialized for exclusively dealing with
- * (effectively utf-32) codepoints rather than (utf-16) chars
- *
- * due to the upgrade of unicode from 16 to 24 bits a couple decades ago utf-16
- * was "patched" to represent "astral" codepoints (&gt;U+FFFF) as a surrogate
- * pair of two utf-16 character values; this means that String.length can
- * return a different number than the actual length of the string
- *
- * also contains areNeighbors and editDistance
- */
 public class Strings {
 	public static int[] toIntArray(String A) {
 		return A.codePoints().toArray();

@@ -1,35 +1,22 @@
-/**
- * @author Rebecca Turner
- * @version 1.0.0
- * @license AGPL3.0 gnu.org/licenses/agpl.html
- */
-
 package becca.edit;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-
-// stacks
 import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
-
-// maps
+import java.util.Deque;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
 import java.lang.Iterable;
+import java.util.Iterator;
 
 import java.lang.StringBuilder;
 
-/**
- * a generic graph object built by a neighboring function areNeighbors and a
- * validity function pathMayExist. implemented with a HashMap and a HashSet.
- *
- * @see java.util.HashMap
- * @see java.util.HashSet
- */
 public abstract class Graph <T> {
 	/**
 	 * maps nodes onto a set of its neighbors (nodes with edit distance 1)
@@ -97,8 +84,6 @@ public abstract class Graph <T> {
 	 * the same length does not *ensure* a path exists between the two
 	 * nodes, but being different lengths ensures a path does *not* exist
 	 * between the two nodes
-	 *
-	 * feel free to override this with return true;
 	 */
 	protected abstract boolean pathMayExist(T a, T b);
 
@@ -125,20 +110,20 @@ public abstract class Graph <T> {
 		// maps a node to the node that first visited it
 		Map<T, T> visitedBy = new HashMap<>();
 
-		Queue<T> path = new LinkedList<>();
+		LinkedList<T> path = new LinkedList<>();
 		path.add(start);
 		while(path.size() > 0) {
-			if(path.peek().equals(end)) {
+			T head = path.poll();
+			if(head.equals(end)) {
 				// done!
 				break;
 			}
-			for(T node : neighbors(path.peek())) {
+			for(T node : neighbors(head)) {
 				if(!visitedBy.containsKey(node)) {
 					path.add(node);
-					visitedBy.put(node, path.peek());
+					visitedBy.put(node, head);
 				}
 			}
-			path.remove();
 		}
 
 		return visitedBy;
@@ -149,39 +134,28 @@ public abstract class Graph <T> {
 	 */
 	public List<T> getPath(T start, T end) {
 		// maps a node to the node that first visited it
-		// get the graph flowing from the end to the start
-		// so we can build up our output with a stack
-		Map<T, T> visitedBy = getFlowGraph(end, start);
+		Map<T, T> visitedBy = getFlowGraph(start, end);
 
-		Stack<T> path = new Stack<>();
-		// now we have our tree in visitedBy and we can just follow it
-		// until we find our end
-		path.push(start);
-		while(!path.peek().equals(end)) {
-			path.push(visitedBy.get(path.peek()));
+		LinkedList<T> path = new LinkedList<>();
+		// now we have our tree in visitedBy
+		// next, find the route from the end to the start
+		// b/c otherwise we have to reverse the list before returning
+		// it
+		T head = end;
+		path.clear();
+		path.push(head);
+		while(!head.equals(start)) {
+			head = visitedBy.get(head);
+			path.push(head);
 		}
 
-		// a stack is a list
 		return path;
 	}
 
-	/**
-	 * method to export the graph to the AT&amp;T GraphViz dot language
-	 *
-	 * i recommend rendering graphs with neato; dot will waste time trying
-	 * to rank everything and probably crash something in the process
-	 *
-	 * @param properties extra text to add after the graph declaration
-	 * @see <a href="http://www.graphviz.org/doc/info/attrs.html">GraphViz
-	 * attributes documentation</a>
-	 */
-	public String toDot(String properties) {
-		StringBuilder ret = new StringBuilder(
-			"graph {\ngraph [overlap=false];\n");
-		ret.append(properties);
-		ret.append("\n");
+	public String toDot() {
+		StringBuilder ret = new StringBuilder("digraph {\n");
 		for(T node : nodes.keySet()) {
-			ret.append(node + " -- { ");
+			ret.append(node + " -> { ");
 			Iterable<String> itr =
 				nodes.get(node)
 				.stream()
@@ -191,9 +165,5 @@ public abstract class Graph <T> {
 		}
 		ret.append("}\n");
 		return ret.toString();
-	}
-
-	public String toDot() {
-		return toDot("");
 	}
 }

@@ -77,7 +77,7 @@ public class DictionaryTest {
 		linksTest(new String[][] {
 				new String[] {"dot", "dog"},
 				new String[] {"cog", "dog"},
-				new String[] {"cot", "dot"},
+				new String[] {"cot", "cog"},
 				new String[] {"cat", "cot"},
 			},
 			"dog", "cat",
@@ -132,24 +132,25 @@ public class DictionaryTest {
 			d.add(n);
 		}
 		String[] path = d.getPath(start, end).toArray(new String[] {});
-		assertEquals(expected.length, path.length, "checking length of path is as expected");
-		assertArrayEquals(expected, path, () ->
-			"checking path between `" + start + "` and `" + end
-			+ "`; length is correct but elements differ; full "
-			+ "arrays are: \nexpected: " + Arrays.toString(expected)
-			+ "actual:   " + Arrays.toString(path));
+		assertArrayEquals(expected, path,
+			"checking path between `"
+			+ start + "` and `" + end + "`");
 		pathConcisenessTest(path);
 	}
 
 	@Test
 	void integrationTest() {
-		integrationTest(new String[] {"net", "pet", "pit", "pip", "hip"},
+		integrationTest(new String[] {"net", "nee", "lee", "lew",
+			"hew", "hem", "him", "hip"},
 			"net", "hip", threes);
 		integrationTest(new String[] {"tag", "nag"},
 			"tag", "nag", threes);
-		integrationTest(new String[] {"tag", "tog", "toe", "tee", "see"},
+		integrationTest(new String[] {"tag", "wag", "wad", "lad",
+			"lid", "tid", "tit", "cit", "cot", "cog", "dog", "dug",
+			"dun", "den", "ten", "tee", "see"},
 			"tag", "see", threes);
-		integrationTest(new String[] {"lop", "loy", "coy"},
+		integrationTest(new String[] {"lop", "mop", "moo", "coo",
+			"coy"},
 			"lop", "coy", threes);
 	}
 

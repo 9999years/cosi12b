@@ -1,9 +1,3 @@
-/**
- * @author Rebecca Turner
- * @version 1.0.0
- * @license AGPL3.0 gnu.org/licenses/agpl.html
- */
-
 package becca.edit;
 
 import java.io.File;
@@ -16,11 +10,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-/**
- * client program to generate a random walk through neighboring words in a
- * dictionary; useful for finding pairs of connected nodes in a graph for
- * testing purposes
- */
 public class RandomWalk {
 	public static final String usage =
 		"Usage: java RandomWalk DICTIONARY_FILE WORD_COUNT";
