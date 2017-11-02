@@ -66,6 +66,25 @@ public abstract class Graph <T> {
 	}
 
 	/**
+	 * set addition; also ensures neighbors are properly updated ---
+	 * unfortunately that means this runs in O(n), and adding n nodes takes
+	 * O(n^2) time :-(
+	 */
+	public void add(T node) {
+		// ensures the node exists
+		Set<T> neighbors = neighbors(node);
+		Set<T> keys = nodes.keySet();
+		for(T candidate : keys) {
+			if(!neighbors.contains(candidate) &&
+				areNeighbors(node, candidate)) {
+				add(node, candidate);
+				keys.remove(node);
+				keys.remove(candidate);
+			}
+		}
+	}
+
+	/**
 	 * function to determine if two Ts are neighbors
 	 */
 	protected abstract boolean areNeighbors(T a, T b);
@@ -82,21 +101,6 @@ public abstract class Graph <T> {
 	 * feel free to override this with return true;
 	 */
 	protected abstract boolean pathMayExist(T a, T b);
-
-	/**
-	 * set addition; also ensures neighbors are properly updated ---
-	 * unfortunately that means this runs in O(n), and adding n nodes takes
-	 * O(n^2) time :-(
-	 */
-	public void add(T node) {
-		ensureNode(node);
-		for(T candidate : nodes.keySet()) {
-			if(!nodes.get(node).contains(candidate) &&
-				areNeighbors(node, candidate)) {
-				add(node, candidate);
-			}
-		}
-	}
 
 	public Set<T> neighbors(T node) {
 		ensureNode(node);

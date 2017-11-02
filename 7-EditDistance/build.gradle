@@ -7,6 +7,10 @@ buildscript {
 	}
 }
 
+plugins {
+  id "me.champeau.gradle.jmh" version "0.4.4"
+}
+
 repositories {
 	mavenCentral()
 }
@@ -19,21 +23,10 @@ tasks.withType(JavaCompile) {
 	options.encoding = compileJava.options.encoding
 }
 
-class SimpleJar extends DefaultTask {
-	String baseName
-
+class SimpleJar extends Jar {
 	@TaskAction
 	void createJarTask() {
-		project.tasks.create(name: baseName, type: Jar, {
-			baseName = this.baseName
-			println baseName
-
-			from(project.sourceSets.main.compileClasspath) {
-				include '**'
-			}
-
-			manifest { attributes( 'Main-Class': baseName ) }
-		}).execute()
+		manifest { attributes( 'Main-Class': baseName ) }
 	}
 }
 
@@ -45,9 +38,18 @@ task rwJar(type: SimpleJar) {
 	baseName = 'becca.edit.RandomWalk'
 }
 
-jar {
-	baseName = 'becca.edit.EditDistance'
-	manifest { attributes( 'Main-Class': baseName ) }
+task jars {
+	//baseName = 'becca.edit.EditDistance'
+	//manifest { attributes( 'Main-Class': baseName ) }
+	//from(sourceSets.main.output) {
+		//include '**'
+	//}
+	//from(project.sourceSets.main.output) {
+		//include '**'
+	//}
+
+	dependsOn edJar
+	dependsOn rwJar
 }
 
 test {
