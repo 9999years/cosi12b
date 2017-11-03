@@ -65,8 +65,6 @@ public abstract class Graph <T> {
 			if(!neighbors.contains(candidate) &&
 				areNeighbors(node, candidate)) {
 				add(node, candidate);
-				keys.remove(node);
-				keys.remove(candidate);
 			}
 		}
 	}

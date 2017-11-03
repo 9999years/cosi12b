@@ -5,16 +5,7 @@ import org.openjdk.jmh.annotations.*;
 import java.util.Random;
 
 public class DictionaryBench {
-
-	@State(Scope.Thread)
-	public static class ThreadState {
-		public static Random rand;
-		ThreadState() {
-			rand = new Random();
-		}
-	}
-
-	static final int iterations = 20000;
+	static final int ITERATIONS = 20000;
 
 	public int randLower(Random rand) {
 		// random lowercase ascii
@@ -30,11 +21,12 @@ public class DictionaryBench {
 	}
 
 	@Benchmark
-	public Dictionary addBenchmark(ThreadState state) {
-		Dictionary ret = new Dictionary((int) (iterations * 0.8));
-		int i = iterations;
+	public Dictionary addBenchmark() {
+		Dictionary ret = new Dictionary((int) (ITERATIONS * 0.8));
+		Random rand = new Random();
+		int i = ITERATIONS;
 		while(i --> 0) {
-			ret.add(randString(4, state.rand));
+			ret.add(randString(4, rand));
 		}
 		return ret;
 	}
