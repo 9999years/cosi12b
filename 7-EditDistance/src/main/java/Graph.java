@@ -60,13 +60,14 @@ public abstract class Graph <T> {
 	public void add(T node) {
 		// ensures the node exists
 		Set<T> neighbors = neighbors(node);
-		Set<T> keys = nodes.keySet();
-		for(T candidate : keys) {
+		Iterator<T> keys = nodes.keySet().iterator();
+		keys.forEachRemaining(candidate -> {
 			if(!neighbors.contains(candidate) &&
 				areNeighbors(node, candidate)) {
 				add(node, candidate);
+				keys.remove();
 			}
-		}
+		});
 	}
 
 	/**

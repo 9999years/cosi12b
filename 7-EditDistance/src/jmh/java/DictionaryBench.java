@@ -5,7 +5,7 @@ import org.openjdk.jmh.annotations.*;
 import java.util.Random;
 
 public class DictionaryBench {
-	static final int ITERATIONS = 20000;
+	static final int ITERATIONS = 1000;
 
 	public int randLower(Random rand) {
 		// random lowercase ascii
