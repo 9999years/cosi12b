@@ -15,14 +15,14 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-/** 
+/**
  * Parses a File, String, or URL into a List<HTMLTag>
  */
 public class HTMLParser {
     public String unparsedPage;
 
-    /** 
-     * Parses the given input stream from the source with the given name 
+    /**
+     * Parses the given input stream from the source with the given name
      */
     private void parseStream(String name, InputStream stream) {
         try {
@@ -42,8 +42,8 @@ public class HTMLParser {
 
     }
 
-    /** 
-     * Creates a parser based off the HTML at the given source URL 
+    /**
+     * Creates a parser based off the HTML at the given source URL
      */
     public HTMLParser(URL url) {
         try {
@@ -59,7 +59,7 @@ public class HTMLParser {
     }
 
     /**
-     * Creates a parser based off the given source File 
+     * Creates a parser based off the given source File
      */
     public HTMLParser(File file) {
         String filename = file.toString();
@@ -73,41 +73,41 @@ public class HTMLParser {
     }
 
     /**
-     * Creates a parser based off the given source String 
-     */ 
+     * Creates a parser based off the given source String
+     */
     public HTMLParser(String str) {
         this.unparsedPage = str;
     }
 
-    /** 
+    /**
      * HTMLLexer to parse a string of tags into HTMLTags. Iterates
-     * over the given source String 
+     * over the given source String
      */
     private class HTMLLexer implements Iterator<HTMLTag> {
         private String page;
         private int index;
         private boolean inString;
 
-        /** 
-         * Creates an HTMLLexer based off the given source String 
+        /**
+         * Creates an HTMLLexer based off the given source String
          */
         public HTMLLexer(String page) {
             this.page = page;
             this.index = 0;
-            this.inString = false; 
+            this.inString = false;
         }
 
-        /** 
-         * Returns the next HTMLTag in the source String 
+        /**
+         * Returns the next HTMLTag in the source String
          */
         public HTMLTag next() {
-            int begin = this.index; 
+            int begin = this.index;
 
             /* If we've found an HTML comment... (that isn't a DOCTYPE...) */
             if (this.page.substring(begin + 1).startsWith("!--")) {
                 this.index = this.page.indexOf("-->", this.index);
                 begin = begin + 2;
-                int end = this.index - 1; 
+                int end = this.index - 1;
                 String element = this.page.substring(begin, end + 1);
                 return new HTMLTag(element, HTMLTagType.SELF_CLOSING);
             }
@@ -117,7 +117,7 @@ public class HTMLParser {
             String contents = "";
 
             movePastString('<');
-           
+
             if (end + 1 < this.index) {
                 contents = this.page.substring(end + 1, this.index);
             }
@@ -138,7 +138,7 @@ public class HTMLParser {
 
                 this.index = this.page.indexOf("<", this.index);
                 contents = "";
-               
+
                 if (this.index > -1) {
                     contents = this.page.substring(end + 1, this.index);
                 }
@@ -158,11 +158,11 @@ public class HTMLParser {
                 return true;
             }
             return false;
-        } 
+        }
 
         /**
-         * Moves the current index in the source String up to the next 
-         * needle not contained in the middle of a String 
+         * Moves the current index in the source String up to the next
+         * needle not contained in the middle of a String
          */
         private boolean movePastString(char needle) {
             int potentialNextIndex = this.page.indexOf(needle, this.index);
@@ -194,16 +194,16 @@ public class HTMLParser {
             return true;
         }
 
-        /** 
-         * Throws UnsupportedOperationException 
-         */ 
+        /**
+         * Throws UnsupportedOperationException
+         */
         public void remove() {
             throw new UnsupportedOperationException();
         }
     }
 
-    /** 
-     * Parses the source String and returns the List of HTMLTags 
+    /**
+     * Parses the source String and returns the List of HTMLTags
      */
     public Queue<HTMLTag> parse() {
         Queue<HTMLTag> parsed = new LinkedList<HTMLTag>();
@@ -212,5 +212,5 @@ public class HTMLParser {
             parsed.add(lexer.next());
         }
         return parsed;
-    } 
+    }
 }
