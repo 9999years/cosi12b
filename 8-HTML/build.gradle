@@ -30,12 +30,8 @@ class SimpleJar extends Jar {
 	}
 }
 
-task edJar(type: SimpleJar) {
-	baseName = 'becca.edit.EditDistance'
-}
-
-task rwJar(type: SimpleJar) {
-	baseName = 'becca.edit.RandomWalk'
+task mainJar(type: SimpleJar) {
+	baseName = 'becca.edit.HTMLMain'
 }
 
 task jars {
@@ -48,8 +44,7 @@ task jars {
 		//include '**'
 	//}
 
-	dependsOn edJar
-	dependsOn rwJar
+	dependsOn mainJar
 }
 
 test {
