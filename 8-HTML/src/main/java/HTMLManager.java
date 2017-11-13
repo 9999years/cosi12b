@@ -1,3 +1,11 @@
+/**
+ * class to manage lists of html tags; can add, remove, or fix the internal html
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 import java.util.Stack;
 import java.util.Queue;
 import java.util.LinkedList;
@@ -8,6 +16,14 @@ import java.util.function.Consumer;
 import java.lang.StringBuilder;
 import java.lang.Iterable;
 
+/**
+ * class to manage lists of html tags; can add, remove, or fix the internal html
+ *
+ * this is basically a lie, ie completely broken and unable to serve the
+ * purpose of managing html in a real-world scenario. really, only the parser
+ * is bad; the html spec is 49,000 words long so it may not surprise you that
+ * a 6,000 byte parser doesn't conform. the lexer can't eg. deal with 
+ */
 public class HTMLManager {
 	protected Queue<HTMLTag> tags;
 
@@ -115,34 +131,44 @@ public class HTMLManager {
 		};
 
 		Consumer<HTMLTag> consumeClosingTag = tag -> {
-			// if the tag doesn't match anything opened, we
-			// just throw it away
-			if(!HTMLTags.matchesAnyTag(tag, opened)) {
-				return;
-			}
 			// if there are no opened tags, we discard this
 			// tag
+			Stack<HTMLTag> closed = new Stack<>();
 			while(!opened.empty()) {
-				HTMLTag top = opened.pop();
+				closed.push(opened.pop());
 				// close the top tag
-				corrected.push(top.getMatching());
+				corrected.push(closed.peek().getMatching());
 				// finish if the current tag matches
 				// the top of the opened stack;
 				// otherwise we just close everything
 				// that's been open
-				if(tag.matches(top)) {
+				if(tag.matches(closed.peek())) {
 					// tag matches; we're finished
 					return;
 				}
+			}
+			// if we've gotten here, our tag didn't match anything
+			// on the opened stack
+			//
+			// SO we undo everything we just did; we've just pushed
+			// closed.size() tags onto corrected, so we pop those
+			// off
+			//
+			// this lets us skip iterating over the opened stack
+			// without doing anything before starting, just to see
+			// if anything in it matches our tag. if the input html
+			// has a bunch of unmatched closing tags, this is
+			// slower than checking for a match beforehand. if the
+			// input html has more unordered or correctly-matching
+			// closing tags, this is faster
+			for(int i = 0; i < closed.size(); i++) {
+				opened.push(corrected.pop().getMatching());
 			}
 		};
 
 		for(HTMLTag tag : tags) {
 			if(!tag.isClosing()) {
-				// equivalent to:
-				// tag.isSelfClosing()
-				// || tag.isOpening()
-				// || tag.isComment()
+				// comments, opening tags, and self-closing tags
 				consumeNonClosingTag.accept(tag);
 			} else {
 				// tag is closing
@@ -155,6 +181,7 @@ public class HTMLManager {
 			corrected.push(opened.pop().getMatching());
 		}
 
+		// replace internal html with fixed tags
 		replace(corrected);
 	}
 

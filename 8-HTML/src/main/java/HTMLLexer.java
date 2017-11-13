@@ -1,3 +1,9 @@
+/**
+ * HTMLLexer extracted from HTMLParser
+ *
+ * @author NOT Rebecca Turner
+ */
+
 import java.util.Iterator;
 
 /**
@@ -5,6 +11,8 @@ import java.util.Iterator;
  * over the given source String
  *
  * taken from the inside of the HTMLParser class
+ *
+ * presumably by dr. papaemannouil or some ta of years passed
  */
 public class HTMLLexer implements Iterator<HTMLTag> {
 	private String page;

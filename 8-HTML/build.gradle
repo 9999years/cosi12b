@@ -35,15 +35,6 @@ task mainJar(type: SimpleJar) {
 }
 
 task jars {
-	//baseName = 'becca.edit.EditDistance'
-	//manifest { attributes( 'Main-Class': baseName ) }
-	//from(sourceSets.main.output) {
-		//include '**'
-	//}
-	//from(project.sourceSets.main.output) {
-		//include '**'
-	//}
-
 	dependsOn mainJar
 }
 
@@ -55,7 +46,13 @@ test {
 
 task zip(type: Zip) {
 	from '.'
-	include 'src/**/*.java'
+	from('src/main/java') {
+		include 'HTMLLexer.java'
+		include 'HTMLManager.java'
+		include 'HTMLManagerTest.java'
+		include 'HTMLTags.java'
+		include 'SimpleTest.java'
+	}
 	include 'build.gradle'
 }
 

@@ -1,33 +1,20 @@
-import java.util.function.Consumer;
+/**
+ * class for testing the HTMLManager
+ *
+ * @author Rebecca Turner
+ * @version 1.0.0
+ * @license AGPL3.0 gnu.org/licenses/agpl.html
+ */
+
 import java.util.Arrays;
 
 public class HTMLManagerTest {
 	public static SimpleTest tester = new SimpleTest();
 
-	/**
-	 * takes a string of html, returns an array of tags, applies the
-	 * lambda after parsing
-	 *
-	 * @param sideEffects post-parsing-pre-return side-effects; something like
-	 * manager -&gt; manager.removeAll(tag)
-	 */
-	static HTMLTag[] htmlToTags(
-			String html, Consumer<HTMLManager> sideEffects) {
-		HTMLManager manager = new HTMLManager(html);
-		sideEffects.accept(manager);
-		return manager.getTags().toArray(new HTMLTag[] {});
-	}
-
-	/**
-	 * takes a string of html, returns an array of tags
-	 */
-	static HTMLTag[] htmlToTags(String html) {
-		return htmlToTags(html, m -> {});
-	}
-
 	static void expectedTest(String html, String... expected) {
 		HTMLTag[] expectedRich = HTMLTags.stringsToTags(expected);
-		tester.richAssertArrayEquals(expectedRich, htmlToTags(html));
+		tester.richAssertArrayEquals(
+			expectedRich, HTMLTags.htmlToTags(html));
 	}
 
 	static void expectedTest() {
@@ -37,8 +24,9 @@ public class HTMLManagerTest {
 
 	static void removeAllTest(String expected, String html, String remove) {
 		HTMLTag removeTag = HTMLTags.fromString(remove);
-		tester.richAssertArrayEquals(htmlToTags(expected),
-			htmlToTags(html, m -> m.removeAll(removeTag)));
+		tester.richAssertArrayEquals(
+			HTMLTags.htmlToTags(expected),
+			HTMLTags.htmlToTags(html, m -> m.removeAll(removeTag)));
 	}
 
 	static void removeAllTest() {
@@ -57,9 +45,13 @@ public class HTMLManagerTest {
 	}
 
 	static void fixHTMLTest(String expected, String original) {
-		HTMLTag[] expectedA = htmlToTags(expected);
-		HTMLTag[] fixedA = htmlToTags(original, m -> m.fixHTML());
-		tester.richAssertArrayEquals(expectedA, fixedA);
+		HTMLTag[] expectedA = HTMLTags.htmlToTags(expected);
+		HTMLTag[] fixedA = HTMLTags.htmlToTags(
+			original, m -> m.fixHTML());
+		if(!tester.richAssertArrayEquals(expectedA, fixedA)) {
+			tester.err("Failed fixing HTML; original HTML: "
+				+ original);
+		}
 	}
 
 	static void fixHTMLTest() {
@@ -173,5 +165,8 @@ public class HTMLManagerTest {
 		fromStringTest();
 		System.out.println();
 		System.out.println(tester.summary());
+
+		System.out.println("\nJust to demonstrate: Here's what a test failure looks like (a modified .fixHTML() test):");
+		fixHTMLTest("<b><i><br/><i></b>","<b><i><br/></b></i>");
 	}
 }

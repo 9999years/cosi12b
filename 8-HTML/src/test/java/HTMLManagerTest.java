@@ -1,4 +1,4 @@
-//import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
@@ -8,6 +8,9 @@ public class HTMLManagerTest {
 	/**
 	 * takes a string of html, returns an array of tags, applies the
 	 * lambda after parsing
+	 *
+	 * @param sideEffects post-parsing-pre-return side-effects; something like
+	 * manager -&gt; manager.removeAll(tag)
 	 */
 	HTMLTag[] htmlToTags(String html, Consumer<HTMLManager> sideEffects) {
 		HTMLManager manager = new HTMLManager(html);
@@ -24,7 +27,7 @@ public class HTMLManagerTest {
 
 	void expectedTest(String html, String... expected) {
 		HTMLTag[] expectedRich = HTMLTags.stringsToTags(expected);
-		SimpleTest.assertArrayEquals(expectedRich, htmlToTags(html));
+		assertArrayEquals(expectedRich, htmlToTags(html));
 	}
 
 	@Test
@@ -35,7 +38,7 @@ public class HTMLManagerTest {
 
 	void removeAllTest(String expected, String html, String remove) {
 		HTMLTag removeTag = HTMLTags.fromString(remove);
-		SimpleTest.assertArrayEquals(htmlToTags(expected),
+		assertArrayEquals(htmlToTags(expected),
 			htmlToTags(html, m -> m.removeAll(removeTag)));
 	}
 
@@ -58,7 +61,7 @@ public class HTMLManagerTest {
 	void fixHTMLTest(String expected, String original) {
 		HTMLTag[] expectedA = htmlToTags(expected);
 		HTMLTag[] fixedA = htmlToTags(original, m -> m.fixHTML());
-		SimpleTest.assertArrayEquals(expectedA, fixedA);
+		assertArrayEquals(expectedA, fixedA);
 	}
 
 	@Test
