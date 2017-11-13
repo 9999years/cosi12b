@@ -4,8 +4,8 @@
 // as HTMlManager.java, HTMLTag.java, HTMLTagType.java and HTMLMain.java.
 
 /** enumerates the options for the type of an HTMLTag */
-public enum HTMLTagType {
-    SELF_CLOSING,
-    OPENING,
+public enum HTMLTagType { 
+    SELF_CLOSING, 
+    OPENING, 
     CLOSING
 }

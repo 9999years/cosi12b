@@ -9,7 +9,11 @@ import java.lang.StringBuilder;
 import java.lang.Iterable;
 
 public class HTMLManager {
-	private Queue<HTMLTag> tags = new LinkedList<>();
+	protected Queue<HTMLTag> tags;
+
+	HTMLManager(Iterable<HTMLTag> page) {
+		replace(page);
+	}
 
 	HTMLManager(Queue<HTMLTag> page) {
 		replace(page);
@@ -19,25 +23,50 @@ public class HTMLManager {
 		tags = new HTMLParser(page).parse();
 	}
 
+	/**
+	 * adds a tag to the end of the page
+	 */
 	public void add(HTMLTag tag) {
 		tags.add(tag);
 	}
 
+	/**
+	 * removes all instances of a given tag from the page; note that this
+	 * will only remove half of matching tag pairs; use removeAllPairs for
+	 * that.
+	 */
 	public void removeAll(HTMLTag tag) {
 		tags.removeIf(t -> t.equals(tag));
+	}
+
+	/**
+	 * removes all *pairs* of a given tag from the page; ie if you want to
+	 * remove both <b> and </b> tags from a page, use this method
+	 */
+	public void removeAllPairs(HTMLTag tag) {
+		removeAll(tag);
+		removeAll(tag.getMatching());
 	}
 
 	public List<HTMLTag> getTags() {
 		return new LinkedList<>(tags);
 	}
 
-	protected void replace(Iterable<HTMLTag> tags) {
-		for(HTMLTag t : tags) {
+	/**
+	 * resets internal tag list and replaces it with the given list of tags
+	 * it would be very silly to pass an un-ordered iterable (like a
+	 * HashSet) but you could, hypothetically, do it
+	 */
+	protected void replace(Iterable<HTMLTag> newTags) {
+		tags.clear();
+		for(HTMLTag t : newTags) {
 			add(t);
 		}
 	}
 
 	/**
+	 * From PA8.pdf:
+	 *
 	 * The basic idea of the algorithm is to process the page tag by tag.
 	 * For each tag, you will check to see if it has a matching tag later
 	 * in the page in the correct place. Since self- closing tags don’t
@@ -72,28 +101,40 @@ public class HTMLManager {
 	public void fixHTML() {
 		Stack<HTMLTag> corrected = new Stack<>();
 		Stack<HTMLTag> opened = new Stack<>();
-		Consumer<HTMLTag> fixMatchings = tag -> {
-			// discard tags that dont close anything
-			//
-			// as long as a tag has been opened and not closed, we
-			// have a tag to close
-			//
-			// as long as given tag doesnt match
-			// the last unclosed tag
-			while(!opened.empty() && !tag.matches(opened.peek())) {
-				// close the top tag
-				corrected.push(
-					opened.pop().getMatching());
-			}
 
-			// now we *might* have one last tag to close;
-			// if this closing tag was correct, the push
-			// above validated the fragment, so we have to
-			// check that we still have a mistake
-			//if(!opened.empty() && tag.matches(opened.peek())) {
-				// insert the users tag
-				//corrected.push(tag);
-			//}
+		Consumer<HTMLTag> consumeNonClosingTag = tag -> {
+			// we assume the author meant to include it
+			corrected.push(tag);
+			if(tag.isOpening()) {
+				// not self-closing or comment tags; we
+				// need to include these in the stack
+				// so we know what needs to be closed
+				// later
+				opened.push(tag);
+			}
+		};
+
+		Consumer<HTMLTag> consumeClosingTag = tag -> {
+			// if the tag doesn't match anything opened, we
+			// just throw it away
+			if(!HTMLTags.matchesAnyTag(tag, opened)) {
+				return;
+			}
+			// if there are no opened tags, we discard this
+			// tag
+			while(!opened.empty()) {
+				HTMLTag top = opened.pop();
+				// close the top tag
+				corrected.push(top.getMatching());
+				// finish if the current tag matches
+				// the top of the opened stack;
+				// otherwise we just close everything
+				// that's been open
+				if(tag.matches(top)) {
+					// tag matches; we're finished
+					return;
+				}
+			}
 		};
 
 		for(HTMLTag tag : tags) {
@@ -102,15 +143,16 @@ public class HTMLManager {
 				// tag.isSelfClosing()
 				// || tag.isOpening()
 				// || tag.isComment()
-				corrected.push(tag);
-				if(tag.isOpening()) {
-					// not self-closing or comment tags
-					opened.push(tag);
-				}
+				consumeNonClosingTag.accept(tag);
 			} else {
 				// tag is closing
-				fixMatchings.accept(tag);
+				consumeClosingTag.accept(tag);
 			}
+		}
+
+		// close extra unclosed tags
+		while(!opened.empty()) {
+			corrected.push(opened.pop().getMatching());
 		}
 
 		replace(corrected);

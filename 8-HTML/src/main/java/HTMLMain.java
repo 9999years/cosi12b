@@ -20,7 +20,7 @@ public class HTMLMain {
         HTMLManager manager = new HTMLManager(new LinkedList<HTMLTag>());
         Scanner console = new Scanner(System.in);
         String choice = "s";
-
+        
         while (true) {
             if (choice.startsWith("s")) {
                 // prompt for page, then download it if it's a URL
@@ -32,23 +32,23 @@ public class HTMLMain {
                     tags = loadTags(url);
                 }
                 manager = new HTMLManager(tags);
-            }
+            } 
             else if (choice.startsWith("a")) {
                 String tagText = prompt(
                         console,
                         "What tag (such as '<table>' or '</p>')? ");
                 manager.add(stringToTag(tagText));
-            }
+            } 
             else if (choice.startsWith("g")) {
                 System.out.println(manager.getTags());
-            }
+            } 
             else if (choice.startsWith("r")) {
                 String tagText = prompt(
                         console,
-                        "Remove all instances of what tag "
+                        "Remove all instances of what tag " 
                         + "(such as '<table>' or '</p>')? ");
                 manager.removeAll(stringToTag(tagText));
-            }
+            } 
             else if (choice.startsWith("f")) {
                 manager.fixHTML();
             }
@@ -83,7 +83,7 @@ public class HTMLMain {
     }
 
     /**
-     * Attempts to load tags from the given URL.
+     * Attempts to load tags from the given URL. 
      *
      * Pre:  The url must either be a valid url, or an empty string
      * Post: Returns a Queue of HTMLTags if the url is valid
@@ -98,13 +98,13 @@ public class HTMLMain {
             }
             System.err.println("Couldn't resolve input. Try again!");
             return null;
-        }
+        } 
         return new LinkedList<HTMLTag>();
     }
 
     /**
      * Converts a String to an HTMLTag object.
-     *
+     * 
      * The String is assumed to be a valid HTML tag.
      */
     public static HTMLTag stringToTag(String tagText) {
@@ -115,7 +115,7 @@ public class HTMLMain {
         String contents = tagText.substring(split + 1, tagText.length());
         return new HTMLTag(element, type, contents);
     }
-
+    
     /**
      * Attempts to get a new HTMLParser for the provided address
      * post: returns null if no source found the given address

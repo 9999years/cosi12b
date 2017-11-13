@@ -126,9 +126,13 @@ public class HTMLTag {
      *
      * pre: If other is null, this method will throw a NullPointerException
      */
-    public boolean equals(HTMLTag other) {
-        return this.element.equalsIgnoreCase(other.element)
-            && this.type == other.type;
+    public boolean equals(Object other) {
+        if(other instanceof HTMLTag) {
+            HTMLTag tag = (HTMLTag) other;
+            return this.element.equalsIgnoreCase(tag.element)
+                && this.type == tag.type;
+        }
+        return false;
     }
 
     /**
