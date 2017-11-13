@@ -1,4 +1,4 @@
-import static org.junit.jupiter.api.Assertions.*;
+//import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
@@ -24,7 +24,7 @@ public class HTMLManagerTest {
 
 	void expectedTest(String html, String... expected) {
 		HTMLTag[] expectedRich = HTMLTags.stringsToTags(expected);
-		assertArrayEquals(expectedRich, htmlToTags(html));
+		SimpleTest.assertArrayEquals(expectedRich, htmlToTags(html));
 	}
 
 	@Test
@@ -35,7 +35,7 @@ public class HTMLManagerTest {
 
 	void removeAllTest(String expected, String html, String remove) {
 		HTMLTag removeTag = HTMLTags.fromString(remove);
-		assertArrayEquals(htmlToTags(expected),
+		SimpleTest.assertArrayEquals(htmlToTags(expected),
 			htmlToTags(html, m -> m.removeAll(removeTag)));
 	}
 
@@ -58,9 +58,7 @@ public class HTMLManagerTest {
 	void fixHTMLTest(String expected, String original) {
 		HTMLTag[] expectedA = htmlToTags(expected);
 		HTMLTag[] fixedA = htmlToTags(original, m -> m.fixHTML());
-		assertArrayEquals(expectedA, fixedA, () -> "checking "
-			+ Arrays.toString(fixedA) + " is "
-			+ Arrays.toString(expectedA));
+		SimpleTest.assertArrayEquals(expectedA, fixedA);
 	}
 
 	@Test
