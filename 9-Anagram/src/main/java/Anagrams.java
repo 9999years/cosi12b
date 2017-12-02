@@ -22,7 +22,7 @@ public class Anagrams {
 		this.dictionary = new TreeSet<String>(dictionary);
 	}
 
-	Anagrams(Collection dictionary) {
+	Anagrams(Collection<String> dictionary) {
 		this(new TreeSet<String>(dictionary));
 	}
 
@@ -62,7 +62,7 @@ public class Anagrams {
 	}
 
 	public SortedSet<List<String>> getAnagrams(String phrase, int max) {
-		SortedSet<List<String>> ret = new TreeSet<>();
+		SortedSet<List<String>> ret = Sets.sortedIterableSet();
 		getAnagrams(new LetterInventory(phrase),
 			getWords(phrase), new ArrayList<>(), ret, max);
 		return ret;
