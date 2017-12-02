@@ -1,8 +1,6 @@
 import java.lang.Comparable;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -12,6 +10,11 @@ public class Sets {
 		return new TreeSet<>(new IterableComparator<>());
 	}
 
+	/**
+	 * a SortedSet of Iterables of a Comparable; each element is compared
+	 * in order like alphabetizing a string; ie [a, b, c] is less than [a,
+	 * c, d], [a, b, c] and [a, b, c] are equal, etc etc
+	 */
 	public static <T extends Comparable<T>, U extends Iterable<T>>
 			SortedSet<U> sortedIterableSet(
 			Collection<U> collection) {
@@ -19,8 +22,4 @@ public class Sets {
 		ret.addAll(collection);
 		return ret;
 	}
-
-	//public static <T> TreeSet<T> alphabeticSet() {
-		//return alphabeticSet(null);
-	//}
 }

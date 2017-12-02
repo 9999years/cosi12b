@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.IntFunction;
 
+/**
+ * utility class
+ */
 public class Strings {
 	public static int minLength(Collection<String> strings) {
 		return Collections.min(strings,
@@ -22,6 +25,9 @@ public class Strings {
 			).val;
 	}
 
+	/**
+	 * total length of all the strings in strings combined
+	 */
 	public static int totalLength(Collection<String> strings) {
 		return totalLength(strings.stream());
 	}

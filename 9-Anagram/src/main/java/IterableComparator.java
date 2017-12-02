@@ -1,12 +1,13 @@
 import java.lang.Comparable;
 import java.lang.Iterable;
 
-import java.util.Iterator;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
 
+/**
+ * compares two Iterables of a Comparable; each element is compared
+ * in order like alphabetizing a string; ie [a, b, c] is less than [a,
+ * c, d], [a, b, c] and [a, b, c] are equal, etc etc
+ */
 public class IterableComparator<T extends Comparable<T>>
 		implements Comparator<Iterable<T>> {
 	public int compare(Iterable<T> A, Iterable<T> B) {

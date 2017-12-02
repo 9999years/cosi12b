@@ -24,11 +24,19 @@ public class Parameters {
 		}
 	}
 
+	/**
+	 * throws an IllegalArgumentException with a custom message if
+	 * parameter fails test
+	 */
 	public static <T> void validate(
 		T parameter, Predicate<T> test, Supplier<String> msg) {
 		validate(parameter, test, p -> msg.get());
 	}
 
+	/**
+	 * throws an IllegalArgumentException with a custom message in terms of
+	 * the parameter if parameter fails test
+	 */
 	public static <T> void validate(
 		T parameter, Predicate<T> test, Function<T, String> msg) {
 		if(!validateQuiet(parameter, test)) {
