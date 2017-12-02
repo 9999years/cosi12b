@@ -48,6 +48,8 @@ public class AnagramsTest {
 			found,
 			() -> "`" + phrase + "` anagrams to "
 				+ Arrays.deepToString(found)
+				+ ", expecting "
+				+ Arrays.deepToString(expected)
 		);
 	}
 
@@ -75,9 +77,10 @@ public class AnagramsTest {
 			new String[] { "sir", "bar", "huh" },
 			new String[] { "sir", "huh", "bar" }
 		);
+		System.out.println("-----");
 		getAnagramsTest("hairbrush", 2,
-			new String[] { "bar", "huh", "sir" },
-			new String[] { "bar", "sir", "huh" }
+			new String[] { "briar", "hush" },
+			new String[] { "hush", "briar" }
 		);
 		// nothin for my boy john
 		getAnagramsTest("john kerry");
@@ -106,9 +109,9 @@ public class AnagramsTest {
 			"hairbrush\n"
 		);
 
-		toStringTest("[bar, huh, sir]\n"
-			+ "[bar, sir, huh]\n",
-			"hairbrush", 2
-		);
+		//toStringTest("[bar, huh, sir]\n"
+			//+ "[bar, sir, huh]\n",
+			//"hairbrush", 2
+		//);
 	}
 }
