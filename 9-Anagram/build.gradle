@@ -1,0 +1,68 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+	}
+}
+
+plugins {
+  id "me.champeau.gradle.jmh" version "0.4.4"
+}
+
+repositories {
+	mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+	options.encoding = compileJava.options.encoding
+}
+
+class SimpleJar extends Jar {
+	@TaskAction
+	void createJarTask() {
+		manifest { attributes( 'Main-Class': baseName ) }
+	}
+}
+
+task mainJar(type: SimpleJar) {
+	baseName = 'AnagramMain'
+}
+
+task jars {
+	dependsOn mainJar
+}
+
+jar {
+	dependsOn jars
+}
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}
+
+task zip(type: Zip) {
+	from '.'
+	from('src/main/java') {
+		include '*.java'
+	}
+	from('src/test/java') {
+		include '*.java'
+	}
+	include 'build.gradle'
+}
+
+ext.junitPlatformVersion = '1.0.0'
+ext.junitJupiterVersion  = '5.0.0'
+
+dependencies {
+	testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+}
