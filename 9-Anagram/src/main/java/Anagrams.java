@@ -63,8 +63,9 @@ public class Anagrams {
 
 	public SortedSet<List<String>> getAnagrams(String phrase, int max) {
 		SortedSet<List<String>> ret = Sets.sortedIterableSet();
-		getAnagrams(new LetterInventory(phrase),
-			getWords(phrase), new ArrayList<>(), ret, max);
+		LetterInventory inventory = new LetterInventory(phrase);
+		getAnagrams(inventory, getWords(phrase), new ArrayList<>(),
+			ret, max, inventory.size());
 		return ret;
 	}
 
@@ -73,11 +74,11 @@ public class Anagrams {
 	}
 
 	/**
-	 * @param _choices mutated
+	 * @param all mutated to add new anagrams
 	 */
 	protected void getAnagrams(LetterInventory remaining,
 		SortedSet<String> choices, List<String> chosen,
-		SortedSet<List<String>> all, int max) {
+		SortedSet<List<String>> all, int max, int originalLength) {
 		// is this a bottom call (eg is our decision tree empty?)
 		boolean bottom = true;
 		for(String choice : choices) {
@@ -103,14 +104,15 @@ public class Anagrams {
 				// so maybe delete this line?
 				_choices.remove(choice);
 				_chosen.add(choice);
-				getAnagrams(_remaining, _choices, _chosen, all, max);
+				getAnagrams(_remaining, _choices, _chosen, all, max, originalLength);
 				if(max != 0 && all.size() >= max) {
 					// done!
 					return;
 				}
 			}
 		}
-		if(bottom && !all.contains(chosen)) {
+		if(bottom && !all.contains(chosen)
+			&& Strings.totalLength(chosen) == originalLength) {
 			all.add(chosen);
 		}
 	}
