@@ -3,7 +3,7 @@
   dictionary file and then gives the user the opportunity to find anagrams of
   various phrases.  It constructs an Anagrams object to do the actual
   search for anagrams that match the user's phrases.
-*/
+  */
 
 import java.io.*;
 import java.util.*;
@@ -64,7 +64,7 @@ public class AnagramMain {
 			if (TIMING) {
 				long elapsed = endTime - startTime;
 				int inventories = LetterInventory.getInstanceCount();
-				System.out.println(elapsed + " ms elapsed, " + inventories + 
+				System.out.println(elapsed + " ms elapsed, " + inventories +
 						" unique LetterInventory object(s) created");
 				LetterInventory.resetInstanceCount();
 			}

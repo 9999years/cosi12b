@@ -53,6 +53,9 @@ task zip(type: Zip) {
 	from('src/main/java') {
 		include '*.java'
 	}
+	from('src/test/java') {
+		include '*.java'
+	}
 	include 'build.gradle'
 }
 
