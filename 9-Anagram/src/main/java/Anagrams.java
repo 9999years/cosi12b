@@ -12,13 +12,16 @@ public class Anagrams {
 	SortedSet<String> dictionary;
 
 	/**
-	 * @param dictionary MUST be a SortedSet but cannot actually be a
-	 * SortedSet because AnagramMain / the assignment, despite requiring
-	 * sorting, only takes regular sets with no guaranteed iteration
-	 * order!!
+	 * @param dictionary MUST be a SortedSet
 	 */
 	Anagrams(Set<String> dictionary) {
 		Objects.requireNonNull(dictionary);
+		//AnagramMain uses Collections.unmodifiableSet rather than
+		//Collections.unmodifiableSortedSet, so this would fail! but
+		//ideally we could use this to validate the parameters (or just
+		//change the signature to a SortedSet<String>
+		//Parameters.validate(dictionary, s -> s instanceof SortedSet,
+			//() -> "dictionary must be a SortedSet!");
 		this.dictionary = new TreeSet<String>(dictionary);
 	}
 
@@ -48,13 +51,30 @@ public class Anagrams {
 		return getWords(phrase, dictionary);
 	}
 
-	public void print(String phrase, int max) {
+	public String toString(String phrase, int max) {
 		Objects.requireNonNull(phrase);
 		Parameters.validate(max, i -> i >= 0,
-			() -> "Max must be greater than 0!");
-		for(List<String> choiceSet : getAnagrams(phrase, max)) {
-			System.out.println(choiceSet);
-		}
+			() -> "Max cannot be negative!");
+		return getAnagrams(phrase, max).stream()
+			.collect(
+				StringBuilder::new,
+				(builder, anagram) -> {
+					builder.append(anagram);
+					builder.append("\n");
+				},
+				(b1, b2) -> {
+					b1.append(b2);
+					b1.append("\n");
+				}
+			).toString();
+	}
+
+	public String toString(String phrase) {
+		return toString(phrase, 0);
+	}
+
+	public void print(String phrase, int max) {
+		System.out.print(toString(phrase, max));
 	}
 
 	public void print(String phrase) {
@@ -101,8 +121,9 @@ public class Anagrams {
 				// anagram. For example, from  "barbara bush"
 				// you might extract the word  "bar" twice.
 				//
-				// so maybe delete this line?
-				_choices.remove(choice);
+				// use this line to forbid duplicate words
+				// within each anagram
+				//_choices.remove(choice);
 				_chosen.add(choice);
 				getAnagrams(_remaining, _choices, _chosen, all, max, originalLength);
 				if(max != 0 && all.size() >= max) {
