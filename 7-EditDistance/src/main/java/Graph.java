@@ -60,15 +60,14 @@ public abstract class Graph <T> {
 	public void add(T node) {
 		// ensures the node exists
 		Set<T> neighbors = neighbors(node);
-		Set<T> keys = nodes.keySet();
-		for(T candidate : keys) {
+		Iterator<T> keys = nodes.keySet().iterator();
+		keys.forEachRemaining(candidate -> {
 			if(!neighbors.contains(candidate) &&
 				areNeighbors(node, candidate)) {
 				add(node, candidate);
-				keys.remove(node);
-				keys.remove(candidate);
+				//keys.remove();
 			}
-		}
+		});
 	}
 
 	/**
@@ -153,9 +152,19 @@ public abstract class Graph <T> {
 	}
 
 	public String toDot() {
-		StringBuilder ret = new StringBuilder("digraph {\n");
+		StringBuilder ret = new StringBuilder(
+			"graph {\n"
+			// boxes, make the background white so they cover up
+			// the edges
+			+ "node [shape=box,style=filled,fillcolor=white];\n"
+			// make sure nodes dont overlap and make sure the edges
+			// are under the nodes
+			+ "graph [overlap=false,outputorder=edgesfirst];\n");
 		for(T node : nodes.keySet()) {
-			ret.append(node + " -> { ");
+			if(nodes.get(node).size() == 0) {
+				continue;
+			}
+			ret.append(node + " -- { ");
 			Iterable<String> itr =
 				nodes.get(node)
 				.stream()
