@@ -77,7 +77,6 @@ public class AnagramsTest {
 			new String[] { "sir", "bar", "huh" },
 			new String[] { "sir", "huh", "bar" }
 		);
-		System.out.println("-----");
 		getAnagramsTest("hairbrush", 2,
 			new String[] { "briar", "hush" },
 			new String[] { "hush", "briar" }
@@ -109,9 +108,9 @@ public class AnagramsTest {
 			"hairbrush\n"
 		);
 
-		//toStringTest("[bar, huh, sir]\n"
-			//+ "[bar, sir, huh]\n",
-			//"hairbrush", 2
-		//);
+		toStringTest("[briar, hush]\n"
+			+ "[hush, briar]\n",
+			"hairbrush", 2
+		);
 	}
 }
