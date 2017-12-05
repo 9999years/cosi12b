@@ -92,6 +92,14 @@ public class Anagrams {
 		return getAnagrams(phrase, 0);
 	}
 
+	protected void addConditionally(List<String> chosen,
+		SortedSet<List<String>> all, int originalLength) {
+		if(!all.contains(chosen)
+			&& Strings.totalLength(chosen) == originalLength) {
+			all.add(chosen);
+		}
+	}
+
 	/**
 	 * @param all mutated to add new anagrams
 	 */
@@ -124,10 +132,11 @@ public class Anagrams {
 				// within each anagram
 				//_choices.remove(choice);
 				_chosen.add(choice);
-				getAnagrams(_remaining, _choices, _chosen, all, max, originalLength);
-				if(max != 0 && all.size() >= max) {
-					// done!
-					return;
+				if(max != 0 && _chosen.size() == max) {
+					// done, but we might have more valid choices deeper in the iteration order; keep going
+					addConditionally(_chosen, all, originalLength);
+				} else {
+					getAnagrams(_remaining, _choices, _chosen, all, max, originalLength);
 				}
 			}
 		}

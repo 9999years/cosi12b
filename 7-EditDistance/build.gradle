@@ -31,25 +31,38 @@ class SimpleJar extends Jar {
 }
 
 task edJar(type: SimpleJar) {
+	from(project.sourceSets.main.output) {
+		include '**'
+	}
 	baseName = 'becca.edit.EditDistance'
 }
 
 task rwJar(type: SimpleJar) {
+	from(project.sourceSets.main.output) {
+		include '**'
+	}
 	baseName = 'becca.edit.RandomWalk'
 }
 
-task jars {
-	//baseName = 'becca.edit.EditDistance'
-	//manifest { attributes( 'Main-Class': baseName ) }
-	//from(sourceSets.main.output) {
-		//include '**'
-	//}
-	//from(project.sourceSets.main.output) {
-		//include '**'
-	//}
+task dJar(type: SimpleJar) {
+	from(project.sourceSets.main.output) {
+		include '**'
+	}
+	baseName = 'becca.edit.Dotter'
+}
 
+task jars {
 	dependsOn edJar
+	dependsOn dJar
 	dependsOn rwJar
+}
+
+jar {
+	from(sourceSets.main.output) {
+		include '**'
+	}
+	baseName = 'becca.edit.Dotter'
+	manifest { attributes( 'Main-Class': baseName ) }
 }
 
 test {

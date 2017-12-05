@@ -27,6 +27,22 @@ public class BiZip<T, U> implements Iterable<Tuple<T, U>>, Iterator<Tuple<T, U>>
 		this(lt.iterator(), lu.iterator());
 	}
 
+	public boolean tHasNext() {
+		return it.hasNext();
+	}
+
+	public boolean uHasNext() {
+		return iu.hasNext();
+	}
+
+	/**
+	 * true if one of the two iterables has a next value but the other
+	 * doesnt;
+	 */
+	public boolean oneHasNext() {
+		return it.hasNext() ^ iu.hasNext();
+	}
+
 	public boolean hasNext() {
 		return it.hasNext() && iu.hasNext();
 	}
