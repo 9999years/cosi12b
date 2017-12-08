@@ -1,6 +1,8 @@
 import java.lang.IndexOutOfBoundsException;
 import java.lang.Exception;
 import java.lang.Iterable;
+import java.lang.UnsupportedOperationException;
+import java.lang.ArrayStoreException;
 
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
@@ -187,7 +189,9 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	public boolean remove(Object o, Iterator<E> itr) {
-		for(E e : itr) {
+		E e;
+		while(itr.hasNext()) {
+			e = itr.next();
 			if((o == null && e == null) || e.equals(o)) {
 				itr.remove();
 				return true;
@@ -204,7 +208,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return remove(o);
 	}
 
-	public boolean removeLastOccurance(Object o) {
+	public boolean removeLastOccurrence(Object o) {
 		return remove(o, descendingIterator());
 	}
 
@@ -227,6 +231,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		for(E e : c) {
 			add(e);
 		}
+	}
+
+	public boolean addAll(Collection<? extends E> c) {
+		addAll(c);
 	}
 
 	public boolean addAll(E... c) {
@@ -330,6 +338,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return removeFirstNonEmpty();
 	}
 
+	public E remove() {
+		return removeFirst();
+	}
+
 	/**
 	 * returns null if empty
 	 */
@@ -338,6 +350,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 			return null;
 		}
 		return removeFirstNonEmpty();
+	}
+
+	public E poll() {
+		return pollFirst();
 	}
 
 	// examining:
@@ -391,6 +407,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return true;
 	}
 
+	public boolean offer(E e) {
+		return offerLast(e);
+	}
+
 	// removal
 
 	/**
@@ -439,19 +459,55 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return size == 0 ? null : tail.value;
 	}
 
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
 	public int size() {
 		return size;
 	}
 
-	public E[] toArray() {
-		E[] ret = (E[]) new Object[size];
+	public <T> T[] toArray(T[] a) {
+		Objects.requireNonNull(a);
+
+		if(a.length < size) {
+			a = (T[]) new Object[size];
+		}
+
 		int i = 0;
 		Node<E> current = head;
 		while(current != null) {
-			ret[i] = current.value;
+			if(current.value instanceof T) {
+				a[i] = (T) current.value;
+			} else {
+				throw new ArrayStoreException();
+			}
 			current = current.next;
 			i++;
 		}
-		return ret;
+
+		if(i < a.length - 1) {
+			a[i] = null;
+		}
+
+		return a;
+	}
+
+	public E[] toArray() {
+		return toArray((E[]) new Object[size]);
+	}
+
+	// COLLECTION METHODS
+
+	public boolean retainAll(Collection<?> c) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean removeAll(Collection<?> c) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean containsAll(Collection<?> c) {
+		throw new UnsupportedOperationException();
 	}
 }
