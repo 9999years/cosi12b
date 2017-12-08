@@ -1,6 +1,14 @@
 import java.util.List;
+import java.text.Normalizer;
+
+import java.lang.StringBuilder;
+import java.lang.IllegalArgumentException;
+import java.lang.IllegalStateException;
 
 public class AssassinManager {
+	protected LinkedList<AssassinNode> killRing;
+	protected LinkedList<AssassinNode> graveyard;
+
 	/**
 	 * This constructor should initialize a new assassin manager over the
 	 * given list of people. Note that you should not save the list
@@ -16,6 +24,31 @@ public class AssassinManager {
 	 * there are no duplicates.
 	 */
 	AssassinManager(List<String> names) {
+		Objects.requireNonNull(names);
+		Parameters.validate(names, l -> l.size() > 0);
+	}
+
+	protected String listString(LinkedList<AssassinNode> list,
+			final String infix) {
+		StringBuilder ret = new StringBuilder();
+		final String prefix = ">>    ";
+		for(AssassinNode n : killRing) {
+			ret.append(
+				prefix
+				+ n.name
+				+ infix
+				+ n.next
+				+ "\n");
+		}
+		return ret.toString();
+	}
+
+	public String killRingString() {
+		return listString(killRing, " is stalking ");
+	}
+
+	public String graveyardString() {
+		return listString(killRing, " was killed by ");
 	}
 
 	/**
@@ -33,11 +66,7 @@ public class AssassinManager {
 	 *     Chris is stalking Chris
 	 */
 	public void printKillRing() {
-		System.out.println(getKillRing());
-	}
-
-	public String getKillRing() {
-		return null;
+		System.out.println(killRingString());
 	}
 
 	/**
@@ -55,20 +84,27 @@ public class AssassinManager {
 	 *     Jim was killed by Sally
 	 */
 	public void printGraveyard() {
-		System.out.println(getGraveyard());
+		System.out.println(graveyardString());
 	}
 
-	public String getGraveyard() {
-		return null;
+	/**
+	 * normalizes and lower-cases a name
+	 */
+	protected static void comparableName(String name) {
+		// "Compatibility decomposition, followed by canonical
+		// composition."
+		return Normalizer.normalize(name, Normalizer.Form.NFKD)
+			.toLowerCase();
+	
 	}
 
 	/**
 	 * This method should return true if the given name is in the current
-	 * kill ring and false otherwise. It  should ignore case in comparing
+	 * kill ring and false otherwise. It should ignore case in comparing
 	 * names; so, “salLY” should match a node with a name of “Sally”.
 	 */
 	public boolean killRingContains(String name)  {
-		return false;
+		return killRing.contains(comparableName(name));
 	}
 
 	/**
@@ -77,7 +113,7 @@ public class AssassinManager {
 	 * names; so, “CaRoL” should match a node with a name of “Carol”.
 	 */
 	public boolean graveyardContains(String name) {
-		return false;
+		return graveyard.contains(comparableName(name));
 	}
 
 	/**
@@ -85,7 +121,7 @@ public class AssassinManager {
 	 * has one person) and false otherwise.
 	 */
 	public boolean isGameOver() {
-		return false;
+		return killRing.size() == 1;
 	}
 
 	/**
@@ -93,7 +129,7 @@ public class AssassinManager {
 	 * null if the game is not over.
 	 */
 	public String winner() {
-		return null;
+		return isGameOver() ? killRing.peekFirst() : null;
 	}
 
 	/**
@@ -112,5 +148,20 @@ public class AssassinManager {
 	 * IllegalStateException takes precedence.
 	 */
 	public void kill(String name) {
+		Parameters.validate(null, isGameOver(),
+			() -> new IllegalArgumentException("Game is over!"));
+		// remove NAME from killRing
+		// IF someone was removed, set their killer and add them to
+		// the front of the graveyard
+		Iterator<AssassinNode> itr = killRing.iterator();
+		for(AssassinNode p : itr) {
+		}
+		AssassinNode killed = killRing.removeFirstOccurrence(comparableName(name));
+		if(graveyard.offerFirst(killed)) {
+			killed.kiler = 
+		} else {
+			// not in ring; killed is null
+			throw new IllegalArgumentException();
+		}
 	}
 }
