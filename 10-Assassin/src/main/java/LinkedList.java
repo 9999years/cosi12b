@@ -1,10 +1,11 @@
 import java.lang.IndexOutOfBoundsException;
-import java.lang.NoSuchElementException;
 import java.lang.Exception;
 import java.lang.Iterable;
 
+import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected class LinkedListIterator<E> implements Iterator<E> {
+	protected class LinkedListIterator<E> implements ListIterator<E> {
 		protected Node<E> current;
 		protected int inx;
 
@@ -34,7 +35,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		 * startingElement is where the iterator starts, advancer is
 		 * a function that takes a node and returns the next node
 		 */
-		LinkedListIterator(E startingElement, int startingIndex) {
+		LinkedListIterator(Node<E> startingElement, int startingIndex) {
 			current = startingElement;
 			inx = startingIndex;
 		}
@@ -56,22 +57,39 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		public void add(E e) {
 			Node<E> n = new Node<>(null, e, null);
 			if(hasPrevious()) {
-				n.previous = previous();
+				n.previous = current.previous;
 				previous().next = n;
 			}
 			if(hasNext()) {
-				n.next = next();
-				next().previous = n;
+				n.next = current.next;
+				current.previous = n;
 			}
 		}
 
 		public E next() {
-			// hasNext call ensures next is updated
 			if(!hasNext()) {
 				throw NoSuchElementException();
 			}
-			current = next;
+			current = current.next;
+			inx++;
 			return current.value;
+		}
+
+		public E previous() {
+			if(!hasPrevious()) {
+				throw NoSuchElementException();
+			}
+			current = current.previous;
+			inx--;
+			return current.value;
+		}
+
+		public int nextIndex() {
+			return inx + 1;
+		}
+
+		public int previousIndex() {
+			return inx - 1;
 		}
 
 		public void remove() {
@@ -79,7 +97,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 				// start of list
 				if(current.next == null) {
 					// single-element list
-					current = next = null;
+					current = null;
 				}
 				LinkedList.this.pollFirst();
 			} else if(current.next == null) {
@@ -90,10 +108,17 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 				LinkedList.this.remove(current);
 			}
 		}
+
+		public void set(E e) {
+			current.value = e;
+		}
 	}
 
-	protected Node<E> head = null;
-	protected Node<E> tail = null;
+	protected class DescendingLinkedListIterator<E> implements ListIterator<E> {
+	}
+
+	protected Node<E> head = new Node<E>(null, null, null);
+	protected Node<E> tail = new Node<E>(null, null, null);
 	protected int size = 0;
 
 	LinkedList() {
@@ -103,12 +128,16 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		addAll(c);
 	}
 
-	public Iterator<E> iterator() {
-		return new LinkedListIterator(head, n -> n.next);
+	LinkedList(Iterable<? extends E> c) {
+		addAll(c);
 	}
 
-	public Iterator<E> descendingIterator() {
-		return new LinkedListIterator(tail, n -> n.previous);
+	public Iterator<E> iterator() {
+		return listIterator();
+	}
+
+	public ListIterator<E> listIterator() {
+		return new LinkedListIterator(head, 0);
 	}
 
 	protected void remove(Node<E> n) {
@@ -120,7 +149,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	public boolean remove(Object o) {
-		Iterator<Node<E>> itr = iterator();
+		Iterator<E> itr = iterator();
 		for(E e : itr) {
 			if(e.equals(o)) {
 				itr.remove();
@@ -131,26 +160,9 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	/**
-	 * returns the element if removed, null otherwise
-	 *
-	 * i know this isn't the signature the *real* java.util.LinkedList
-	 * has, it's fine
-	 */
-	public E removeFirstOccurrence(Object o) {
-		Iterator<Node<E>> itr = iterator();
-		for(E e : itr) {
-			if(e.equals(o)) {
-				itr.remove();
-				return e;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * precondition: size == 0
 	 */
-	protected addEmpty(E e) {
+	protected void addEmpty(E e) {
 		head = tail = new Node(null, e, null);
 	}
 
@@ -162,7 +174,13 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return true;
 	}
 
-	public boolean addAll(Collection<? extends E> c) {
+	public boolean addAll(Iterable<? extends E> c) {
+		for(E e : c) {
+			add(e);
+		}
+	}
+
+	public boolean addAll(E... c) {
 		for(E e : c) {
 			add(e);
 		}
@@ -173,7 +191,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		size = 0;
 	}
 
-	public void contains(Object o) {
+	public boolean contains(Object o) {
 		for(E e : this) {
 			if(e.equals(o)) {
 				return true;
@@ -357,5 +375,17 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 	public int size() {
 		return size;
+	}
+
+	public E[] toArray() {
+		E[] ret = (E[]) new Object[size];
+		int i = 0;
+		Node<E> current = head;
+		while(current != null) {
+			ret[i] = current.value;
+			current = current.next;
+			i++;
+		}
+		return ret;
 	}
 }

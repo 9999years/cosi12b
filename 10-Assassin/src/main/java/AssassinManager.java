@@ -1,4 +1,6 @@
 import java.util.List;
+import java.util.Objects;
+import java.util.ListIterator;
 import java.text.Normalizer;
 
 import java.lang.StringBuilder;
@@ -6,15 +8,15 @@ import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
 
 public class AssassinManager {
-	protected LinkedList<AssassinNode> killRing;
-	protected LinkedList<AssassinNode> graveyard;
+	protected LinkedList<AssassinPlayer> killRing;
+	protected LinkedList<AssassinPlayer> graveyard;
 
 	/**
 	 * This constructor should initialize a new assassin manager over the
 	 * given list of people. Note that you should not save the list
 	 * parameter itself as a field, nor modify the list. Instead, you
 	 * should build your own kill ring of list nodes that contains these
-	 * names in the same order. If the list is null or empty, you should
+	 * names in the same order. If the list is null or empty, you should
 	 * throw an IllegalArgumentException.
 	 *
 	 * For example, if the given list contains ["John", "Sally", "Fred"],
@@ -28,17 +30,23 @@ public class AssassinManager {
 		Parameters.validate(names, l -> l.size() > 0);
 	}
 
-	protected String listString(LinkedList<AssassinNode> list,
+	protected String listString(LinkedList<AssassinPlayer> list,
 			final String infix) {
 		StringBuilder ret = new StringBuilder();
 		final String prefix = ">>    ";
-		for(AssassinNode n : killRing) {
-			ret.append(
-				prefix
-				+ n.name
-				+ infix
-				+ n.next
-				+ "\n");
+		ListIterator<AssassinPlayer> itr = killRing.listIterator();
+		for(AssassinPlayer n : killRing) {
+			if(itr.hasPrevious()) {
+				// X
+				ret.append(n.name + "\n");
+			}
+			if(itr.hasNext()) {
+				// X is stalking
+				ret.append(
+					prefix
+					+ n.name
+					+ infix);
+			}
 		}
 		return ret.toString();
 	}
@@ -88,32 +96,21 @@ public class AssassinManager {
 	}
 
 	/**
-	 * normalizes and lower-cases a name
-	 */
-	protected static void comparableName(String name) {
-		// "Compatibility decomposition, followed by canonical
-		// composition."
-		return Normalizer.normalize(name, Normalizer.Form.NFKD)
-			.toLowerCase();
-	
-	}
-
-	/**
 	 * This method should return true if the given name is in the current
 	 * kill ring and false otherwise. It should ignore case in comparing
 	 * names; so, “salLY” should match a node with a name of “Sally”.
 	 */
-	public boolean killRingContains(String name)  {
-		return killRing.contains(comparableName(name));
+	public boolean killRingContains(String name) {
+		return killRing.contains(name);
 	}
 
 	/**
 	 * This method should return true if the given name is in the current
-	 * graveyard and false otherwise. It  should ignore case in comparing
+	 * graveyard and false otherwise. It  should ignore case in comparing
 	 * names; so, “CaRoL” should match a node with a name of “Carol”.
 	 */
-	public boolean graveyardContains(String name) {
-		return graveyard.contains(comparableName(name));
+	public boolean graveyardContains(String name) {
+		return graveyard.contains(name);
 	}
 
 	/**
@@ -128,8 +125,8 @@ public class AssassinManager {
 	 * This method should return the name of the winner of the game, or
 	 * null if the game is not over.
 	 */
-	public String winner() {
-		return isGameOver() ? killRing.peekFirst() : null;
+	public String winner() {
+		return isGameOver() ? killRing.peekFirst().name : null;
 	}
 
 	/**
@@ -148,20 +145,19 @@ public class AssassinManager {
 	 * IllegalStateException takes precedence.
 	 */
 	public void kill(String name) {
-		Parameters.validate(null, isGameOver(),
-			() -> new IllegalArgumentException("Game is over!"));
+		Parameters.validate(null, n -> isGameOver(), () -> "Game is over!");
 		// remove NAME from killRing
 		// IF someone was removed, set their killer and add them to
 		// the front of the graveyard
-		Iterator<AssassinNode> itr = killRing.iterator();
-		for(AssassinNode p : itr) {
-		}
-		AssassinNode killed = killRing.removeFirstOccurrence(comparableName(name));
-		if(graveyard.offerFirst(killed)) {
-			killed.kiler = 
-		} else {
-			// not in ring; killed is null
-			throw new IllegalArgumentException();
-		}
+		//Iterator<AssassinPlayer> itr = killRing.iterator();
+		//for(AssassinPlayer p : itr) {
+		//}
+		//AssassinPlayer killed = killRing.removeFirstOccurrence(name);
+		//if(graveyard.offerFirst(killed)) {
+			////killed.kiler = 
+		//} else {
+			//// not in ring; killed is null
+			//throw new IllegalArgumentException();
+		//}
 	}
 }
