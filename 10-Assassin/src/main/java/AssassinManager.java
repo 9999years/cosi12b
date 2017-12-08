@@ -144,7 +144,7 @@ public class AssassinManager {
 	 * ring. If both of these conditions are true, the
 	 * IllegalStateException takes precedence.
 	 */
-	public void kill(String name) {
+	public void kill(String name) throws IllegalArgumentException, IllegalStateException {
 		Parameters.validate(null, n -> isGameOver(), () -> "Game is over!");
 		// remove NAME from killRing
 		// IF someone was removed, set their killer and add them to

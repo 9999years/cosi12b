@@ -20,6 +20,9 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		Node<E> previous;
 		Node<E> next;
 
+		Node() {
+		}
+
 		Node(Node<E> previous, E value, Node<E> next) {
 			this.value    = value;
 			this.previous = previous;
@@ -27,7 +30,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected class LinkedListIterator<E> implements ListIterator<E> {
+	protected class LinkedListIterator<E> implements Iterable<E>, ListIterator<E> {
 		protected Node<E> current;
 		protected int inx;
 
@@ -38,6 +41,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		LinkedListIterator(Node<E> startingElement, int startingIndex) {
 			current = startingElement;
 			inx = startingIndex;
+		}
+
+		public Iterator<E> iterator() {
+			return this;
 		}
 
 		public boolean hasNext() {
@@ -58,17 +65,17 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 			Node<E> n = new Node<>(null, e, null);
 			if(hasPrevious()) {
 				n.previous = current.previous;
-				previous().next = n;
+				current.previous.next = n;
 			}
 			if(hasNext()) {
 				n.next = current.next;
-				current.previous = n;
+				current.next.previous = n;
 			}
 		}
 
 		public E next() {
 			if(!hasNext()) {
-				throw NoSuchElementException();
+				throw new NoSuchElementException();
 			}
 			current = current.next;
 			inx++;
@@ -77,7 +84,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 		public E previous() {
 			if(!hasPrevious()) {
-				throw NoSuchElementException();
+				throw new NoSuchElementException();
 			}
 			current = current.previous;
 			inx--;
@@ -114,7 +121,34 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected class DescendingLinkedListIterator<E> implements ListIterator<E> {
+	protected class DescendingLinkedListIterator<E> extends LinkedListIterator<E> {
+		DescendingLinkedListIterator(Node<E> startingElement, int startingIndex) {
+			super(startingElement, startingIndex);
+		}
+
+		public boolean hasNext() {
+			return super.hasPrevious();
+		}
+
+		public boolean hasPrevious() {
+			return super.hasNext();
+		}
+
+		public E next() {
+			return super.previous();
+		}
+
+		public E previous() {
+			return super.next();
+		}
+
+		public int nextIndex() {
+			return super.previousIndex();
+		}
+
+		public int previousIndex() {
+			return super.nextIndex();
+		}
 	}
 
 	protected Node<E> head = new Node<E>(null, null, null);
@@ -140,6 +174,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return new LinkedListIterator(head, 0);
 	}
 
+	public ListIterator<E> descendingIterator() {
+		return new DescendingLinkedListIterator(head, size - 1);
+	}
+
 	protected void remove(Node<E> n) {
 		n.previous.next = n.next;
 		n.next.previous = n.previous;
@@ -148,15 +186,26 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		size--;
 	}
 
-	public boolean remove(Object o) {
-		Iterator<E> itr = iterator();
+	public boolean remove(Object o, Iterator<E> itr) {
 		for(E e : itr) {
-			if(e.equals(o)) {
+			if((o == null && e == null) || e.equals(o)) {
 				itr.remove();
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public boolean remove(Object o) {
+		return remove(o, iterator());
+	}
+
+	public boolean removeFirstOccurrence(Object o) {
+		return remove(o);
+	}
+
+	public boolean removeLastOccurance(Object o) {
+		return remove(o, descendingIterator());
 	}
 
 	/**
@@ -245,10 +294,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 */
 	public void addFirst(E e) {
 		if(size == 0) {
-			addEmpty(element);
+			addEmpty(e);
 		} else {
 			// add front
-			head.previous = new Node(null, element, head);
+			head.previous = new Node(null, e, head);
 			head = head.previous;
 			size++;
 		}
@@ -262,12 +311,21 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return true;
 	}
 
+	public void push(E e) {
+		addFirst(e);
+	}
+
 	// removing:
 
 	/**
 	 * throws NoSuchElementException if empty
 	 */
 	public E removeFirst() {
+		throwIfEmpty();
+		return removeFirstNonEmpty();
+	}
+
+	public E pop() {
 		throwIfEmpty();
 		return removeFirstNonEmpty();
 	}
@@ -292,11 +350,19 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return head.value;
 	}
 
+	public E element() {
+		return getFirst();
+	}
+
 	/**
 	 * returns null if empty
 	 */
 	public E peekFirst() {
 		return size == 0 ? null : head.value;
+	}
+
+	public E peek() {
+		return peekFirst();
 	}
 
 	// TAIL OPERATIONS

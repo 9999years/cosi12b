@@ -32,14 +32,14 @@ public class Parameters {
 	 */
 	public static <T> void validate(T parameter, Predicate<T> test,
 			Supplier<String> msg)
-			throws Exception {
+			throws IllegalArgumentException {
 		validate(parameter, test, msg, IllegalArgumentException::new);
 	}
 
-	public static <T> void validate(T parameter, Predicate<T> test,
+	public static <T, E extends Exception> void validate(T parameter, Predicate<T> test,
 			Supplier<String> msg,
-			Function<String, Exception> exceptionGenerator)
-			throws Exception {
+			Function<String, E> exceptionGenerator)
+			throws E {
 		validate(parameter, test, p -> exceptionGenerator.apply(msg.get()));
 	}
 
@@ -47,9 +47,9 @@ public class Parameters {
 	 * throws an IllegalArgumentException with a custom message in terms of
 	 * the parameter if parameter fails test
 	 */
-	public static <T> void validate(
-		T parameter, Predicate<T> test, Function<T, Exception> msg)
-		throws Exception {
+	public static <T, E extends Exception> void validate(
+		T parameter, Predicate<T> test, Function<T, E> msg)
+		throws E {
 		if(!validateQuiet(parameter, test)) {
 			// test failed
 			throw msg.apply(parameter);

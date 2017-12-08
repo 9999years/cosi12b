@@ -21,7 +21,7 @@ public class AssassinPlayer {
 		this.normalizedName = comparableName(name);
 	}
 
-	public String isKiller(String s) {
+	public boolean isKiller(String s) {
 		return killer.equals(s);
 	}
 
