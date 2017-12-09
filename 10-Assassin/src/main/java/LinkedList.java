@@ -190,13 +190,15 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	protected void addAfter(Node<E> n, E e) {
+		Objects.requireNonNull(n);
 		Node<E> insert = new Node<E>(n, e, n.next);
-		n.previous.next = insert;
 		n.next.previous = insert;
+		n.next = insert;
 		size++;
 	}
 
 	protected void addBefore(Node<E> n, E e) {
+		Objects.requireNonNull(n);
 		addAfter(n.previous, e);
 	}
 
@@ -374,7 +376,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 */
 	public E getFirst() {
 		throwIfEmpty();
-		return head.value;
+		return head.next.value;
 	}
 
 	public E element() {
@@ -385,7 +387,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 * returns null if empty
 	 */
 	public E peekFirst() {
-		return nullIfEmpty(() -> head.value);
+		return nullIfEmpty(() -> head.next.value);
 	}
 
 	public E peek() {
@@ -400,7 +402,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 * never throws an exception
 	 */
 	public void addLast(E e) {
-		addBefore(tail.previous, e);
+		addBefore(tail, e);
 	}
 
 	/**
