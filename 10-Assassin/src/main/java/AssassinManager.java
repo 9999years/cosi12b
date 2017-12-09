@@ -8,8 +8,8 @@ import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
 
 public class AssassinManager {
-	protected LinkedList<AssassinPlayer> killRing;
-	protected LinkedList<AssassinPlayer> graveyard;
+	protected LinkedList<AssassinPlayer> killRing  = new LinkedList<>();
+	protected LinkedList<AssassinPlayer> graveyard = new LinkedList<>();
 
 	/**
 	 * This constructor should initialize a new assassin manager over the
@@ -30,6 +30,12 @@ public class AssassinManager {
 		Parameters.validate(names, l -> l.size() > 0);
 	}
 
+	protected void addAll(List<String> names) {
+		for(String name : names) {
+			killRing.add(new AssassinPlayer(name));
+		}
+	}
+
 	protected String listString(LinkedList<AssassinPlayer> list,
 			final String infix) {
 		StringBuilder ret = new StringBuilder();
@@ -42,10 +48,7 @@ public class AssassinManager {
 			}
 			if(itr.hasNext()) {
 				// X is stalking
-				ret.append(
-					prefix
-					+ n.name
-					+ infix);
+				ret.append(prefix + n.name + infix);
 			}
 		}
 		return ret.toString();
@@ -149,15 +152,25 @@ public class AssassinManager {
 		// remove NAME from killRing
 		// IF someone was removed, set their killer and add them to
 		// the front of the graveyard
-		//Iterator<AssassinPlayer> itr = killRing.iterator();
-		//for(AssassinPlayer p : itr) {
-		//}
-		//AssassinPlayer killed = killRing.removeFirstOccurrence(name);
-		//if(graveyard.offerFirst(killed)) {
-			////killed.kiler = 
-		//} else {
-			//// not in ring; killed is null
-			//throw new IllegalArgumentException();
-		//}
+		ListIterator<AssassinPlayer> itr = killRing.listIterator();
+		while(itr.hasNext()) {
+			AssassinPlayer next = itr.next();
+			if(next.equals(name)) {
+				itr.remove();
+				if(itr.hasPrevious()) {
+					// mid list or end of list
+					next.killer = itr.previous();
+				} else {
+					// front of list, being stalked by
+					// end
+					next.killer = killRing.peekLast();
+				}
+				graveyard.offerFirst(next);
+				return;
+			}
+		}
+
+		// name not found
+		throw new IllegalArgumentException();
 	}
 }

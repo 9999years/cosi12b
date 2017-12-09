@@ -13,7 +13,6 @@ public class AssassinPlayer {
 		// composition."
 		return Normalizer.normalize(name, Normalizer.Form.NFKD)
 			.toLowerCase();
-	
 	}
 
 	AssassinPlayer(String name) {
