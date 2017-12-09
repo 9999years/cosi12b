@@ -282,12 +282,14 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		size = 0;
 	}
 
-	protected void remove(Node<E> n) {
+	protected E remove(Node<E> n) {
+		E value = n.value;
 		n.previous.next = n.next;
 		n.next.previous = n.previous;
 		// clean up for the gc
 		n.value = null;
 		size--;
+		return value;
 	}
 
 	public boolean remove(Object o, Iterator<E> itr) {
@@ -438,7 +440,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 * returns null if empty
 	 */
 	public E pollLast() {
-		return nullIfEmpty(LinkedList::removeLast);
+		return nullIfEmpty(this::removeLast);
 	}
 
 	// examining
