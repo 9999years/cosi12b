@@ -66,11 +66,14 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 
 		public boolean hasNext() {
-			return current.next != tail;
+			// we must be able to get the ListIterator to the
+			// position "past" the last element, which is, in
+			// our case, where curent == tail
+			return current != tail;
 		}
 
 		public boolean hasPrevious() {
-			return current.previous != head;
+			return current != head;
 		}
 
 		public void add(E e) {
@@ -97,7 +100,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 
 		public int nextIndex() {
-			return inx + 1;
+			return inx;
 		}
 
 		public int previousIndex() {
@@ -162,17 +165,16 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		addAll(c);
 	}
 
-	public ListIterator<E> descendingIterator() {
-		return new DescendingLinkedListIterator(head, size);
-	}
-
 	/**
 	 * optional operation; if o is in this list, applies operation on it
-	 * @return true if operation was performed
+	 *
+	 * kind of a combination .contains / .get
+	 *
+	 * @return true if operation was performed, false otherwise
 	 */
 	public boolean operateOnFirst(Object o, Consumer<E> operation) {
 		for(E e : this) {
-			if(o.equals(e)) {
+			if(equals(e, o)) {
 				operation.accept(e);
 				return true;
 			}
@@ -207,19 +209,41 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		addAfter(n.previous, e);
 	}
 
+	/**
+	 * gets the first instance of o in the list
+	 */
+	public E get(Object o) {
+		for(E e : this) {
+			if(equals(e, o)) {
+				return e;
+			}
+		}
+		return null;
+	}
+
 	// DEQUE METHODS:
 
 	public Iterator<E> iterator() {
 		return listIterator();
 	}
 
+	public ListIterator<E> descendingIterator() {
+		return new DescendingLinkedListIterator(tail, size);
+	}
+
 	public ListIterator<E> listIterator() {
-		return new LinkedListIterator(head, -1);
+		return new LinkedListIterator(head, 0);
+	}
+
+	protected boolean equals(E e, Object o) {
+		return e == null
+			? o == null
+			: e.equals(o);
 	}
 
 	public boolean contains(Object o) {
 		for(E e : this) {
-			if(e.equals(o)) {
+			if(equals(e, o)) {
 				return true;
 			}
 		}
@@ -302,7 +326,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		E e;
 		while(itr.hasNext()) {
 			e = itr.next();
-			if((o == null && e == null) || e.equals(o)) {
+			if(equals(e, o)) {
 				itr.remove();
 				return true;
 			}

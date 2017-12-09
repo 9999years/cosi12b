@@ -7,6 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.Arrays;
 import java.util.stream.IntStream;
+import java.util.ListIterator;
 
 public class LinkedListTest {
 	// super low quality random numbers
@@ -141,7 +142,8 @@ public class LinkedListTest {
 		numbers4,
 		numbers5,
 		numbers6,
-		numbers7
+		numbers7,
+		numbers8
 	};
 
 	Integer[] boxed(int[] ints) {
@@ -289,6 +291,47 @@ public class LinkedListTest {
 	void addRemoveTest() {
 		for(int[] nrs : numbers) {
 			addRemoveTest(nrs, nrs);
+		}
+	}
+
+	void listIteratorTest(int[] expected) {
+		LinkedList<Integer> list = new LinkedList<>();
+		list.addAll(Arrays.asList(boxed(expected)));
+		ListIterator<Integer> itr = list.listIterator();
+		assertFalse(itr.hasPrevious());
+		if(list.size() > 0) {
+			assertTrue(itr.hasNext());
+		}
+		assertEquals(-1, itr.previousIndex());
+		assertEquals(0, itr.nextIndex());
+
+		// traverse forwards
+		int i = 0;
+		while(itr.hasNext()) {
+			assertEquals(i, itr.nextIndex());
+			assertEquals((Object) expected[i], itr.next());
+			i++;
+		}
+		assertEquals(i, list.size() - 1);
+		assertFalse(itr.hasNext());
+		assertTrue(itr.hasPrevious());
+
+		// and backwards!
+		i = list.size() - 1;
+		while(itr.hasPrevious()) {
+			assertEquals(i, itr.previousIndex());
+			assertEquals((Object) expected[i], itr.previous());
+			i--;
+		}
+		assertEquals(i, 0);
+		assertFalse(itr.hasPrevious());
+		assertTrue(itr.hasNext());
+	}
+
+	@Test
+	void listIteratorTest() {
+		for(int[] nrs : numbers) {
+			listIteratorTest(nrs);
 		}
 	}
 
