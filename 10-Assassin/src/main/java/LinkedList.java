@@ -3,6 +3,7 @@ import java.lang.Exception;
 import java.lang.Iterable;
 import java.lang.UnsupportedOperationException;
 import java.lang.ArrayStoreException;
+import java.lang.ClassCastException;
 
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
@@ -477,9 +478,9 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		int i = 0;
 		Node<E> current = head;
 		while(current != null) {
-			if(current.value instanceof T) {
+			try {
 				a[i] = (T) current.value;
-			} else {
+			} catch(ClassCastException e) {
 				throw new ArrayStoreException();
 			}
 			current = current.next;
