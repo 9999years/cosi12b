@@ -1,17 +1,22 @@
-import java.lang.IndexOutOfBoundsException;
 import java.lang.Exception;
 import java.lang.Iterable;
+
+//exceptions
 import java.lang.UnsupportedOperationException;
 import java.lang.ArrayStoreException;
 import java.lang.ClassCastException;
-
+import java.lang.IndexOutOfBoundsException;
 import java.util.NoSuchElementException;
+
+// functional
 import java.util.function.Supplier;
 import java.util.function.Function;
 import java.util.function.Consumer;
+
+import java.util.Objects;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Collection;
+import java.util.ListIterator;
 import java.util.Deque;
 
 /**
@@ -232,16 +237,19 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		for(E e : c) {
 			add(e);
 		}
+		return true;
 	}
 
 	public boolean addAll(Collection<? extends E> c) {
 		addAll(c);
+		return true;
 	}
 
 	public boolean addAll(E... c) {
 		for(E e : c) {
 			add(e);
 		}
+		return true;
 	}
 
 	public void clear() {
@@ -272,7 +280,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return false;
 	}
 
-	protected void throwIfEmpty(Supplier<Exception> e) {
+	protected <E extends Exception> void throwIfEmpty(Supplier<E> e) throws E {
 		if(size == 0) {
 			throw e.get();
 		}
