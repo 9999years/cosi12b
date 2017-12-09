@@ -43,7 +43,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected class LinkedListIterator<E> implements Iterable<E>, ListIterator<E> {
+	protected class LinkedListIterator implements Iterable<E>, ListIterator<E> {
 		protected Node<E> current;
 		protected int inx;
 
@@ -70,10 +70,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 		public void add(E e) {
 			Node<E> n = new Node<>(e);
-			current.previous.next = n;
-			current.next.previous = n;
-			n.previous = current.previous;
-			n.next     = current.next;
+			LinkedList.this.addBefore(current, e);
 		}
 
 		public E next() {
@@ -111,7 +108,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected class DescendingLinkedListIterator<E> extends LinkedListIterator<E> {
+	protected class DescendingLinkedListIterator extends LinkedListIterator {
 		DescendingLinkedListIterator(Node<E> startingElement, int startingIndex) {
 			super(startingElement, startingIndex);
 		}
@@ -161,7 +158,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	public ListIterator<E> descendingIterator() {
-		return new DescendingLinkedListIterator<E>(head, size - 1);
+		return new DescendingLinkedListIterator(head, size);
 	}
 
 	/**
@@ -210,7 +207,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	public ListIterator<E> listIterator() {
-		return new LinkedListIterator<E>(head, 0);
+		return new LinkedListIterator(head, -1);
 	}
 
 	public boolean contains(Object o) {
