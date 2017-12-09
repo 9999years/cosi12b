@@ -3,10 +3,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Deque;
 import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.Arrays;
 
 public class LinkedListTest {
+	/**
+	 * basic operations
+	 */
 	@Test
 	void simpleTest1() {
 		LinkedList<Integer> list = new LinkedList<>();
@@ -37,6 +41,10 @@ public class LinkedListTest {
 		removerTest(expected, input, LinkedList<Integer>::pollFirst);
 	}
 
+	/**
+	 * tests all remove from front methods:
+	 * pop, remove, removefirst, poll, and pollfirst
+	 */
 	@Test
 	void removerTest() {
 		removerTest(
@@ -50,7 +58,7 @@ public class LinkedListTest {
 		);
 
 		removerTest(
-			new Integer[] { 1, 9, null, null, null, null },
+			new Integer[] { 1, 9 },
 			new Integer[] { 1, 9 }
 		);
 
@@ -59,6 +67,114 @@ public class LinkedListTest {
 			new Integer[] { 4574 }
 		);
 	}
+
+	void peekLastTest(LinkedList<Integer> list, int expected, Function<LinkedList, Integer> peeker) {
+		assertEquals((Object) expected, peeker.apply(expected));
+	}
+
+	void peekLastTest(LinkedList<Integer> list, int expected) {
+		peekLastTest(list, expected, LinkedList<Integer>::getLast);
+		peekLastTest(list, expected, LinkedList<Integer>::peekLast);
+	}
+
+	void peekTest(LinkedList<Integer> list, int expected) {
+		peekTest(list, expected, LinkedList<Integer>::getFirst);
+		peekTest(list, expected, LinkedList<Integer>::element);
+		peekTest(list, expected, LinkedList<Integer>::peek);
+		peekTest(list, expected, LinkedList<Integer>::peekFirst);
+	}
+
+	void adderTest(Integer[] expected, Integer[] input, BiConsumer<LinkedList, Integer> adder) {
+		LinkedList<Integer> list = new LinkedList<>();
+		for(int i : input) {
+			adder.accept(list, i);
+			peekLastTest(list, i);
+		}
+		for(int e : expected) {
+			assertEquals((Object) e, list.removeFirst());
+			peekTest(list, i);
+		}
+	}
+
+	void adderTest(Integer[] expected, Integer[] input) {
+		adderTest(expected, input, LinkedList<Integer>::add);
+		adderTest(expected, input, LinkedList<Integer>::addLast);
+		adderTest(expected, input, LinkedList<Integer>::offerLast);
+		adderTest(expected, input, LinkedList<Integer>::offer);
+	}
+
+	/**
+	 * tests all add at end methods:
+	 * add, addLast, offer, and offerLast
+	 *
+	 * ALSO tests the peek at end methods:
+	 */
+	@Test
+	void adderTest() {
+		adderTest(
+			new Integer[] { 0, 1, 2, 9, -1929 },
+			new Integer[] { 0, 1, 2, 9, -1929 }
+		);
+
+		adderTest(
+			new Integer[] { },
+			new Integer[] { }
+		);
+
+		adderTest(
+			new Integer[] { 1, 9 },
+			new Integer[] { 1, 9 }
+		);
+
+		adderTest(
+			new Integer[] { 4574 },
+			new Integer[] { 4574 }
+		);
+	}
+
+	void pusherTest(Integer[] expected, Integer[] input, BiConsumer<LinkedList, Integer> pusher) {
+		LinkedList<Integer> list = new LinkedList<>();
+		for(int i : input) {
+			pusher.accept(list, i);
+		}
+		for(int e : expected) {
+			assertEquals((Object) e, list.removeFirst());
+		}
+	}
+
+	void pusherTest(Integer[] expected, Integer[] input) {
+		pusherTest(expected, input, LinkedList<Integer>::addFirst);
+		pusherTest(expected, input, LinkedList<Integer>::offerFirst);
+		pusherTest(expected, input, LinkedList<Integer>::push);
+	}
+
+	/**
+	 * tests all add at front methods:
+	 * addFirst, offerFirst, push
+	 */
+	@Test
+	void pusherTest() {
+		pusherTest(
+			new Integer[] { 0, 1, 2, 9, -1929 },
+			new Integer[] { 0, 1, 2, 9, -1929 }
+		);
+
+		pusherTest(
+			new Integer[] { },
+			new Integer[] { }
+		);
+
+		pusherTest(
+			new Integer[] { 1, 9 },
+			new Integer[] { 1, 9 }
+		);
+
+		pusherTest(
+			new Integer[] { 4574 },
+			new Integer[] { 4574 }
+		);
+	}
+
 
 	/**
 	 * also tests the peek methods
@@ -69,12 +185,7 @@ public class LinkedListTest {
 			list.add(i);
 		}
 		for(int e : expected) {
-			// WHY DOES THE DEQUE INTERFACE HAVE SO MANY
-			// METHODS!!! THAT ALL DO THE SAME THING!!!
-			assertEquals((Object) e, list.peek());
-			assertEquals((Object) e, list.peekFirst());
-			assertEquals((Object) e, list.getFirst());
-			assertEquals((Object) e, list.element());
+			peekTest(list, e);
 			assertEquals((Object) e, list.poll());
 		}
 	}

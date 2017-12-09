@@ -21,7 +21,12 @@ import java.util.ListIterator;
 import java.util.Deque;
 
 /**
- * Linked list
+ * Linked list class; see java.util.Deque for details
+ *
+ * note: all add methods never fail (throw exceptions or return false)
+ *
+ * note: retainAll, removeAll, and containsAll just throw a
+ * java.lang.UnsupportedOperationException
  */
 public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	protected class Node<E> {
@@ -321,16 +326,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 	// insertion:
 
-	/**
-	 * never throws an exception
-	 */
 	public void addFirst(E e) {
 		addAfter(head, e);
 	}
 
-	/**
-	 * always returns true
-	 */
 	public boolean offerFirst(E e) {
 		addFirst(e);
 		return true;
@@ -342,9 +341,6 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 	// removing:
 
-	/**
-	 * throws NoSuchElementException if empty
-	 */
 	public E removeFirst() {
 		throwIfEmpty();
 		return remove(head.next);
@@ -360,9 +356,6 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return removeFirst();
 	}
 
-	/**
-	 * returns null if empty
-	 */
 	public E pollFirst() {
 		return nullIfEmpty(() -> remove(head.next));
 	}
@@ -373,9 +366,6 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 	// examining:
 
-	/**
-	 * throws NoSuchElementException if empty
-	 */
 	public E getFirst() {
 		throwIfEmpty();
 		return head.next.value;
@@ -385,9 +375,6 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return getFirst();
 	}
 
-	/**
-	 * returns null if empty
-	 */
 	public E peekFirst() {
 		return nullIfEmpty(() -> head.next.value);
 	}
@@ -400,24 +387,15 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 	// insertion
 
-	/**
-	 * never throws an exception
-	 */
 	public void addLast(E e) {
 		addBefore(tail, e);
 	}
 
-	/**
-	 * actually just addLast(e)
-	 */
 	public boolean add(E e) {
 		addLast(e);
 		return true;
 	}
 
-	/**
-	 * always true
-	 */
 	public boolean offerLast(E e) {
 		addLast(e);
 		return true;
@@ -429,34 +407,22 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 	// removal
 
-	/**
-	 * throws NoSuchElementException if empty
-	 */
 	public E removeLast() {
 		throwIfEmpty();
 		return remove(tail.previous);
 	}
 
-	/**
-	 * returns null if empty
-	 */
 	public E pollLast() {
 		return nullIfEmpty(this::removeLast);
 	}
 
 	// examining
 
-	/**
-	 * throws NoSuchElementException if empty
-	 */
 	public E getLast() {
 		throwIfEmpty();
 		return tail.previous.value;
 	}
 
-	/**
-	 * returns null if empty
-	 */
 	public E peekLast() {
 		return nullIfEmpty(() -> tail.previous.value);
 	}

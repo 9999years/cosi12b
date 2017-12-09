@@ -61,8 +61,8 @@ public class AssassinManager {
 
 	/**
 	 * This method should print the names of the people in the kill ring,
-	 * one per line, indented by four spaces, as “X is stalking Y ”. If
-	 * the game is over, then instead print “X is stalking X”.  For
+	 * one per line, indented by four spaces, as "X is stalking Y ". If
+	 * the game is over, then instead print "X is stalking X".  For
 	 * example, using the names in the example game above, the output is:
 	 *     Joe is stalking Sally
 	 *     Sally is stalking Jim
@@ -80,7 +80,7 @@ public class AssassinManager {
 	/**
 	 * This method should print the names of the people in the graveyard,
 	 * one per line, with each line indented by four spaces, with output
-	 * of the form “name was killed by name”. It should print the names in
+	 * of the form "name was killed by name". It should print the names in
 	 * the opposite of the order in which they were killed (most recently
 	 * killed first, then next more recently killed, and so on). It should
 	 * produce no output if the graveyard is empty.
@@ -98,7 +98,7 @@ public class AssassinManager {
 	/**
 	 * This method should return true if the given name is in the current
 	 * kill ring and false otherwise. It should ignore case in comparing
-	 * names; so, “salLY” should match a node with a name of “Sally”.
+	 * names; so, "salLY" should match a node with a name of "Sally".
 	 */
 	public boolean killRingContains(String name) {
 		return killRing.contains(name);
@@ -107,7 +107,7 @@ public class AssassinManager {
 	/**
 	 * This method should return true if the given name is in the current
 	 * graveyard and false otherwise. It  should ignore case in comparing
-	 * names; so, “CaRoL” should match a node with a name of “Carol”.
+	 * names; so, "CaRoL" should match a node with a name of "Carol".
 	 */
 	public boolean graveyardContains(String name) {
 		return graveyard.contains(name);
