@@ -1,21 +1,24 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import java.unit.Dequeue;
+import java.util.Deque;
 
 public class LinkedListTest {
+	void addTest(int[] expected, int[] input) {
+		Deque<Integer> list = new LinkedList<>();
+		for(int i : input) {
+			list.add(i);
+		}
+		for(int e : expected) {
+			assertEquals((Object) e, list.removeFirst());
+		}
+	}
+
 	@Test
 	void addTest() {
-		Deque<Integer> list = new LinkedList<>();
-		list.add(0);
-		list.add(1);
-		list.add(2);
-		list.add(9);
-		list.add(-1929);
-		assertEquals(0, list.removeFirst());
-		assertEquals(1, list.removeFirst());
-		assertEquals(2, list.removeFirst());
-		assertEquals(9, list.removeFirst());
-		assertEquals(-1929, list.removeFirst());
+		addTest(
+			new int[] { 0, 1, 2, 9, -1929 },
+			new int[] { 0, 1, 2, 9, -1929 }
+		);
 	}
 }

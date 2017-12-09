@@ -1,5 +1,6 @@
 import java.lang.Exception;
 import java.lang.Iterable;
+import java.lang.SuppressWarnings;
 
 //exceptions
 import java.lang.UnsupportedOperationException;
@@ -31,6 +32,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		Node() {
 		}
 
+		Node(E value) {
+			this(null, value, null);
+		}
+
 		Node(Node<E> previous, E value, Node<E> next) {
 			this.value    = value;
 			this.previous = previous;
@@ -56,29 +61,19 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 
 		public boolean hasNext() {
-			if(current == null) {
-				return false;
-			}
-			return current.next != null;
+			return current.next != tail;
 		}
 
 		public boolean hasPrevious() {
-			if(current == null) {
-				return false;
-			}
-			return current.previous != null;
+			return current.previous != head;
 		}
 
 		public void add(E e) {
-			Node<E> n = new Node<>(null, e, null);
-			if(hasPrevious()) {
-				n.previous = current.previous;
-				current.previous.next = n;
-			}
-			if(hasNext()) {
-				n.next = current.next;
-				current.next.previous = n;
-			}
+			Node<E> n = new Node<>(e);
+			current.previous.next = n;
+			current.next.previous = n;
+			n.previous = current.previous;
+			n.next     = current.next;
 		}
 
 		public E next() {
@@ -108,20 +103,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 
 		public void remove() {
-			if(current.previous == null) {
-				// start of list
-				if(current.next == null) {
-					// single-element list
-					current = null;
-				}
-				LinkedList.this.pollFirst();
-			} else if(current.next == null) {
-				// end of list
-				LinkedList.this.pollLast();
-			} else {
-				// middle of list
-				LinkedList.this.remove(current);
-			}
+			LinkedList.this.remove(current);
 		}
 
 		public void set(E e) {
@@ -159,31 +141,145 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected Node<E> head = new Node<E>(null, null, null);
-	protected Node<E> tail = new Node<E>(null, null, null);
+	protected Node<E> head = new Node<E>();
+	protected Node<E> tail = new Node<E>();
 	protected int size = 0;
 
 	LinkedList() {
+		head.next = tail;
+		tail.previous = head;
 	}
 
 	LinkedList(Collection<? extends E> c) {
+		this();
 		addAll(c);
 	}
 
 	LinkedList(Iterable<? extends E> c) {
+		this();
 		addAll(c);
 	}
+
+	public ListIterator<E> descendingIterator() {
+		return new DescendingLinkedListIterator<E>(head, size - 1);
+	}
+
+	/**
+	 * optional operation; if o is in this list, applies operation on it
+	 * @return true if operation was performed
+	 */
+	public boolean operateOnFirst(Object o, Consumer<E> operation) {
+		for(E e : this) {
+			if(o.equals(e)) {
+				operation.accept(e);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected <E extends Exception> void throwIfEmpty(Supplier<E> e) throws E {
+		if(isEmpty()) {
+			throw e.get();
+		}
+	}
+
+	protected void throwIfEmpty() {
+		throwIfEmpty(NoSuchElementException::new);
+	}
+
+	protected <T> T nullIfEmpty(Supplier<T> t) {
+		return isEmpty() ? null : t.get();
+	}
+
+	protected void addAfter(Node<E> n, E e) {
+		Node<E> insert = new Node<E>(n, e, n.next);
+		n.previous.next = insert;
+		n.next.previous = insert;
+		size++;
+	}
+
+	protected void addBefore(Node<E> n, E e) {
+		addAfter(n.previous, e);
+	}
+
+	// DEQUE METHODS:
 
 	public Iterator<E> iterator() {
 		return listIterator();
 	}
 
 	public ListIterator<E> listIterator() {
-		return new LinkedListIterator(head, 0);
+		return new LinkedListIterator<E>(head, 0);
 	}
 
-	public ListIterator<E> descendingIterator() {
-		return new DescendingLinkedListIterator(head, size - 1);
+	public boolean contains(Object o) {
+		for(E e : this) {
+			if(e.equals(o)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	public int size() {
+		return size;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T[] toArray(T[] a) {
+		Objects.requireNonNull(a);
+
+		if(a.length < size) {
+			a = (T[]) new Object[size];
+		}
+
+		int i = 0;
+		Node<E> current = head;
+		while(current != null) {
+			try {
+				a[i] = (T) current.value;
+			} catch(ClassCastException e) {
+				throw new ArrayStoreException();
+			}
+			current = current.next;
+			i++;
+		}
+
+		if(i < a.length - 1) {
+			a[i] = null;
+		}
+
+		return a;
+	}
+
+	@SuppressWarnings("unchecked")
+	public E[] toArray() {
+		return toArray((E[]) new Object[size]);
+	}
+
+	// MUTATORS
+
+	public boolean addAll(Iterable<? extends E> c) {
+		for(E e : c) {
+			add(e);
+		}
+		return true;
+	}
+
+	public boolean addAll(Collection<? extends E> c) {
+		addAll(c);
+		return true;
+	}
+
+	public void clear() {
+		head = null;
+		tail = null;
+		size = 0;
 	}
 
 	protected void remove(Node<E> n) {
@@ -218,90 +314,6 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return remove(o, descendingIterator());
 	}
 
-	/**
-	 * precondition: size == 0
-	 */
-	protected void addEmpty(E e) {
-		head = tail = new Node(null, e, null);
-	}
-
-	/**
-	 * actually just addLast(e)
-	 */
-	public boolean add(E e) {
-		addLast(e);
-		return true;
-	}
-
-	public boolean addAll(Iterable<? extends E> c) {
-		for(E e : c) {
-			add(e);
-		}
-		return true;
-	}
-
-	public boolean addAll(Collection<? extends E> c) {
-		addAll(c);
-		return true;
-	}
-
-	public boolean addAll(E... c) {
-		for(E e : c) {
-			add(e);
-		}
-		return true;
-	}
-
-	public void clear() {
-		head = tail = null;
-		size = 0;
-	}
-
-	public boolean contains(Object o) {
-		for(E e : this) {
-			if(e.equals(o)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * optional operation; if o is in this list, applies operation on it
-	 * @return true if operation was performed
-	 */
-	public boolean operateOnFirst(Object o, Consumer<E> operation) {
-		for(E e : this) {
-			if(o.equals(e)) {
-				operation.accept(e);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	protected <E extends Exception> void throwIfEmpty(Supplier<E> e) throws E {
-		if(size == 0) {
-			throw e.get();
-		}
-	}
-
-	protected void throwIfEmpty() {
-		throwIfEmpty(() -> new NoSuchElementException());
-	}
-
-	/**
-	 * precondition: size &gt; 0
-	 */
-	public E removeFirstNonEmpty() {
-		E oldHead = head.value;
-		head = head.next;
-		size--;
-		return oldHead;
-	}
-
-	// DEQUE METHODS:
-
 	// HEAD OPERATIONS
 
 	// insertion:
@@ -310,14 +322,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 * never throws an exception
 	 */
 	public void addFirst(E e) {
-		if(size == 0) {
-			addEmpty(e);
-		} else {
-			// add front
-			head.previous = new Node(null, e, head);
-			head = head.previous;
-			size++;
-		}
+		addAfter(head, e);
 	}
 
 	/**
@@ -339,15 +344,16 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 */
 	public E removeFirst() {
 		throwIfEmpty();
-		return removeFirstNonEmpty();
+		return remove(head.next);
 	}
 
 	public E pop() {
 		throwIfEmpty();
-		return removeFirstNonEmpty();
+		return removeFirst();
 	}
 
 	public E remove() {
+		throwIfEmpty();
 		return removeFirst();
 	}
 
@@ -355,10 +361,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 * returns null if empty
 	 */
 	public E pollFirst() {
-		if(size == 0) {
-			return null;
-		}
-		return removeFirstNonEmpty();
+		return nullIfEmpty(() -> remove(head.next));
 	}
 
 	public E poll() {
@@ -383,7 +386,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 * returns null if empty
 	 */
 	public E peekFirst() {
-		return size == 0 ? null : head.value;
+		return nullIfEmpty(() -> head.value);
 	}
 
 	public E peek() {
@@ -398,14 +401,15 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 * never throws an exception
 	 */
 	public void addLast(E e) {
-		if(size == 0) {
-			// empty list
-			addEmpty(e);
-		} else {
-			tail.next = new Node(tail, e, null);
-			tail = tail.next;
-			size++;
-		}
+		addBefore(tail.previous, e);
+	}
+
+	/**
+	 * actually just addLast(e)
+	 */
+	public boolean add(E e) {
+		addLast(e);
+		return true;
 	}
 
 	/**
@@ -423,32 +427,18 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	// removal
 
 	/**
-	 * precondition: tail is non-null / size &gt; 0
-	 *
-	 * removes last element and returns its value
-	 */
-	protected E removeLastNonEmpty() {
-		E oldTail = tail.value;
-		tail = tail.previous;
-		return oldTail;
-	}
-
-	/**
 	 * throws NoSuchElementException if empty
 	 */
 	public E removeLast() {
 		throwIfEmpty();
-		return removeLastNonEmpty();
+		return remove(tail.previous);
 	}
 
 	/**
 	 * returns null if empty
 	 */
 	public E pollLast() {
-		if(size == 0) {
-			return null;
-		}
-		return removeLastNonEmpty();
+		return nullIfEmpty(LinkedList::removeLast);
 	}
 
 	// examining
@@ -458,52 +448,14 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	 */
 	public E getLast() {
 		throwIfEmpty();
-		return tail.value;
+		return tail.previous.value;
 	}
 
 	/**
 	 * returns null if empty
 	 */
 	public E peekLast() {
-		return size == 0 ? null : tail.value;
-	}
-
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	public int size() {
-		return size;
-	}
-
-	public <T> T[] toArray(T[] a) {
-		Objects.requireNonNull(a);
-
-		if(a.length < size) {
-			a = (T[]) new Object[size];
-		}
-
-		int i = 0;
-		Node<E> current = head;
-		while(current != null) {
-			try {
-				a[i] = (T) current.value;
-			} catch(ClassCastException e) {
-				throw new ArrayStoreException();
-			}
-			current = current.next;
-			i++;
-		}
-
-		if(i < a.length - 1) {
-			a[i] = null;
-		}
-
-		return a;
-	}
-
-	public E[] toArray() {
-		return toArray((E[]) new Object[size]);
+		return nullIfEmpty(() -> tail.previous.value);
 	}
 
 	// COLLECTION METHODS
