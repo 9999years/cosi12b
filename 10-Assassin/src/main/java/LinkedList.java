@@ -271,7 +271,9 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	public boolean addAll(Collection<? extends E> c) {
-		addAll(c);
+		for(E e : c) {
+			add(e);
+		}
 		return true;
 	}
 
