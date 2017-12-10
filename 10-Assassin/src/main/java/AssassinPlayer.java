@@ -20,18 +20,19 @@ public class AssassinPlayer {
 		this.normalizedName = comparableName(name);
 	}
 
-	public boolean isKiller(String s) {
-		return killer.equals(s);
-	}
-
 	public boolean equals(Object o) {
 		if(o instanceof AssassinPlayer) {
 			return normalizedName.equals(
 				((AssassinPlayer) o).normalizedName);
 		} else if(o instanceof String) {
-			return normalizedName.equals((String) o);
+			return normalizedName.equals(
+				comparableName((String) o));
 		} else {
 			return false;
 		}
+	}
+
+	public String toString() {
+		return name;
 	}
 }

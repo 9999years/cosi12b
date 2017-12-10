@@ -2,6 +2,7 @@ import java.lang.Exception;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 /**
@@ -23,6 +24,23 @@ public class Parameters {
 		if(!validateQuiet(parameter, test)) {
 			// test failed
 			throw new IllegalArgumentException();
+		}
+	}
+	/**
+	 * throws an IllegalArgumentException with a custom message if
+	 * test fails
+	 */
+	public static void validate(BooleanSupplier test, Supplier<String> msg)
+			throws IllegalArgumentException {
+		validate(test, msg, IllegalArgumentException::new);
+	}
+
+	public static <E extends Exception> void validate(BooleanSupplier test,
+			Supplier<String> msg,
+			Function<String, E> exceptionGenerator)
+			throws E {
+		if(!test.getAsBoolean()) {
+			throw exceptionGenerator.apply(msg.get());
 		}
 	}
 

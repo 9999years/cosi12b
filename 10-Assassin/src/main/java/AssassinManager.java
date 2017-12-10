@@ -28,6 +28,7 @@ public class AssassinManager {
 	AssassinManager(List<String> names) {
 		Objects.requireNonNull(names);
 		Parameters.validate(names, l -> l.size() > 0);
+		addAll(names);
 	}
 
 	protected void addAll(List<String> names) {
@@ -38,19 +39,23 @@ public class AssassinManager {
 
 	protected String listString(LinkedList<AssassinPlayer> list,
 			final String infix) {
+		if(list.size() == 0) {
+			return "";
+		}
+
 		StringBuilder ret = new StringBuilder();
 		final String prefix = ">>    ";
 		ListIterator<AssassinPlayer> itr = killRing.listIterator();
-		for(AssassinPlayer n : killRing) {
-			if(itr.hasPrevious()) {
-				// X
-				ret.append(n.name + "\n");
-			}
-			if(itr.hasNext()) {
-				// X is stalking
-				ret.append(prefix + n.name + infix);
-			}
+
+		// list always has at least 1 person in it
+		AssassinPlayer p = itr.next();
+		ret.append(prefix + p.name + infix);
+		while(itr.hasNext()) {
+			p = itr.next();
+			ret.append(p + "\n" + prefix + p + infix);
 		}
+		ret.append(killRing.peekFirst().name + "\n");
+
 		return ret.toString();
 	}
 
@@ -59,7 +64,12 @@ public class AssassinManager {
 	}
 
 	public String graveyardString() {
-		return listString(killRing, " was killed by ");
+		StringBuilder ret = new StringBuilder();
+		final String prefix = ">>    ";
+		for(AssassinPlayer p : graveyard) {
+			ret.append(prefix + p + " was killed by " + p.killer + "\n");
+		}
+		return ret.toString();
 	}
 
 	/**
@@ -77,7 +87,7 @@ public class AssassinManager {
 	 *     Chris is stalking Chris
 	 */
 	public void printKillRing() {
-		System.out.println(killRingString());
+		System.out.print(killRingString());
 	}
 
 	/**
@@ -95,7 +105,7 @@ public class AssassinManager {
 	 *     Jim was killed by Sally
 	 */
 	public void printGraveyard() {
-		System.out.println(graveyardString());
+		System.out.print(graveyardString());
 	}
 
 	/**
@@ -148,24 +158,28 @@ public class AssassinManager {
 	 * IllegalStateException takes precedence.
 	 */
 	public void kill(String name) throws IllegalArgumentException, IllegalStateException {
-		Parameters.validate(null, n -> isGameOver(), () -> "Game is over!");
+		Parameters.validate(() -> !isGameOver(), () -> "Game is over!");
 		// remove NAME from killRing
 		// IF someone was removed, set their killer and add them to
 		// the front of the graveyard
 		ListIterator<AssassinPlayer> itr = killRing.listIterator();
 		while(itr.hasNext()) {
-			AssassinPlayer next = itr.next();
-			if(next.equals(name)) {
+			AssassinPlayer person = itr.next();
+			if(person.equals(name)) {
 				itr.remove();
+				// reverse so we don't get the same person
+				// twice
+				itr.previous();
 				if(itr.hasPrevious()) {
 					// mid list or end of list
-					next.killer = itr.previous();
+					person.killer = itr.previous();
 				} else {
 					// front of list, being stalked by
 					// end
-					next.killer = killRing.peekLast();
+					person.killer = killRing.peekLast();
 				}
-				graveyard.offerFirst(next);
+				graveyard.offerFirst(person);
+				// done
 				return;
 			}
 		}

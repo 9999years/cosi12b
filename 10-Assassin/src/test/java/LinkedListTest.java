@@ -574,6 +574,15 @@ public class LinkedListTest {
 			() -> "checking array after removing all elements");
 	}
 
+	@Test
+	void toStringTest() {
+		LinkedList<String> list = new LinkedList<>(Arrays.asList(
+			"a", "b", "c", "d", "e"
+		));
+
+		assertEquals("[a, b, c, d, e]", list.toString());
+	}
+
 	// TO TEST:
 	// operateOnFirst(Object o, Consumer<E> operation)
 	// removeFirstOccurrence(Object o)

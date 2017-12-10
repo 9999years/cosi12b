@@ -1,6 +1,7 @@
 import java.lang.Exception;
 import java.lang.Iterable;
 import java.lang.SuppressWarnings;
+import java.lang.StringBuilder;
 
 //exceptions
 import java.lang.UnsupportedOperationException;
@@ -18,6 +19,7 @@ import java.util.Objects;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.ListIterator;
+import java.util.Spliterator;
 import java.util.Deque;
 
 /**
@@ -48,7 +50,7 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected class LinkedListIterator implements Iterable<E>, ListIterator<E> {
+	protected class LinkedListIterator implements Iterable<E>, ListIterator<E>, Spliterator<E> {
 		/**
 		 * our "cursor" is between current and current.next
 		 *
@@ -56,6 +58,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		 * after list end: current == tail.previous
 		 */
 		protected Node<E> current;
+		/**
+		 * last node returned
+		 */
+		protected Node<E> last = null;
 		/**
 		 * inx of current
 		 */
@@ -94,8 +100,9 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 				throw new NoSuchElementException();
 			}
 			current = current.next;
+			last = current;
 			inx++;
-			return current.value;
+			return last.value;
 		}
 
 		/**
@@ -106,10 +113,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 			if(!hasPrevious()) {
 				throw new NoSuchElementException();
 			}
-			E ret = current.value;
+			last = current;
 			current = current.previous;
 			inx--;
-			return ret;
+			return last.value;
 		}
 
 		public int nextIndex() {
@@ -126,15 +133,51 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 
 		public void remove() {
-			LinkedList.this.remove(current);
+			Parameters.validate(last, t -> t != null, () -> null, IllegalStateException::new);
+			LinkedList.this.remove(last);
+			last = null;
 		}
 
 		public void set(E e) {
-			current.value = e;
+			last.value = e;
+		}
+
+		public void forEachRemaining(Consumer<? super E> action) {
+			while(hasNext()) {
+				action.accept(next());
+			}
+		}
+
+		// spliterator methods
+
+		public int characteristics() {
+			return Spliterator.SIZED;
+		}
+
+		public long estimateSize() {
+			return size;
+		}
+
+		public boolean tryAdvance(Consumer<? super E> action) {
+			if(hasNext()) {
+				action.accept(next());
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * this doesn't do anything, ever. sorry threads!
+		 */
+		public Spliterator<E> trySplit() {
+			// lol
+			return null;
 		}
 	}
 
-	protected class DescendingLinkedListIterator implements Iterable<E>, ListIterator<E> {
+	protected class DescendingLinkedListIterator implements Iterable<E>,
+			ListIterator<E>, Spliterator<E> {
 		LinkedListIterator itr;
 
 		DescendingLinkedListIterator(
@@ -180,6 +223,26 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 
 		public void set(E e) {
 			itr.set(e);
+		}
+
+		public long estimateSize() {
+			return size;
+		}
+
+		public void forEachRemaining(Consumer<? super E> action) {
+			itr.forEachRemaining(action);
+		}
+
+		public boolean tryAdvance(Consumer<? super E> action) {
+			return itr.tryAdvance(action);
+		}
+
+		public Spliterator<E> trySplit() {
+			return null;
+		}
+
+		public int characteristics() {
+			return Spliterator.SIZED;
 		}
 	}
 
@@ -324,6 +387,20 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		return toArray((E[]) new Object[size]);
 	}
 
+	public String toString() {
+		StringBuilder ret = new StringBuilder();
+		ret.append("[");
+		ListIterator<E> itr = listIterator();
+		while(itr.hasNext()) {
+			ret.append(itr.next());
+			if(itr.hasNext()) {
+				ret.append(", ");
+			}
+		}
+		ret.append("]");
+		return ret.toString();
+	}
+
 	// MUTATORS
 
 	public boolean addAll(Iterable<? extends E> c) {
@@ -352,8 +429,6 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		E value = n.value;
 		n.previous.next = n.next;
 		n.next.previous = n.previous;
-		// clean up for the gc
-		n.value = null;
 		size--;
 		return value;
 	}
