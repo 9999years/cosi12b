@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.Objects;
 import java.util.ListIterator;
+import java.util.Iterator;
 import java.text.Normalizer;
 
 import java.lang.StringBuilder;
@@ -8,6 +9,7 @@ import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
 
 public class AssassinManager {
+	// not the java.util.LinkedList, don't worry!
 	protected LinkedList<AssassinPlayer> killRing  = new LinkedList<>();
 	protected LinkedList<AssassinPlayer> graveyard = new LinkedList<>();
 
@@ -30,6 +32,7 @@ public class AssassinManager {
 
 		StringBuilder ret = new StringBuilder();
 		final String prefix = ">>    ";
+		final String infix = " is stalking ";
 		Iterator<AssassinPlayer> itr = killRing.iterator();
 
 		// list has at least 1 person in it
@@ -47,8 +50,9 @@ public class AssassinManager {
 	public String graveyardString() {
 		StringBuilder ret = new StringBuilder();
 		final String prefix = ">>    ";
+		final String infix = " was killed by ";
 		for(AssassinPlayer p : graveyard) {
-			ret.append(prefix + p + " was killed by " + p.killer + "\n");
+			ret.append(prefix + p + infix + p.killer + "\n");
 		}
 		return ret.toString();
 	}
