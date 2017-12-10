@@ -75,12 +75,6 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 
 		public boolean hasNext() {
-			//System.out.println("hasNext called");
-			//System.out.println("index: " + inx);
-			//System.out.println("curr: " + current);
-			//System.out.println("head: " + head);
-			//System.out.println("tail: " + tail);
-			//System.out.println("next: " + current.next);
 			return current != tail.previous;
 		}
 
@@ -89,11 +83,6 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 			// position "before" the first element, which is, in
 			// our case, where curent == head
 			return current != head;
-		}
-
-		public void add(E e) {
-			Node<E> n = new Node<>(e);
-			LinkedList.this.addBefore(current, e);
 		}
 
 		/**
@@ -131,6 +120,11 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 			return inx;
 		}
 
+		public void add(E e) {
+			Node<E> n = new Node<>(e);
+			LinkedList.this.addBefore(current, e);
+		}
+
 		public void remove() {
 			LinkedList.this.remove(current);
 		}
@@ -140,33 +134,52 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected class DescendingLinkedListIterator extends LinkedListIterator {
-		DescendingLinkedListIterator(Node<E> startingElement, int startingIndex) {
-			super(startingElement, startingIndex);
+	protected class DescendingLinkedListIterator implements Iterable<E>, ListIterator<E> {
+		LinkedListIterator itr;
+
+		DescendingLinkedListIterator(
+			Node<E> startingElement, int startingIndex) {
+			itr = new LinkedListIterator(startingElement, startingIndex);
 		}
 
 		public boolean hasNext() {
-			return super.hasPrevious();
+			return itr.hasPrevious();
 		}
 
 		public boolean hasPrevious() {
-			return super.hasNext();
+			return itr.hasNext();
 		}
 
 		public E next() {
-			return super.previous();
+			return itr.previous();
 		}
 
 		public E previous() {
-			return super.next();
+			return itr.next();
 		}
 
 		public int nextIndex() {
-			return super.previousIndex();
+			return itr.previousIndex();
 		}
 
 		public int previousIndex() {
-			return super.nextIndex();
+			return itr.nextIndex();
+		}
+
+		public Iterator<E> iterator() {
+			return this;
+		}
+
+		public void add(E e) {
+			itr.add(e);
+		}
+
+		public void remove() {
+			itr.remove();
+		}
+
+		public void set(E e) {
+			itr.set(e);
 		}
 	}
 
@@ -291,14 +304,12 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 
 		int i = 0;
-		Node<E> current = head;
-		while(current != null) {
+		for(E e : this) {
 			try {
-				a[i] = (T) current.value;
-			} catch(ClassCastException e) {
+				a[i] = (T) e;
+			} catch(ClassCastException err) {
 				throw new ArrayStoreException();
 			}
-			current = current.next;
 			i++;
 		}
 

@@ -1,45 +1,26 @@
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.function.*;
 
 public class LLSimple {
-	static void removerTest(Integer[] expected, Integer[] input, Function<LinkedList, Integer> remover) {
-		LinkedList<Integer> list = new LinkedList<>();
-		list.addAll(Arrays.asList(input));
-		for(Integer e : expected) {
-			remover.apply(list);
-		}
-	}
+	static Integer[] numbers1 = new Integer[] {
+		46, 82, 11, 81, 33, 55, 97, 48, 75, 5, 70, 16, 1, 13, 45,
+		69, 97, 81, 7, 87, 99, 87, 92, 67, 11, 97, 2, 32,
+		79, 2, 60, 26, 42, 0, 53, 9, 28, 70, 93, 72, 92, 59
+	};
 
-	static void removerTest(Integer[] expected, Integer[] input) {
-		removerTest(expected, input, LinkedList<Integer>::pop);
-		removerTest(expected, input, LinkedList<Integer>::remove);
-		removerTest(expected, input, LinkedList<Integer>::removeFirst);
-		removerTest(expected, input, LinkedList<Integer>::poll);
-		removerTest(expected, input, LinkedList<Integer>::pollFirst);
-	}
-
-	static void removerTest() {
-		removerTest(
-			new Integer[] { 0, 1, 2, 9, -1929 },
-			new Integer[] { 0, 1, 2, 9, -1929 }
-		);
-
-		removerTest(
-			new Integer[] { },
-			new Integer[] { }
-		);
-
-		removerTest(
-			new Integer[] { 1, 9, null, null, null, null },
-			new Integer[] { 1, 9 }
-		);
-
-		removerTest(
-			new Integer[] { 4574 },
-			new Integer[] { 4574 }
-		);
-	}
 	public static void main(String[] args) {
-		removerTest();
+		LinkedList<Integer> list = new LinkedList<>();
+		list.addAll(Arrays.asList(numbers1));
+		System.out.println(Arrays.toString(list.toArray()));
+		ListIterator<Integer> itr = list.descendingIterator();
+
+		System.out.println("list size: " + list.size());
+		while(itr.hasNext()) {
+			System.out.print(itr.next() + ", ");
+		}
+		System.out.println();
 	}
 }

@@ -10,9 +10,11 @@ import java.util.function.Function;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.ListIterator;
+import java.util.Iterator;
 
 public class LinkedListTest {
 	protected class MethodNamePair<T> {
