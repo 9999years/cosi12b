@@ -38,15 +38,6 @@ jar {
 	dependsOn jars
 }
 
-junitPlatform {
-	details = "TREE"
-	configurationParameter "details-theme", "unicode"
-}
-
-test {
-	dependsOn junitPlatformTest
-}
-
 task zip(type: Zip) {
 	from '.'
 	from('src/main/java') {
