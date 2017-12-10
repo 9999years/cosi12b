@@ -2,12 +2,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.DisplayName;
 
 import java.util.Deque;
 import java.util.function.Consumer;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
@@ -469,21 +471,111 @@ public class LinkedListTest {
 			"hasNext at start after backwards traversal");
 	}
 
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void toArrayTest(List<Integer> input) {
+		LinkedList<Integer> list = new LinkedList<>(input);
+		assertArrayEquals(input.toArray(), list.toArray());
+	}
+
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void clearTest(List<Integer> input) {
+		LinkedList<Integer> list = new LinkedList<>(input);
+		list.clear();
+		assertEquals(0, list.size(), "list size after clear");
+		assertEquals(list.head.next, list.tail,
+			"list head -> tail");
+		assertEquals(list.tail.previous, list.head,
+			"list tail -> head");
+	}
+
+	@Test
+	@DisplayName("special value tests")
+	void nullFetch() {
+		LinkedList<Integer> list = new LinkedList<>();
+		for(int i = 0; i < 10; i++) {
+			assertEquals(null, list.peekFirst(), "peekFirst");
+			assertEquals(null, list.pollFirst(), "pollFirst");
+			assertEquals(null, list.peekLast(), "peekLast");
+			assertEquals(null, list.pollLast(), "pollLast");
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void containsTest(List<Integer> input) {
+		LinkedList<Integer> list = new LinkedList<>(input);
+		for(int i : input) {
+			assertTrue(list.contains(i));
+		}
+	}
+
+	@Test
+	void containsTest2() {
+		LinkedList<Integer> list = new LinkedList<>();
+		list.addAll(Arrays.asList(
+			0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+		));
+		assertFalse(list.contains(-1));
+		assertFalse(list.contains(-3));
+		assertFalse(list.contains(-4));
+		assertFalse(list.contains(-5));
+
+		assertTrue(list.contains(1));
+		assertTrue(list.contains(3));
+		assertTrue(list.contains(4));
+		assertTrue(list.contains(5));
+	}
+
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void removeTest(List<Integer> input) {
+		if(input.size() == 0) {
+			return;
+		}
+
+		LinkedList<Integer> list = new LinkedList<>(input);
+		input = new ArrayList<>(input);
+
+		list.remove(input.get(0));
+		input.remove(0);
+
+		assertArrayEquals(input.toArray(), list.toArray());
+	}
+
+	@Test
+	void removeContainsTest() {
+		List<String> input = new ArrayList<>(Arrays.asList(
+			"a", "b", "c", "d", "e"
+		));
+		LinkedList<String> list = new LinkedList<>(input);
+
+		assertTrue(list.contains("a"));
+		assertTrue(list.contains("b"));
+		assertTrue(list.contains("c"));
+		assertTrue(list.contains("d"));
+		assertTrue(list.contains("e"));
+
+		list.remove("d");
+		input.remove(input.indexOf("d"));
+
+		assertFalse(list.contains("d"));
+
+		assertArrayEquals(input.toArray(), list.toArray(),
+			() -> "checking array contents after removal");
+
+		while(list.size() > 0) {
+			list.remove(input.get(0));
+			input.remove(0);
+		}
+
+		assertArrayEquals(new Object[] {}, list.toArray(),
+			() -> "checking array after removing all elements");
+	}
+
 	// TO TEST:
-	// descendingIterator()
 	// operateOnFirst(Object o, Consumer<E> operation)
-	// iterator()
-	// listIterator()
-	// contains(Object o)
-	// isEmpty()
-	// size()
-	// toArray(T[] a)
-	// toArray()
-	// addAll(Iterable<? extends E> c)
-	// addAll(Collection<? extends E> c)
-	// clear()
-	// remove(Object o, Iterator<E> itr)
-	// remove(Object o)
 	// removeFirstOccurrence(Object o)
 	// removeLastOccurrence(Object o)
 }

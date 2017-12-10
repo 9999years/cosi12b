@@ -183,13 +183,12 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 	}
 
-	protected Node<E> head = new Node<E>();
-	protected Node<E> tail = new Node<E>();
-	protected int size = 0;
+	protected Node<E> head;
+	protected Node<E> tail;
+	protected int size;
 
 	LinkedList() {
-		head.next = tail;
-		tail.previous = head;
+		clear();
 	}
 
 	LinkedList(Collection<? extends E> c) {
@@ -342,8 +341,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	public void clear() {
-		head = null;
-		tail = null;
+		head = new Node<E>();
+		tail = new Node<E>();
+		head.next = tail;
+		tail.previous = head;
 		size = 0;
 	}
 
