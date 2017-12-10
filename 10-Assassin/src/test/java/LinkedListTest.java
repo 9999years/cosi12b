@@ -1,23 +1,83 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Deque;
 import java.util.function.Consumer;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Collection;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.ListIterator;
 
 public class LinkedListTest {
+	protected class MethodNamePair<T> {
+		final T method;
+		final String name;
+
+		MethodNamePair(T method, String name) {
+			this.method = method;
+			this.name = name;
+		}
+	}
+
+	final Collection<MethodNamePair<BiConsumer<LinkedList, Integer>>>
+		addHeadMethods = Arrays.asList(
+		new MethodNamePair<>(LinkedList<Integer>::addFirst, "addFirst"),
+		new MethodNamePair<>(LinkedList<Integer>::offerFirst, "offerFirst"),
+		new MethodNamePair<>(LinkedList<Integer>::push, "push")
+	);
+
+	final Collection<MethodNamePair<BiConsumer<LinkedList, Integer>>>
+		addTailMethods = Arrays.asList(
+		new MethodNamePair<>(LinkedList<Integer>::add, "add"),
+		new MethodNamePair<>(LinkedList<Integer>::addLast, "addLast"),
+		new MethodNamePair<>(LinkedList<Integer>::offerLast, "offerLast"),
+		new MethodNamePair<>(LinkedList<Integer>::offer, "offer")
+	);
+
+	final Collection<MethodNamePair<Function<LinkedList, Integer>>>
+		popHeadMethods = Arrays.asList(
+		new MethodNamePair<>(LinkedList<Integer>::pop, "pop"),
+		new MethodNamePair<>(LinkedList<Integer>::removeFirst, "removeFirst"),
+		new MethodNamePair<>(LinkedList<Integer>::remove, "remove"),
+		new MethodNamePair<>(LinkedList<Integer>::poll, "poll")
+	);
+
+	final Collection<MethodNamePair<Function<LinkedList, Integer>>>
+		popTailMethods = Arrays.asList(
+		new MethodNamePair<>(LinkedList<Integer>::removeLast,
+			"removeLast"),
+		new MethodNamePair<>(LinkedList<Integer>::pollLast,
+			"pollLast")
+	);
+
+	final Collection<MethodNamePair<Function<LinkedList, Integer>>>
+		peekTailMethods = Arrays.asList(
+		new MethodNamePair<>(LinkedList<Integer>::getLast,  "getLast"),
+		new MethodNamePair<>(LinkedList<Integer>::peekLast, "peekLast")
+	);
+
+	final Collection<MethodNamePair<Function<LinkedList, Integer>>>
+		peekHeadMethods = Arrays.asList(
+		new MethodNamePair<>(LinkedList<Integer>::getFirst, "getFirst"),
+		new MethodNamePair<>(LinkedList<Integer>::element, "element"),
+		new MethodNamePair<>(LinkedList<Integer>::peek, "peek"),
+		new MethodNamePair<>(LinkedList<Integer>::peekFirst, "peekFirst")
+	);
+
 	// super low quality random numbers
-	int[] numbers1 = new int[] {
+	static Integer[] numbers1 = new Integer[] {
 		46, 82, 11, 81, 33, 55, 97, 48, 75, 5, 70, 16, 1, 13, 45,
 		69, 97, 81, 7, 87, 99, 87, 92, 67, 11, 97, 2, 32,
 		79, 2, 60, 26, 42, 0, 53, 9, 28, 70, 93, 72, 92, 59
 	};
 
-	int[] numbers2 = new int[] {
+	static Integer[] numbers2 = new Integer[] {
 		46, 82, 11, 81, 33, 55, 97, 48, 75, 5, 70, 16, 1, 13, 45,
 		69, 97, 81, 7, 87, 99, 87, 92, 67, 11, 97, 2, 32, 79, 2, 60,
 		26, 42, 0, 53, 9, 28, 70, 93, 72, 92, 59, 68, 6, 74, 20, 42,
@@ -50,7 +110,7 @@ public class LinkedListTest {
 		66, 35, 86, 76, 0, 71, 71, 24, 74, 66, 44, 81, 64, 61, 15
 	};
 
-	int[] numbers3 = new int[] {
+	static Integer[] numbers3 = new Integer[] {
 		70, 31, 99, 55, 31, 50, 68, 0, 43, 33, 60, 75, 97, 60, 37,
 		61, 77, 54, 68, 74, 73, 65, 94, 35, 76, 93, 78, 95, 91, 61,
 		98, 47, 65, 67, 57, 26, 79, 68, 29, 66, 60, 72, 87, 39, 2,
@@ -89,12 +149,12 @@ public class LinkedListTest {
 		78, 84, 3, 2, 59, 86, 26, 44, 82, 87, 21, 26, 71, 78
 	};
 
-	int[] numbers4 = new int[] { };
-	int[] numbers5 = new int[] { 0, 1, 2, 9, -1929 };
-	int[] numbers6 = new int[] { 4574 };
+	static Integer[] numbers4 = new Integer[] { };
+	static Integer[] numbers5 = new Integer[] { 0, 1, 2, 9, -1929 };
+	static Integer[] numbers6 = new Integer[] { 4574 };
 
 	// large
-	int[] numbers7 = new int[] {
+	static Integer[] numbers7 = new Integer[] {
 		-47213, -2720, -70973, -13345, 78590, 24782, 95603, -47864,
 		-8482, 33537, 48241, -26363, 31811, -79587, 89727, 92298,
 		-75600, -28021, 15496, 49950, -14363, -55650, 24166, -97619,
@@ -111,7 +171,7 @@ public class LinkedListTest {
 	};
 
 	// HUGE
-	int[] numbers8 = new int[] {
+	static Integer[] numbers8 = new Integer[] {
 		2141189727, 1963605963, 783498319, 1701260636, 1765489994,
 		1933443289, 258168141, 1975481639, 418860235, 1017993252,
 		1501404128, 227608783, 1022964812, 521546890, 97948355,
@@ -135,7 +195,7 @@ public class LinkedListTest {
 		594492302
 	};
 
-	int[][] numbers = new int[][] {
+	static Integer[][] numbers = new Integer[][] {
 		numbers1,
 		numbers2,
 		numbers3,
@@ -150,6 +210,24 @@ public class LinkedListTest {
 		return IntStream.of(ints).boxed().toArray(Integer[]::new);
 	}
 
+	static Stream<List<Integer>> numbersProvider() {
+		return Arrays.stream(numbers).map(t -> Arrays.asList(t));
+	}
+
+	/**
+	 * just to make sure our argument generator is working as it should
+	 */
+	//@Test
+	//void streamTest() {
+		//int i = 0;
+		//Iterable<Integer[]> numsStream
+			//= (Iterable<Integer[]>) numbersProvider()::iterator;
+		//for(Integer[] nums : numsStream) {
+			//assertArrayEquals(numbers[i], nums);
+			//i++;
+		//}
+	//}
+
 	/**
 	 * basic operations
 	 */
@@ -160,143 +238,141 @@ public class LinkedListTest {
 		assertEquals(list.tail.previous.value, list.head.next.value,
 			"asserting head and tail point towards each other");
 		assertEquals(null, list.peek(), "peek (null)");
-		list.add(100);
+		Integer el = 100;
+		list.add(el);
 		assertEquals((Object) 1, list.size(), "size");
-		assertEquals((Object) 100, list.head.next.value, "head.next");
-		assertEquals((Object) 100, list.tail.previous.value, "tail.next");
-		assertEquals((Object) 100, list.peek(), "peek");
+		assertEquals((Object) el, list.head.next.value, "head.next");
+		assertEquals((Object) el, list.tail.previous.value, "tail.next");
+		assertEquals((Object) el, list.peek(), "peek");
 	}
 
-	void removerTest(int[] expected, int[] input, Function<LinkedList, Integer> remover) {
+	void removerTest(List<Integer> input,
+		MethodNamePair<Function<LinkedList, Integer>> remover) {
 		LinkedList<Integer> list = new LinkedList<>();
-		list.addAll(Arrays.asList(boxed(input)));
-		for(int e : expected) {
-			assertEquals((Object) e, remover.apply(list));
+		list.addAll(input);
+		for(int i : input) {
+			assertEquals((Object) i, remover.method.apply(list),
+				() -> "removing with " + remover.name);
 		}
-	}
-
-	void removerTest(int[] expected, int[] input) {
-		removerTest(expected, input, LinkedList<Integer>::pop);
-		removerTest(expected, input, LinkedList<Integer>::remove);
-		removerTest(expected, input, LinkedList<Integer>::removeFirst);
-		removerTest(expected, input, LinkedList<Integer>::poll);
-		removerTest(expected, input, LinkedList<Integer>::pollFirst);
 	}
 
 	/**
-	 * tests all remove from front methods:
-	 * pop, remove, removefirst, poll, and pollfirst
+	 * tests all remove from front methods
 	 */
-	@Test
-	void removerTest() {
-		for(int[] nrs : numbers) {
-			removerTest(nrs, nrs);
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void removerTest(List<Integer> input) {
+		for(MethodNamePair<Function<LinkedList, Integer>> method
+				: popHeadMethods) {
+			removerTest(input, method);
 		}
 	}
 
-	void peekLastTest(LinkedList<Integer> list, int expected, Function<LinkedList, Integer> peeker) {
-		assertEquals((Object) expected, peeker.apply(list));
+	void peekLastTest(LinkedList<Integer> list, int expected,
+			MethodNamePair<Function<LinkedList, Integer>> peeker) {
+		assertEquals((Object) expected, peeker.method.apply(list),
+			() -> "peek at end with " + peeker.name);
 	}
 
 	void peekLastTest(LinkedList<Integer> list, int expected) {
-		peekLastTest(list, expected, LinkedList<Integer>::getLast);
-		peekLastTest(list, expected, LinkedList<Integer>::peekLast);
+		for(MethodNamePair<Function<LinkedList, Integer>> method
+				: peekTailMethods) {
+			peekLastTest(list, expected, method);
+		}
 	}
 
-	void peekTest(LinkedList<Integer> list, int expected, Function<LinkedList, Integer> peeker) {
-		assertEquals((Object) expected, peeker.apply(list));
+	void peekTest(LinkedList<Integer> list, int expected,
+			MethodNamePair<Function<LinkedList, Integer>> peeker) {
+		assertEquals((Object) expected, peeker.method.apply(list),
+			() -> "peek at front with " + peeker.name);
 	}
 
 	void peekTest(LinkedList<Integer> list, int expected) {
-		peekTest(list, expected, LinkedList<Integer>::getFirst);
-		peekTest(list, expected, LinkedList<Integer>::element);
-		peekTest(list, expected, LinkedList<Integer>::peek);
-		peekTest(list, expected, LinkedList<Integer>::peekFirst);
+		for(MethodNamePair<Function<LinkedList, Integer>> method
+				: peekHeadMethods) {
+			peekTest(list, expected, method);
+		}
 	}
 
-	void adderTest(int[] expected, int[] input, BiConsumer<LinkedList, Integer> adder) {
+	void adderTest(List<Integer> input,
+			MethodNamePair<BiConsumer<LinkedList, Integer>> adder) {
 		LinkedList<Integer> list = new LinkedList<>();
 		for(int i : input) {
-			adder.accept(list, i);
+			adder.method.accept(list, i);
 			peekLastTest(list, i);
 		}
-		for(int e : expected) {
-			peekTest(list, e);
-			assertEquals((Object) e, list.removeFirst());
+		for(int i : input) {
+			peekTest(list, i);
+			assertEquals((Object) i, list.removeFirst(),
+				() -> "add at end with " + adder.name
+				+ " (checking via removal at front "
+				+ "with removeFirst)");
 		}
-	}
-
-	void adderTest(int[] expected, int[] input) {
-		adderTest(expected, input, LinkedList<Integer>::add);
-		adderTest(expected, input, LinkedList<Integer>::addLast);
-		adderTest(expected, input, LinkedList<Integer>::offerLast);
-		adderTest(expected, input, LinkedList<Integer>::offer);
 	}
 
 	/**
 	 * tests all add at end methods:
 	 * add, addLast, offer, and offerLast
 	 *
-	 * ALSO tests the peek at end methods:
+	 * ALSO tests the peek (head and tail) methods
 	 */
-	@Test
-	void adderTest() {
-		for(int[] nrs : numbers) {
-			adderTest(nrs, nrs);
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void adderTest(List<Integer> input) {
+		for(MethodNamePair<BiConsumer<LinkedList, Integer>> method
+				: addTailMethods) {
+			adderTest(input, method);
 		}
 	}
 
-	void pusherTest(int[] expected, int[] input, BiConsumer<LinkedList, Integer> pusher) {
+	void pusherTest(List<Integer> input,
+			MethodNamePair<BiConsumer<LinkedList, Integer>> pusher) {
 		LinkedList<Integer> list = new LinkedList<>();
 		for(int i : input) {
-			pusher.accept(list, i);
+			pusher.method.accept(list, i);
 		}
-		for(int e : expected) {
-			assertEquals((Object) e, list.removeLast());
+		for(int i : input) {
+			assertEquals((Object) i, list.pop(),
+				() -> "add at front with " + pusher.name
+				+ " (checking via removal at end "
+				+ "with pop)");
 		}
-	}
-
-	void pusherTest(int[] expected, int[] input) {
-		pusherTest(expected, input, LinkedList<Integer>::addFirst);
-		pusherTest(expected, input, LinkedList<Integer>::offerFirst);
-		pusherTest(expected, input, LinkedList<Integer>::push);
 	}
 
 	/**
 	 * tests all add at front methods:
 	 * addFirst, offerFirst, push
 	 */
-	@Test
-	void pusherTest() {
-		for(int[] nrs : numbers) {
-			pusherTest(nrs, nrs);
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void pusherTest(List<Integer> input) {
+		for(MethodNamePair<BiConsumer<LinkedList, Integer>> method
+				: addTailMethods) {
+			pusherTest(input, method);
 		}
 	}
 
 	/**
 	 * also tests the peek methods
 	 */
-	void addRemoveTest(int[] expected, int[] input) {
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void addRemovePeekTest(List<Integer> input) {
 		LinkedList<Integer> list = new LinkedList<>();
 		for(int i : input) {
 			list.add(i);
 		}
-		for(int e : expected) {
-			peekTest(list, e);
-			assertEquals((Object) e, list.poll());
+		for(int i : input) {
+			peekTest(list, i);
+			assertEquals((Object) i, list.poll());
 		}
 	}
 
-	@Test
-	void addRemoveTest() {
-		for(int[] nrs : numbers) {
-			addRemoveTest(nrs, nrs);
-		}
-	}
-
-	void listIteratorTest(int[] expected) {
+	@ParameterizedTest
+	@MethodSource("numbersProvider")
+	void listIteratorTest(List<Integer> input) {
 		LinkedList<Integer> list = new LinkedList<>();
-		list.addAll(Arrays.asList(boxed(expected)));
+		list.addAll(input);
 		ListIterator<Integer> itr = list.listIterator();
 		assertFalse(itr.hasPrevious(), "no hasPrevious at start");
 		assertEquals(-1, itr.previousIndex(), "previousIndex at start");
@@ -315,7 +391,7 @@ public class LinkedListTest {
 		while(itr.hasNext()) {
 			assertEquals(i, itr.nextIndex(),
 				"index (forward traversal)");
-			assertEquals((Object) expected[i], itr.next(),
+			assertEquals((Object) input.get(i), itr.next(),
 				"element (forward traversal)");
 			i++;
 		}
@@ -330,7 +406,7 @@ public class LinkedListTest {
 		while(itr.hasPrevious()) {
 			assertEquals(i, itr.previousIndex(),
 				"index (backwards traversal)");
-			assertEquals((Object) expected[i], itr.previous(),
+			assertEquals((Object) input.get(i), itr.previous(),
 				"element (backward traversal)");
 			i--;
 		}
@@ -339,13 +415,6 @@ public class LinkedListTest {
 			"no hasPrevious at start after backwards traversal");
 		assertTrue(itr.hasNext(),
 			"hasNext at start after backwards traversal");
-	}
-
-	@Test
-	void listIteratorTest() {
-		for(int[] nrs : numbers) {
-			listIteratorTest(nrs);
-		}
 	}
 
 	// TO TEST:
