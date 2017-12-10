@@ -1,8 +1,5 @@
 import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
-import java.util.function.*;
+import java.util.Iterator;
 
 public class LLSimple {
 	static Integer[] numbers1 = new Integer[] {
@@ -14,9 +11,12 @@ public class LLSimple {
 	public static void main(String[] args) {
 		LinkedList<Integer> list = new LinkedList<>();
 		list.addAll(Arrays.asList(numbers1));
-		System.out.println(Arrays.toString(list.toArray()));
-		ListIterator<Integer> itr = list.descendingIterator();
+		for(int i : list) {
+			System.out.print(i + ", ");
+		}
+		System.out.println();
 
+		Iterator<Integer> itr = list.descendingIterator();
 		System.out.println("list size: " + list.size());
 		while(itr.hasNext()) {
 			System.out.print(itr.next() + ", ");
