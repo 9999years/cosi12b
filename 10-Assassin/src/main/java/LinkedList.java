@@ -49,7 +49,16 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	protected class LinkedListIterator implements Iterable<E>, ListIterator<E> {
+		/**
+		 * our "cursor" is between current and current.next
+		 *
+		 * before the list: current == head
+		 * after list end: current == tail.previous
+		 */
 		protected Node<E> current;
+		/**
+		 * inx of current
+		 */
 		protected int inx;
 
 		/**
@@ -66,13 +75,19 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 		}
 
 		public boolean hasNext() {
-			// we must be able to get the ListIterator to the
-			// position "past" the last element, which is, in
-			// our case, where curent == tail
-			return current != tail;
+			//System.out.println("hasNext called");
+			//System.out.println("index: " + inx);
+			//System.out.println("curr: " + current);
+			//System.out.println("head: " + head);
+			//System.out.println("tail: " + tail);
+			//System.out.println("next: " + current.next);
+			return current != tail.previous;
 		}
 
 		public boolean hasPrevious() {
+			// we must be able to get the ListIterator to the
+			// position "before" the first element, which is, in
+			// our case, where curent == head
 			return current != head;
 		}
 
@@ -81,6 +96,10 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 			LinkedList.this.addBefore(current, e);
 		}
 
+		/**
+		 * cursor is in front of current, so we advance the cursor
+		 * to the next value and then return the current value
+		 */
 		public E next() {
 			if(!hasNext()) {
 				throw new NoSuchElementException();
@@ -90,21 +109,26 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 			return current.value;
 		}
 
+		/**
+		 * cursor is in front of current, so we take our value at
+		 * current (to return) and then rewind the cursor
+		 */
 		public E previous() {
 			if(!hasPrevious()) {
 				throw new NoSuchElementException();
 			}
+			E ret = current.value;
 			current = current.previous;
 			inx--;
-			return current.value;
+			return ret;
 		}
 
 		public int nextIndex() {
-			return inx;
+			return inx + 1;
 		}
 
 		public int previousIndex() {
-			return inx - 1;
+			return inx;
 		}
 
 		public void remove() {
@@ -228,11 +252,11 @@ public class LinkedList<E> implements Iterable<E>, Deque<E> {
 	}
 
 	public ListIterator<E> descendingIterator() {
-		return new DescendingLinkedListIterator(tail, size);
+		return new DescendingLinkedListIterator(tail.previous, size - 1);
 	}
 
 	public ListIterator<E> listIterator() {
-		return new LinkedListIterator(head, 0);
+		return new LinkedListIterator(head, -1);
 	}
 
 	protected boolean equals(E e, Object o) {

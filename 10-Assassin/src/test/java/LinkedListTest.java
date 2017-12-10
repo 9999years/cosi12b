@@ -298,34 +298,47 @@ public class LinkedListTest {
 		LinkedList<Integer> list = new LinkedList<>();
 		list.addAll(Arrays.asList(boxed(expected)));
 		ListIterator<Integer> itr = list.listIterator();
-		assertFalse(itr.hasPrevious());
+		assertFalse(itr.hasPrevious(), "no hasPrevious at start");
+		assertEquals(-1, itr.previousIndex(), "previousIndex at start");
+		assertEquals(0, itr.nextIndex(), "nextIndex at start");
+
 		if(list.size() > 0) {
-			assertTrue(itr.hasNext());
+			assertTrue(itr.hasNext(), "hasNext at start (size > 0)");
+		} else {
+			assertFalse(itr.hasNext(), "no hasNext at start (size == 0)");
+			// quit early; nothing to do
+			return;
 		}
-		assertEquals(-1, itr.previousIndex());
-		assertEquals(0, itr.nextIndex());
 
 		// traverse forwards
 		int i = 0;
 		while(itr.hasNext()) {
-			assertEquals(i, itr.nextIndex());
-			assertEquals((Object) expected[i], itr.next());
+			assertEquals(i, itr.nextIndex(),
+				"index (forward traversal)");
+			assertEquals((Object) expected[i], itr.next(),
+				"element (forward traversal)");
 			i++;
 		}
-		assertEquals(i, list.size() - 1);
-		assertFalse(itr.hasNext());
-		assertTrue(itr.hasPrevious());
+		// index is actually past the end of the list (last index is
+		// list.size() - 1 but we've incremented again)
+		assertEquals(list.size(), i, "index == size after forward traversal");
+		assertFalse(itr.hasNext(), "no hasNext at end");
+		assertTrue(itr.hasPrevious(), "hasPrevious at end");
 
 		// and backwards!
 		i = list.size() - 1;
 		while(itr.hasPrevious()) {
-			assertEquals(i, itr.previousIndex());
-			assertEquals((Object) expected[i], itr.previous());
+			assertEquals(i, itr.previousIndex(),
+				"index (backwards traversal)");
+			assertEquals((Object) expected[i], itr.previous(),
+				"element (backward traversal)");
 			i--;
 		}
-		assertEquals(i, 0);
-		assertFalse(itr.hasPrevious());
-		assertTrue(itr.hasNext());
+		assertEquals(-1, i, "index after backwards traversal");
+		assertFalse(itr.hasPrevious(),
+			"no hasPrevious at start after backwards traversal");
+		assertTrue(itr.hasNext(),
+			"hasNext at start after backwards traversal");
 	}
 
 	@Test
